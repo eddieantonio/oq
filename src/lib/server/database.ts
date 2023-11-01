@@ -1,6 +1,5 @@
+import knex from "knex";
 
-// The dumbest database for now.
-const db: Map<string, Answer> = new Map();
 // Maps a question id to the response.
 export interface Answer {
     question_id: string,
@@ -8,10 +7,24 @@ export interface Answer {
 }
 // That's it for now. Later I will add "partipant_id" later.
 
-export function saveAnswer(answer: Answer) {
-    db.set(answer.question_id, answer);
+const db = knex({
+    client: "better-sqlite3",
+    connection: {
+        filename: "./answers.sqlite3",
+    },
+    // Okay, so knex REALLY wants you to know that SQLite3 does not support
+    // default values, so it practically FORCES you to set this option:
+    useNullAsDefault: true,
+    debug: true,
+    // todo: migrations
+});
+
+const Answers = () => db('answers');
+
+export async function saveAnswer(answer: Answer) {
+    await Answers().insert(answer).onConflict('question_id').merge();
 }
 
-export function getAllAnswers(): Answer[] {
-    return Array.from(db.values());
+export async function getAllAnswers(): Promise<Answer[]> {
+    return await Answers().select('*');
 }

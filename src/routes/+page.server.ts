@@ -11,7 +11,7 @@ export const actions: import('./$types').Actions = {
                 continue;
             }
 
-            saveAnswer({
+            await saveAnswer({
                 question_id: key,
                 answer: value,
             });
