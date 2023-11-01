@@ -68,3 +68,9 @@
 
 	<button type="submit">Submit</button>
 </form>
+
+<p>
+	<small>
+		(<a href="/answers">See the answers</a>)
+	</small>
+</p>
