@@ -1,4 +1,4 @@
-import { saveAnswer } from "$lib/server/database";
+import { saveAnswer } from '$lib/server/database';
 
 export const actions: import('./$types').Actions = {
     default: async ({ request }) => {
@@ -13,7 +13,7 @@ export const actions: import('./$types').Actions = {
 
             await saveAnswer({
                 question_id: key,
-                answer: value,
+                answer: value
             });
         }
     }
