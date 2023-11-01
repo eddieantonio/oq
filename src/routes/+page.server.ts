@@ -1,4 +1,4 @@
-import { db } from "$lib/server/database";
+import { saveAnswer } from "$lib/server/database";
 
 export const actions: import('./$types').Actions = {
     default: async ({ request }) => {
@@ -11,7 +11,7 @@ export const actions: import('./$types').Actions = {
                 continue;
             }
 
-            db.set(key, {
+            saveAnswer({
                 question_id: key,
                 answer: value,
             });
