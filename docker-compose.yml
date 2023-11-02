@@ -1,0 +1,22 @@
+version: '3'
+services:
+    web:
+        build: .
+        # node is not a good PID 1, so use tini to reap zombies:
+        init: true
+        ports:
+            - '5173:5173'
+        volumes:
+            # This mounts the current working directory in the container so that
+            # you, Eddie, can continue developing on your cozy little M1 MacBook,
+            # with hot reloading in Docker.
+            # Take a sip of your PSL before reading the next part.
+            - .:/app
+            # This EXCLUDES the current node_modules, so that the container uses
+            # its own installed version of node_modules.
+            # Why? Because there will be some compiled extentions (notably,
+            # esbuild) that need to be compiled for whatever architecture that the
+            # container is running on -- probably linux-amd64-muslc.
+            # This is NOT what's in your Mac's node_modules :/
+            # See: https://stackoverflow.com/a/37898591/6626414
+            - /app/node_modules
