@@ -8,4 +8,6 @@ RUN npm ci
 
 COPY . .
 
-CMD ["npm", "run", "dev"]
+# Hardcode "npm run" to avoid npm from intercepting our exit signals
+# See: https://github.com/nodejs/docker-node/blob/main/docs/BestPractices.md#cmd
+CMD ["node_modules/.bin/vite", "dev"]
