@@ -21,6 +21,16 @@ add dependencies in `package.json`, **you will need to rebuild the container**
 
 After this, you should have a live-reloading version of the site on <http://localhost:5173/> (that's vite's default port idk).
 
+## Database migrations
+
+You need to run database migrations for the database to: 1) exist; 2) have seed data.
+
+The way you do this is:
+
+```bash
+npm run migrate
+```
+
 ## Building
 
 (this section is from the svelte-kit template repo)
