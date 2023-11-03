@@ -12,5 +12,3 @@
         <dd>{answer.answer}</dd>
     {/each}
 </dl>
-
-<a href="/">Back to home</a>
