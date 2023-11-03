@@ -1,11 +1,26 @@
 import knex from 'knex';
+import type { ParticipantId } from './participants';
 
-// Maps a question id to the response.
+//////////////////////////////////////////////// Tables ////////////////////////////////////////////////
+
+/**
+ * An answer by a participant to a question.
+ */
 export interface Answer {
+    participant_id: ParticipantId;
     question_id: string;
     answer: string;
 }
-// That's it for now. Later I will add "partipant_id" later.
+
+/**
+ * A study participant.
+ */
+export interface Participant {
+    participant_id: ParticipantId;
+    module: string | undefined;
+}
+
+////////////////////////////////////////////// Config //////////////////////////////////////////////
 
 // TODO: derive config from knexfile.js
 // Example: https://github.com/knex/knex/blob/82f43d53abd2b6215015c11061a9793ed68e8611/test/jake-util/knexfile-imports/knexfile.mjs
@@ -21,10 +36,23 @@ const db = knex({
     // todo: migrations
 });
 
+////////////////////////////////// Tables (for use in TypeScript) //////////////////////////////////
+
+const Participants = () => db('participants');
 const Answers = () => db('answers');
 
+//////////////////////////////////////////// Public API ////////////////////////////////////////////
+
+export async function saveParticipant(participantId: ParticipantId) {
+    // TODO: we... should not merge participants? Should we?
+    await Participants()
+        .insert({ participant_id: participantId })
+        .onConflict('participant_id')
+        .merge();
+}
+
 export async function saveAnswer(answer: Answer) {
-    await Answers().insert(answer).onConflict('question_id').merge();
+    await Answers().insert(answer).onConflict(['question_id', 'participant_id']).merge();
 }
 
 export async function getAllAnswers(): Promise<Answer[]> {

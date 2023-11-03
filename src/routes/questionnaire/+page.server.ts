@@ -1,7 +1,8 @@
 import { saveAnswer } from '$lib/server/database';
+import type { ParticipantId } from '$lib/server/participants';
 
 export const actions: import('./$types').Actions = {
-    default: async ({ request }) => {
+    default: async ({ request, cookies }) => {
         const data = await request.formData();
 
         // create a question record for each thing in form data
@@ -11,7 +12,9 @@ export const actions: import('./$types').Actions = {
                 continue;
             }
 
+            const who = cookies.get('participant_id') as ParticipantId;
             await saveAnswer({
+                participant_id: who,
                 question_id: key,
                 answer: value
             });
