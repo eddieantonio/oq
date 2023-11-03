@@ -16,6 +16,8 @@ export const up = async (knex) => {
             table.string('participant_id', 8).references('participant_id').inTable('participants');
             table.string('question_id', 32).references('question_id').inTable('questions');
             table.string('answer', 1024);
+
+            table.primary(['participant_id', 'question_id']);
         });
 };
 
