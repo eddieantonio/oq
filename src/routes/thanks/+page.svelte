@@ -1,3 +1,13 @@
+<script lang="ts">
+    import { onMount } from 'svelte';
+    import JSConfetti from 'js-confetti';
+
+    onMount(() => {
+        let jsConfetti = new JSConfetti();
+        jsConfetti.addConfetti();
+    });
+</script>
+
 <header>
     <h1>You're done!</h1>
 </header>

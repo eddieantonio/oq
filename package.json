@@ -33,6 +33,7 @@
     "type": "module",
     "dependencies": {
         "better-sqlite3": "^9.0.0",
+        "js-confetti": "^0.11.0",
         "knex": "^3.0.1"
     }
 }
