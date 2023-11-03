@@ -7,6 +7,8 @@ export interface Answer {
 }
 // That's it for now. Later I will add "partipant_id" later.
 
+// TODO: derive config from knexfile.js
+// Example: https://github.com/knex/knex/blob/82f43d53abd2b6215015c11061a9793ed68e8611/test/jake-util/knexfile-imports/knexfile.mjs
 const db = knex({
     client: 'better-sqlite3',
     connection: {
