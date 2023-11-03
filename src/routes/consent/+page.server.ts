@@ -10,11 +10,12 @@ export const actions: Actions = {
         const data = await request.formData();
         console.table(Object.fromEntries(data.entries()));
 
+        // TODO: check that all boxes are truthy, else reject it.
+
         const participantID = makeNewParticipantId();
 
-        // TODO: add the server date to the consent form
+        await saveParticipant(participantID);
         cookies.set('participant_id', participantID, { path: '/' });
-        saveParticipant(participantID);
 
         throw redirect(HTTP_SEE_OTHER, '/questionnaire');
     }

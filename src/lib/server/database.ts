@@ -17,7 +17,8 @@ export interface Answer {
  */
 export interface Participant {
     participant_id: ParticipantId;
-    module: string | undefined;
+    started_at: Date;
+    consented_to_all: boolean;
 }
 
 ////////////////////////////////////////////// Config //////////////////////////////////////////////
@@ -46,7 +47,12 @@ const Answers = () => db('answers');
 export async function saveParticipant(participantId: ParticipantId) {
     // TODO: we... should not merge participants? Should we?
     await Participants()
-        .insert({ participant_id: participantId })
+        .insert({
+            participant_id: participantId,
+            started_at: new Date(),
+            // If we've gotten here, they have consented to all questions.
+            consented_to_all: true
+        })
         .onConflict('participant_id')
         .merge();
 }
