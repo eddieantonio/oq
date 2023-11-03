@@ -83,6 +83,6 @@
 
 <p>
     <small>
-        (<a href="/answers">See the answers</a>)
+        (<a href="/_debug/answers">See the answers</a>)
     </small>
 </p>

@@ -2,7 +2,7 @@
 
 <footer>
     <nav>
-        <a href="/">Go to debug page</a>
+        <a href="/_debug">Go to debug page</a>
     </nav>
 </footer>
 
