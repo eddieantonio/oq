@@ -1,20 +1,16 @@
-import { saveAnswer } from '$lib/server/database';
+import { redirect } from '@sveltejs/kit';
+import type { Actions } from './$types';
 
-export const actions: import('./$types').Actions = {
+const HTTP_SEE_OTHER = 303;
+
+export const actions: Actions = {
     default: async ({ request }) => {
         const data = await request.formData();
+        console.table(Object.fromEntries(data.entries()));
 
-        // create a question record for each thing in form data
-        for (const [key, value] of data.entries()) {
-            if (typeof value !== 'string') {
-                console.error('Got a non-string value. Ignoring...');
-                continue;
-            }
+        // TODO: add the server date to the consent form
+        // TODO: insert the consent into the database
 
-            await saveAnswer({
-                question_id: key,
-                answer: value
-            });
-        }
+        throw redirect(HTTP_SEE_OTHER, '/questionnaire');
     }
 };
