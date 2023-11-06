@@ -1,3 +1,7 @@
+<script lang="ts">
+    import LikertScale from '$lib/components/LikertScale.svelte';
+</script>
+
 <!-- This is the questionnaire for now. Eventually I will refactor this to have its own page. -->
 <h1>Questionnaire</h1>
 
@@ -34,37 +38,13 @@
         </div>
 
         <!-- we'll come up with better widgets for likert scales later -->
-        <div class="input-group">
-            <label for="experience-likert"
-                >How would you rate your overall experience with programming? (1=complete beginner,
-                7=expert)</label
-            >
-            <input
-                type="number"
-                id="experience-likert"
-                name="experience-likert"
-                min="1"
-                max="7"
-                step="1"
-                value="1"
-            />
-        </div>
+        <LikertScale questionId="experience-likert">
+            How would you rate your overall experience with programming?
+        </LikertScale>
 
-        <div class="input-group">
-            <label for="python-familiarity-likert"
-                >How would you rate your overall familiarity with Python? (1=complete beginner,
-                7=expert)</label
-            >
-            <input
-                type="number"
-                id="python-familiarity-likert"
-                name="python-familiarity-likert"
-                min="1"
-                max="7"
-                step="1"
-                value="1"
-            />
-        </div>
+        <LikertScale questionId="python-familiarity-likert">
+            How would you rate your overall familiarity with Python?
+        </LikertScale>
 
         <div class="input-group">
             <label for="best-language">What programming language are you most experienced in?</label
