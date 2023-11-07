@@ -14,4 +14,5 @@
         Politely ask the participant to NOT use external help (google, stackoverflow, chatgpt, etc.)
     </p>
     <p>EDDIE: put pictures. Make it BLATENTLY OBVIOUS what they're supposed to do.</p>
+    <p>EDDIE: maybe make a YouTube video?</p>
 </article>
