@@ -9,15 +9,24 @@
     let monaco: typeof Monaco;
     let editor: Monaco.editor.IStandaloneCodeEditor;
     let element: HTMLDivElement;
+    let model: Monaco.editor.ITextModel;
 
     onMount(async () => {
-        monaco = (await import('$lib/monaco')).monaco;
+        let monacoModule = await import('$lib/monaco');
+        monaco = monacoModule.monaco;
+        let { cIncludeValidator } = monacoModule;
         editor = monaco.editor.create(element, {});
-        const model = monaco.editor.createModel(content, language);
+        model = monaco.editor.createModel(content, language);
         editor.setModel(model);
+        cIncludeValidator(model);
+        model.onDidChangeContent(() => {
+            content = model.getValue();
+            cIncludeValidator(model);
+        });
     });
     onDestroy(() => {
         if (editor) editor.dispose();
+        if (model) model.dispose();
     });
 </script>
 
