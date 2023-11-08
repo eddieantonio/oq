@@ -71,7 +71,13 @@
         width: 100vw;
         height: 100vh;
 
-        --editor-bg: #f3f3f3; /* stolen from vscode */
+        /* stolen from vscode */
+        --editor-bg: #f3f3f3;
+        --tab-border-right-color: rgb(229, 229, 229);
+        --tab-bg-color: white;
+        --tab-border-top-color: #005fb8;
+        --tab-text-color: rgb(59, 59, 59);
+
         background-color: var(--editor-bg);
     }
     .tabs-and-actions-container {
@@ -101,14 +107,24 @@
         display: flex;
     }
 
+    @media (prefers-color-scheme: dark) {
+        .ide {
+            /* These colours, once again, stolen from VS Code's default theme. */
+            --editor-bg: #252525;
+            --tab-bg-color: #1e1e1e;
+            --tab-border-top-color: #005fb8;
+            --tab-border-inline-color: #252525;
+            --tab-text-color: #ccc;
+        }
+    }
+
     /* I stole a lot of these stylings directly from VS code. */
     .tab {
-        border-right: 1px solid rgb(229, 229, 229);
-        background-color: white;
-        --tab-border-bottom-color: #f8f8f8;
-        --tab-border-top-color: #005fb8;
-        color: rgb(59, 59, 59);
+        color: var(--tab-text-color);
+        background-color: var(--tab-bg-color);
         border-top: 2px solid var(--tab-border-top-color);
+        /* It seems like this border colour can be on either side of the tab. */
+        border-right: 1px solid var(--tab-border-inline-color);
 
         width: 120px;
         padding-left: 10px;
