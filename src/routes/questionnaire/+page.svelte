@@ -1,5 +1,6 @@
 <script lang="ts">
     import LikertScale from '$lib/components/LikertScale.svelte';
+    import ShortAnswer from '$lib/components/ShortAnswer.svelte';
 </script>
 
 <!-- This is the questionnaire for now. Eventually I will refactor this to have its own page. -->
@@ -43,15 +44,11 @@
         How would you rate your overall familiarity with Python?
     </LikertScale>
 
-    <div class="input-group">
-        <label for="best-language">What programming language are you most experienced in?</label>
-        <input type="text" id="best-language" name="best-language" value="" />
-    </div>
+    <ShortAnswer questionId="best-language">
+        What programming language are you most experienced in?
+    </ShortAnswer>
 
-    <div class="input-group">
-        <label for="favourite-ide">What is your favourite code editor or IDE?</label>
-        <input type="text" id="favourite-ide" name="favourite-ide" value="" />
-    </div>
+    <ShortAnswer questionId="favourite-ide">What is your favourite code editor or IDE?</ShortAnswer>
 
     <button type="submit">Submit</button>
 </form>
