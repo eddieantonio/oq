@@ -15,7 +15,9 @@
         let monacoModule = await import('$lib/monaco');
         monaco = monacoModule.monaco;
         let { cIncludeValidator } = monacoModule;
-        editor = monaco.editor.create(element, {});
+        editor = monaco.editor.create(element, {
+            theme: prefersDarkMode() ? 'vs-dark' : 'vs'
+        });
         model = monaco.editor.createModel(content, language);
         editor.setModel(model);
         cIncludeValidator(model);
@@ -28,14 +30,24 @@
         if (editor) editor.dispose();
         if (model) model.dispose();
     });
+
+    /* Change editor theme if dark mode changes */
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        editor.updateOptions({
+            theme: e.matches ? 'vs-dark' : 'vs'
+        });
+    });
+
+    function prefersDarkMode(): boolean {
+        return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
 </script>
 
 <div bind:this={element} class="editor" />
 
 <style>
     .editor {
-        width: 100vw;
-        min-height: 80vh;
-        outline: 1px solid #ccc;
+        width: 100%;
+        height: 100%;
     }
 </style>
