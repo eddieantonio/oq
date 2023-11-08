@@ -1,14 +1,38 @@
 <script lang="ts">
     import Editor from '$lib/components/Editor.svelte';
 
-    /* a C hello world program */
+    /* A C hello world program with an error in it! */
     let content = [
-        '#include <stdio.h>',
+        'include <stdio.h>',
         'int main() {',
         '   printf("Hello, World!");',
         '   return 0;',
         '}'
     ].join('\n');
+
+    let enableRun = true;
+
+    /**
+     * Post content to the server to be compiled and run.
+     */
+    async function runCode() {
+        /* Prepare FormData for the post including the contents */
+        const formData = new FormData();
+        formData.append('sourceCode', content);
+
+        enableRun = false;
+        try {
+            const res = await fetch('?/run', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            console.log(data);
+        } catch (error) {
+            console.error(error);
+        }
+        enableRun = true;
+    }
 </script>
 
 <div class="ide">
@@ -17,13 +41,15 @@
             <li class="tab">main.c</li>
         </ul>
         <ul class="actions-container unstyle">
-            <li><button type="submit">Pass</button></li>
-            <li><button type="submit">Submit</button></li>
-            <li class="more-space"><button type="submit">Run</button></li>
+            <li><button type="submit" disabled>Pass</button></li>
+            <li><button type="submit" disabled>Submit</button></li>
+            <li class="more-space">
+                <button type="submit" on:click={runCode} disabled={!enableRun}>Run</button>
+            </li>
         </ul>
     </div>
     <div class="editor">
-        <Editor {content} language="c" />
+        <Editor bind:content language="c" />
     </div>
 </div>
 
