@@ -11,6 +11,7 @@
     ].join('\n');
 
     let enableRun = true;
+    let pem: string | null = null;
 
     /**
      * Post content to the server to be compiled and run.
@@ -22,12 +23,12 @@
 
         enableRun = false;
         try {
-            const res = await fetch('?/run', {
+            const res = await fetch('/api/run', {
                 method: 'POST',
                 body: formData
             });
             const data = await res.json();
-            console.log(data);
+            pem = JSON.stringify(data.gccError, null, 4);
         } catch (error) {
             console.error(error);
         }
@@ -51,6 +52,11 @@
     <div class="editor">
         <Editor bind:content language="c" />
     </div>
+    <div class="problems-pane">
+        {#if pem}
+            <pre><code>{pem}</code></pre>
+        {/if}
+    </div>
 </div>
 
 <style>
@@ -73,6 +79,10 @@
     }
     .editor {
         flex: 1;
+    }
+    .problems-pane {
+        /* flex with at least a height of 100px */
+        flex: 0 1 100px;
     }
 
     .editor {
