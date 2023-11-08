@@ -10,19 +10,42 @@
     let editor: Monaco.editor.IStandaloneCodeEditor;
     let element: HTMLDivElement;
     let model: Monaco.editor.ITextModel;
+    /**
+     * These are things that Monaco creates and need to have .dispose() called
+     * on them when the current component is destroyed.
+     */
+    let disposables: Monaco.IDisposable[] = [];
 
     onMount(async () => {
+        // Importing the monaco module MUST be done onMount, otherwise Sveltekit
+        // will attempt loading the client-only library on the server which
+        // would make node upsetti.
         let monacoModule = await import('$lib/monaco');
         monaco = monacoModule.monaco;
+
         let { cIncludeValidator } = monacoModule;
+
+        // Create the main editor instance.
         editor = monaco.editor.create(element, {
-            theme: prefersDarkMode() ? 'vs-dark' : 'vs'
+            theme: prefersDarkMode() ? 'vs-dark' : 'vs',
+            minimap: {
+                enabled: false
+            }
         });
+        disposables.push(editor);
+
+        // Start the editor with the supplied content:
         model = monaco.editor.createModel(content, language);
+        disposables.push(model);
+
         editor.setModel(model);
+
+        // Listen to when the text changes:
         cIncludeValidator(model);
         model.onDidChangeContent(() => {
+            // Update the content prop:
             content = model.getValue();
+            // Add error messages:
             cIncludeValidator(model);
         });
 
@@ -39,9 +62,9 @@
         });
         /* TODO: clean up event listeners and disposables. */
     });
+
     onDestroy(() => {
-        if (editor) editor.dispose();
-        if (model) model.dispose();
+        disposables.forEach((d) => d.dispose());
     });
 
     function prefersDarkMode(): boolean {
