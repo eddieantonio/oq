@@ -25,17 +25,23 @@
             content = model.getValue();
             cIncludeValidator(model);
         });
+
+        /* Change editor theme if dark mode changes */
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            editor.updateOptions({
+                theme: e.matches ? 'vs-dark' : 'vs'
+            });
+        });
+
+        /* Update editor size when the window size changes */
+        window.addEventListener('resize', () => {
+            editor.layout();
+        });
+        /* TODO: clean up event listeners and disposables. */
     });
     onDestroy(() => {
         if (editor) editor.dispose();
         if (model) model.dispose();
-    });
-
-    /* Change editor theme if dark mode changes */
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-        editor.updateOptions({
-            theme: e.matches ? 'vs-dark' : 'vs'
-        });
     });
 
     function prefersDarkMode(): boolean {
