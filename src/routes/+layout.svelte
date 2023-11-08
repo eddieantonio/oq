@@ -1,10 +1,18 @@
+<script lang="ts">
+    import { dev } from '$app/environment';
+    export let data;
+</script>
+
 <slot />
 
-<footer class="debug-footer">
-    <nav>
-        <a href="/_debug">Go to debug page</a>
-    </nav>
-</footer>
+{#if dev}
+    <footer class="debug-footer">
+        <nav>
+            <a href="/_debug">Go to debug page</a>
+            <span>Logged in as {data.participantId ? data.participantId : 'guest'}</span>
+        </nav>
+    </footer>
+{/if}
 
 <style>
     footer {
@@ -18,6 +26,9 @@
         right: 0;
         z-index: 1000;
 
+        display: flex;
+        justify-content: space-between;
+
         margin: 0;
         padding-inline: 1rem;
         padding-block: 1rem;
@@ -26,5 +37,10 @@
 
         background-color: var(--nc-bg-3);
         opacity: 0.5;
+        transition: opacity 0.2s ease-in-out;
+    }
+
+    nav:hover {
+        opacity: 1;
     }
 </style>
