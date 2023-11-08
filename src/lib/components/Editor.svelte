@@ -3,18 +3,27 @@
 
     import { onDestroy, onMount } from 'svelte';
 
+    // Props
     export let content: string = '';
     export let language: string = '';
 
+    /** The DOM element that the editor will be mounted to. */
+    let element: HTMLDivElement;
+
     let monaco: typeof Monaco;
     let editor: Monaco.editor.IStandaloneCodeEditor;
-    let element: HTMLDivElement;
     let model: Monaco.editor.ITextModel;
+
+    // Resource management
     /**
      * These are things that Monaco creates and need to have .dispose() called
      * on them when the current component is destroyed.
      */
     let disposables: Monaco.IDisposable[] = [];
+    /**
+     * Removes all event listeners when controller.abort() is called.
+     */
+    const controller = new AbortController();
 
     onMount(async () => {
         // Importing the monaco module MUST be done onMount, otherwise Sveltekit
@@ -36,9 +45,8 @@
 
         // Start the editor with the supplied content:
         model = monaco.editor.createModel(content, language);
-        disposables.push(model);
-
         editor.setModel(model);
+        disposables.push(model);
 
         // Listen to when the text changes:
         cIncludeValidator(model);
@@ -49,22 +57,26 @@
             cIncludeValidator(model);
         });
 
-        /* Change editor theme if dark mode changes */
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-            editor.updateOptions({
-                theme: e.matches ? 'vs-dark' : 'vs'
-            });
-        });
+        // Using { signal } enables controller.abort() to remove all the event listeners in one go
+        const { signal } = controller;
 
-        /* Update editor size when the window size changes */
-        window.addEventListener('resize', () => {
-            editor.layout();
-        });
-        /* TODO: clean up event listeners and disposables. */
+        // Change editor theme if dark mode changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener(
+            'change',
+            (e) =>
+                void editor.updateOptions({
+                    theme: e.matches ? 'vs-dark' : 'vs'
+                }),
+            { signal }
+        );
+
+        // Update editor size when the window size changes
+        window.addEventListener('resize', () => void editor.layout(), { signal });
     });
 
     onDestroy(() => {
         disposables.forEach((d) => d.dispose());
+        controller.abort();
     });
 
     function prefersDarkMode(): boolean {
