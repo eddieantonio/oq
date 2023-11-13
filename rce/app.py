@@ -7,11 +7,15 @@ Use a third-party code execution engine instead! I am not qualified to write
 a secure code sandbox! This is for demonstration purposes only!
 """
 
-from contextlib import contextmanager
+import json
+import logging
 import os
-import tempfile
-from flask import Flask, request
 import subprocess
+import tempfile
+from contextlib import contextmanager
+
+from flask import Flask, request
+
 
 app = Flask(__name__)
 
@@ -19,34 +23,50 @@ app = Flask(__name__)
 @app.route("/run/gcc", methods=["POST"])
 def compile_and_run_gcc():
     """
-    Uses the file uploaded in the form data to compile and run a C program.
-    Will return json with the stdout and stderr from the compiler and program.
+    Compiles and runs a C program. The program is POSTed using multipart/form-data.
     """
 
     source_code_file = request.files["file"]
+    filename = source_code_file.filename
+    # NOTE: a REAL sandboxed environment would further validate the filename,
+    # but I cannot be bothered to do that here.
+    assert filename.endswith(".c"), "Only C files are supported"
+    executable_name = filename[:-2]
 
     # Save the file to disk using a TemporaryDirectory
     with tempfile.TemporaryDirectory() as tmpdirname, cd(tmpdirname):
-        # TODO: use filename from request instead of hardcoding 'main.c'
-        source_code_file.save("main.c")
+        source_code_file.save(filename)
 
         # Compile the file...
         compile_result = subprocess.run(
-            ["gcc", "main.c"], capture_output=True, text=True
+            ["gcc", "-fdiagnostics-format=json", "-o", executable_name, filename],
+            capture_output=True,
+            text=True,
         )
+        app.logger.info("Ran: %s", compile_result.args)
 
+        # If the compile failed, return the stderr
         if compile_result.returncode != 0:
-            # If the compile failed, return the stderr
-            return {"compile": compile_result.stderr}
+            app.logger.info("stderr: %s", compile_result.stderr)
+            try:
+                parsed = json.loads(compile_result.stderr)
+            except json.JSONDecodeError:
+                parsed = None
+
+            return {
+                "stderr": compile_result.stderr,
+                "parsed": parsed,
+            }
 
         # Run the file...
         run_result = subprocess.run(
-            ["./a.out"],
+            [f"./{executable_name}"],
             capture_output=True,
             # TODO: can I be sure it will be UTF-8 encoded text? No. But this will do for demo purposes.
             # TODO: to avoid unknown encoding errors, use binary mode and base64 or base85 to encode the output
             text=True,
         )
+        app.logger.info("Ran: %s", run_result.args)
 
         # Return the results as JSON
         return {
@@ -72,3 +92,10 @@ def cd(path):
 
 if __name__ == "__main__":
     app.run()
+
+# Configure logging for gunicorn
+# See: https://trstringer.com/logging-flask-gunicorn-the-manageable-way/
+if __name__ != "__main__":
+    gunicorn_logger = logging.getLogger("gunicorn.error")
+    app.logger.handlers = gunicorn_logger.handlers
+    app.logger.setLevel(gunicorn_logger.level)
