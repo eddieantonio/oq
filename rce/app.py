@@ -37,51 +37,69 @@ def compile_and_run_gcc():
     with tempfile.TemporaryDirectory() as tmpdirname, cd(tmpdirname):
         source_code_file.save(filename)
 
-        # Compile the file...
-        compile_args = [
-            "gcc",
-            "-fdiagnostics-format=json",
-            "-o",
-            executable_name,
-            filename,
-        ]
-        app.logger.info("Running: %r", compile_args)
-        compile_result = subprocess.run(
-            compile_args,
-            capture_output=True,
-            text=True,
+        # First, compile the program
+        compile_success, compile_result = compile_c_program(
+            app, filename, executable_name
         )
 
-        # If the compile failed, return the stderr
-        if compile_result.returncode != 0:
-            app.logger.info("stderr: %s", compile_result.stderr)
-            try:
-                parsed = json.loads(compile_result.stderr)
-            except json.JSONDecodeError:
-                parsed = None
+        if not compile_success:
+            # Return the compile errors as JSON
+            return {"compilation": compile_result}
 
-            return {
-                "stderr": compile_result.stderr,
-                "parsed": parsed,
-            }
-
-        # Run the file...
-        run_args = [f"./{executable_name}"]
-        app.logger.info("Running: %r", run_args)
-        run_result = subprocess.run(
-            run_args,
-            capture_output=True,
-            # TODO: can I be sure it will be UTF-8 encoded text? No. But this will do for demo purposes.
-            # TODO: to avoid unknown encoding errors, use binary mode and base64 or base85 to encode the output
-            text=True,
-        )
-
-        # Return the results as JSON
+        # Run the executable
+        _run_status, run_output = run_executable(app, executable_name)
         return {
-            "compile": compile_result.stderr,
-            "run": run_result.stdout,
-            "stderr": run_result.stderr,
+            "compilation": compile_result,
+            "run": run_output,
         }
+
+
+def compile_c_program(app, filename, executable_name):
+    """
+    Compiles a C program using gcc, trying to return diagnostics as JSON output.
+    """
+
+    compile_args = [
+        "gcc",
+        "-fdiagnostics-format=json",
+        "-o",
+        executable_name,
+        filename,
+    ]
+    app.logger.info("Running: %r", compile_args)
+    compile_result = subprocess.run(
+        compile_args,
+        capture_output=True,
+        text=True,
+    )
+
+    try:
+        parsed = json.loads(compile_result.stderr)
+    except json.JSONDecodeError:
+        parsed = None
+
+    return compile_result.returncode == 0, {
+        "status_code": compile_result.returncode,
+        "stderr": compile_result.stderr,
+        "parsed": parsed,
+    }
+
+
+def run_executable(app, executable_name):
+    run_args = [f"./{executable_name}"]
+    app.logger.info("Running: %r", run_args)
+    run_result = subprocess.run(
+        run_args,
+        capture_output=True,
+        # TODO: can I be sure it will be UTF-8 encoded text? No. But this will do for demo purposes.
+        # TODO: to avoid unknown encoding errors, use binary mode and base64 or base85 to encode the output
+        text=True,
+    )
+    return run_result.returncode == 0, {
+        "status_code": run_result.returncode,
+        "stdout": run_result.stdout,
+        "stderr": run_result.stderr,
+    }
 
 
 # cd context manager
