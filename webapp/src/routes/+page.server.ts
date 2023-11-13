@@ -3,7 +3,7 @@ import type { Actions } from './$types';
 import { makeNewParticipantId } from '$lib/server/participants';
 import { saveParticipant } from '$lib/server/database';
 
-const HTTP_SEE_OTHER = 303;
+import { StatusCodes } from 'http-status-codes';
 
 export const actions: Actions = {
     default: async ({ request, cookies }) => {
@@ -17,6 +17,6 @@ export const actions: Actions = {
         await saveParticipant(participantID);
         cookies.set('participant_id', participantID, { path: '/' });
 
-        throw redirect(HTTP_SEE_OTHER, '/questionnaire');
+        throw redirect(StatusCodes.SEE_OTHER, '/questionnaire');
     }
 };
