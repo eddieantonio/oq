@@ -44,13 +44,13 @@ def compile_and_run_gcc():
 
         if not compile_success:
             # Return the compile errors as JSON
-            return {"compilation": compile_result}
+            return {"compilation": compile_result, "execution": None}
 
         # Run the executable
         _run_status, run_output = run_executable(app, executable_name)
         return {
             "compilation": compile_result,
-            "run": run_output,
+            "execution": run_output,
         }
 
 
@@ -79,7 +79,7 @@ def compile_c_program(app, filename, executable_name):
         parsed = None
 
     return compile_result.returncode == 0, {
-        "status_code": compile_result.returncode,
+        "exitCode": compile_result.returncode,
         "stderr": compile_result.stderr,
         "parsed": parsed,
     }
@@ -96,7 +96,7 @@ def run_executable(app, executable_name):
         text=True,
     )
     return run_result.returncode == 0, {
-        "status_code": run_result.returncode,
+        "exitCode": run_result.returncode,
         "stdout": run_result.stdout,
         "stderr": run_result.stderr,
     }

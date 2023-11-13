@@ -12,6 +12,7 @@
 
     let enableRun = true;
     let pem: string | null = null;
+    let programOutput: string | null = null;
 
     /**
      * Post content to the server to be compiled and run.
@@ -28,7 +29,18 @@
                 body: formData
             });
             const data = await res.json();
-            pem = JSON.stringify(data.gccError, null, 4);
+
+            if (data.compilation.exitCode != 0) {
+                pem = JSON.stringify(data.compilation.parsed, null, 4);
+            } else {
+                pem = null;
+            }
+
+            if (data.execution) {
+                programOutput = data.execution.stdout;
+            } else {
+                programOutput = null;
+            }
         } catch (error) {
             console.error(error);
         }
@@ -54,7 +66,10 @@
     </div>
     <div class="problems-pane">
         {#if pem}
-            <pre><code>{pem}</code></pre>
+            <pre class="problem"><code>{pem}</code></pre>
+        {/if}
+        {#if programOutput}
+            <pre class="success"><code>{programOutput}</code></pre>
         {/if}
     </div>
 </div>
@@ -153,5 +168,12 @@
     }
     .more-space {
         margin-inline-start: 16px;
+    }
+
+    .problem {
+        color: red;
+    }
+    .success {
+        color: green;
     }
 </style>
