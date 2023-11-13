@@ -21,11 +21,19 @@ export async function POST({ cookies, request }) {
 
     const data = await request.formData();
     const sourceCode = data.get('sourceCode');
-    console.log(data);
 
     if (!sourceCode || !(typeof sourceCode == 'string'))
         throw fail(BAD_REQUEST, { sourceCode, missing: true });
 
+    try {
+        let { gccError } = await runCode(sourceCode);
+        return json({ gccError });
+    } catch (error) {
+        console.error(`exec error: ${error}`);
+    }
+}
+
+async function runCode(sourceCode: string) {
     const fileName = 'main';
     const filePath = `/tmp/${fileName}.c`;
 
@@ -35,12 +43,9 @@ export async function POST({ cookies, request }) {
     // Compile the source code using gcc
     const command = `gcc -fdiagnostics-format=json ${filePath} -o /tmp/${fileName} || true`;
     console.log({ command });
-    try {
-        const { stdout, stderr } = await exec(command);
-        console.log({ stdout, stderr });
-        const parsedErrorMessage = JSON.parse(stderr);
-        return json({ gccError: parsedErrorMessage });
-    } catch (error) {
-        console.error(`exec error: ${error}`);
-    }
+    const { stdout, stderr } = await exec(command);
+    console.log({ stdout, stderr });
+    const parsedErrorMessage = JSON.parse(stderr);
+
+    return { gccError: parsedErrorMessage };
 }
