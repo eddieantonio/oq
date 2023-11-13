@@ -1,9 +1,0 @@
-# Sveltekit stuff:
-build/
-.svelte-kit/
-/.git/
-package/
-node_modules/
-
-# Databases
-*.sqlite3
