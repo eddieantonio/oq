@@ -2,17 +2,17 @@
  * Handles running the code
  */
 
-import { exec as nodeExec } from 'child_process';
-import fs from 'fs';
-
 import { error, fail, json } from '@sveltejs/kit';
-import util from 'util';
 
 /* TODO: use basic HTTP status code module. */
 const UNAUTHORIZED = 401;
 const BAD_REQUEST = 400;
 
-const exec = util.promisify(nodeExec);
+/**
+ * POST to this endpoint to compile and run the code.
+ * NOTE: this URL is hardcoded for my docker-compose setup.
+ */
+const REMOTE_CODE_EXECUTION_URL = 'http://rce:8000/run/gcc';
 
 /** @type {import('@sveltejs/kit').RequestHandler} */
 export async function POST({ cookies, request }) {
@@ -25,27 +25,20 @@ export async function POST({ cookies, request }) {
     if (!sourceCode || !(typeof sourceCode == 'string'))
         throw fail(BAD_REQUEST, { sourceCode, missing: true });
 
-    try {
-        let { gccError } = await runCode(sourceCode);
-        return json({ gccError });
-    } catch (error) {
-        console.error(`exec error: ${error}`);
-    }
+    let response = await runCode(sourceCode);
+    return json(response);
 }
 
+// TODO: define TS interface for run output
 async function runCode(sourceCode: string) {
-    const fileName = 'main';
-    const filePath = `/tmp/${fileName}.c`;
+    const formData = new FormData();
+    // TODO: do not hardcode "main.c"
+    formData.append("file", new Blob([sourceCode]), "main.c");
 
-    // Write the source code to a file
-    await fs.promises.writeFile(filePath, sourceCode);
-
-    // Compile the source code using gcc
-    const command = `gcc -fdiagnostics-format=json ${filePath} -o /tmp/${fileName} || true`;
-    console.log({ command });
-    const { stdout, stderr } = await exec(command);
-    console.log({ stdout, stderr });
-    const parsedErrorMessage = JSON.parse(stderr);
-
-    return { gccError: parsedErrorMessage };
+    // POST a file as multipart/form-data
+    const res = await fetch(REMOTE_CODE_EXECUTION_URL, {
+        method: "POST",
+        body: formData,
+    });
+    return res.json();
 }
