@@ -2,7 +2,7 @@ FROM python:3.11-slim-buster
 
 WORKDIR /app
 
-# Install system dependencies like gcc and build essential. Clean up apt cache
+# Install a C compiler!
 RUN apt-get update && apt-get install -y gcc build-essential && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -11,10 +11,11 @@ RUN apt-get update && apt-get install -y gcc build-essential && \
 COPY ./requirements.txt /app/requirements.txt
 RUN pip install -r requirements.txt
 
+# Now copy the app source code
 COPY . /app
 
-# Expose port 8000 for Gunicorn
+# Expose port 8000 for Gunicorn (see gunicorn.conf.py)
 EXPOSE 8000
 
-# Start Gunicorn with 4 worker processes
-CMD ["gunicorn", "app:app", "-w", "4", "-b", "0.0.0.0:8000"]
+# Start Gunicorn.
+CMD ["gunicorn", "app:app"]

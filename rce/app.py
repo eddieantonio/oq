@@ -27,6 +27,7 @@ def compile_and_run_gcc():
 
     # Save the file to disk using a TemporaryDirectory
     with tempfile.TemporaryDirectory() as tmpdirname, cd(tmpdirname):
+        # TODO: use filename from request instead of hardcoding 'main.c'
         source_code_file.save("main.c")
 
         # Compile the file...
@@ -43,6 +44,7 @@ def compile_and_run_gcc():
             ["./a.out"],
             capture_output=True,
             # TODO: can I be sure it will be UTF-8 encoded text? No. But this will do for demo purposes.
+            # TODO: to avoid unknown encoding errors, use binary mode and base64 or base85 to encode the output
             text=True,
         )
 
