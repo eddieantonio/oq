@@ -2,10 +2,6 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# TODO: move this stuff to the sandboxed environment
-# TEMPORARY: install gcc to compile user code
-RUN apk add --no-cache gcc musl-dev
-
 COPY package.json package-lock.json ./
 
 RUN npm ci
