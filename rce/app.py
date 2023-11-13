@@ -38,12 +38,19 @@ def compile_and_run_gcc():
         source_code_file.save(filename)
 
         # Compile the file...
+        compile_args = [
+            "gcc",
+            "-fdiagnostics-format=json",
+            "-o",
+            executable_name,
+            filename,
+        ]
+        app.logger.info("Running: %r", compile_args)
         compile_result = subprocess.run(
-            ["gcc", "-fdiagnostics-format=json", "-o", executable_name, filename],
+            compile_args,
             capture_output=True,
             text=True,
         )
-        app.logger.info("Ran: %s", compile_result.args)
 
         # If the compile failed, return the stderr
         if compile_result.returncode != 0:
@@ -59,14 +66,15 @@ def compile_and_run_gcc():
             }
 
         # Run the file...
+        run_args = [f"./{executable_name}"]
+        app.logger.info("Running: %r", run_args)
         run_result = subprocess.run(
-            [f"./{executable_name}"],
+            run_args,
             capture_output=True,
             # TODO: can I be sure it will be UTF-8 encoded text? No. But this will do for demo purposes.
             # TODO: to avoid unknown encoding errors, use binary mode and base64 or base85 to encode the output
             text=True,
         )
-        app.logger.info("Ran: %s", run_result.args)
 
         # Return the results as JSON
         return {
