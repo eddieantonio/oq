@@ -1,9 +1,8 @@
-# Sveltekit stuff
-.DS_Store
-node_modules
-/build
-/.svelte-kit
-/package
+# Node + Sveltekit stuff
+node_modules/
+build/
+.svelte-kit/
+package/
 .env
 .env.*
 !.env.example
@@ -12,3 +11,6 @@ vite.config.ts.timestamp-*
 
 # Databases
 *.sqlite3
+
+# macOS junk
+.DS_Store
