@@ -1,7 +1,7 @@
 version: '3'
 services:
-    web:
-        build: .
+    webapp:
+        build: ./webapp
         # node is not a good PID 1, so use tini to reap zombies:
         init: true
         ports:
@@ -11,7 +11,7 @@ services:
             # you, Eddie, can continue developing on your cozy little M1 MacBook,
             # with hot reloading in Docker.
             # Take a sip of your PSL before reading the next part.
-            - .:/app
+            - ./webapp:/app
             # This EXCLUDES the current node_modules, so that the container uses
             # its own installed version of node_modules.
             # Why? Because there will be some compiled extentions (notably,
