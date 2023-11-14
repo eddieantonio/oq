@@ -1,7 +1,13 @@
 import knex from 'knex';
-import type { ParticipantId } from './participants';
 
-//////////////////////////////////////////////// Tables ////////////////////////////////////////////////
+import type { ParticipantId } from './participants';
+import config from '../../../knexfile.mjs';
+
+////////////////////////////////////////////// Config //////////////////////////////////////////////
+
+const db = knex(config);
+
+////////////////////////////////////////////// Tables //////////////////////////////////////////////
 
 /**
  * An answer by a participant to a question.
@@ -20,22 +26,6 @@ export interface Participant {
     started_at: Date;
     consented_to_all: boolean;
 }
-
-////////////////////////////////////////////// Config //////////////////////////////////////////////
-
-// TODO: derive config from knexfile.js
-// Example: https://github.com/knex/knex/blob/82f43d53abd2b6215015c11061a9793ed68e8611/test/jake-util/knexfile-imports/knexfile.mjs
-const db = knex({
-    client: 'better-sqlite3',
-    connection: {
-        filename: './answers.sqlite3'
-    },
-    // Okay, so knex REALLY wants you to know that SQLite3 does not support
-    // default values, so it practically FORCES you to set this option:
-    useNullAsDefault: true,
-    debug: true
-    // todo: migrations
-});
 
 ////////////////////////////////// Tables (for use in TypeScript) //////////////////////////////////
 
