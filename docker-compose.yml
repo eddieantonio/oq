@@ -6,6 +6,10 @@ services:
             target: production
         environment:
             DATABASE_PATH: '/app/run/answers.sqlite3'
+            # SvelteKit relies on this to know the correct origin:
+            # In real prod, behind nginx, use PROTOCOL_HEADER=x-forwarded-proto HOST_HEADER=x-forwarded-host
+            # See: https://kit.svelte.dev/docs/adapter-node#environment-variables-origin-protocolheader-and-hostheader
+            ORIGIN: 'http://localhost:3000'
         ports:
             - '3000:3000'
         volumes:
