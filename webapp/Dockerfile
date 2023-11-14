@@ -39,15 +39,16 @@ FROM base as builder
 # Copy remaining files:
 COPY . .
 # Builds the application. The app is now in the /app/build folder
-RUN npm run build && npm prune --production
+RUN npm run build && \
+    npm prune --production
 
 
 ## STAGE ######################## production #################################
-FROM alpine:${ALPINE_VERSION}
+FROM alpine:${ALPINE_VERSION} as production
 
 # Derived from https://github.com/nodejs/docker-node/blob/main/docs/BestPractices.md#smaller-images-without-npmyarn
 WORKDIR /app
-RUN apk add --no-cache dumb-init && \
+RUN apk add --no-cache libstdc++ dumb-init && \
     addgroup -g 1000 node && \
     adduser -u 1000 node -G node -s /bin/sh -D node && \
     chown node:node ./
