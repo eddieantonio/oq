@@ -12,12 +12,32 @@ services:
             # with hot reloading in Docker.
             # Take a sip of your PSL before reading the next part.
             - ./webapp:/app
-            # This EXCLUDES the current node_modules, so that the container uses
-            # its own installed version of node_modules.
-            # Why? Because there will be some compiled extentions (notably,
-            # esbuild) that need to be compiled for whatever architecture that the
-            # container is running on -- probably linux-amd64-muslc.
-            # This is NOT what's in your Mac's node_modules :/
+            # This creates an ANONYMOUS volume for JUST for node_modules which
+            # EXCLUDES the current node_modules, so that the container uses
+            # its own installed version of packages.
+            #
+            # !!! NOTE !!!
+            # When you install a new npm package, you will need to run
+            #
+            #   docker compose down -v
+            #
+            # ...to remove the anonymous volume, OR ELSE Docker will reuse the
+            # old volume WITHOUT having the new package(s) installed.
+            #
+            # You will probably also want to get back the disk space from the
+            # old, unused, anonymous volumes:
+            #
+            #  docker volume prune --filter all=1
+            #
+            # (See: https://github.com/docker/cli/issues/4028#issuecomment-1429538156)
+            #
+            # ---
+            #
+            # Why create this anonymous volume? Because there will be some
+            # compiled extentions (notably, esbuild) that need to be compiled
+            # for whatever architecture that the container is running on --
+            # probably linux-amd64-muslc.  This is NOT what's in your Mac's
+            # node_modules :/
             # See: https://stackoverflow.com/a/37898591/6626414
             - /app/node_modules
 
