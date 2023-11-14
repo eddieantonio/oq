@@ -1,7 +1,10 @@
 version: '3'
 services:
     webapp:
-        build: ./webapp
+        build:
+            context: ./webapp
+            target: dev-hot-reload
+
         # node is not a good PID 1, so use tini to reap zombies:
         init: true
         ports:
