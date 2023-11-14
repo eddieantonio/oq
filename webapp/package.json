@@ -15,9 +15,11 @@
         "format": "prettier --plugin-search-dir . --write ."
     },
     "dependencies": {
-        "knex": "^3.0.1",
         "better-sqlite3": "^9.0.0",
-        "http-status-codes": "^2.3.0"
+        "connect": "^3.7.0",
+        "http-status-codes": "^2.3.0",
+        "knex": "^3.0.1",
+        "morgan": "^1.10.0"
     },
     "devDependencies": {
         "@sveltejs/adapter-auto": "^2.0.0",
