@@ -5,6 +5,7 @@ services:
             context: ./webapp
             target: production
         environment:
+            NODE_ENV: production
             DATABASE_PATH: '/app/run/answers.sqlite3'
             # SvelteKit relies on this to know the correct origin:
             # In real prod, behind nginx, use PROTOCOL_HEADER=x-forwarded-proto HOST_HEADER=x-forwarded-host
