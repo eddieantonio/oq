@@ -15,7 +15,6 @@ The way you do this is:
 npm run migrate
 ```
 
-
 ## Building
 
 (this section is from the svelte-kit template repo)

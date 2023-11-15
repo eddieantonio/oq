@@ -80,7 +80,7 @@ Note: I do **not** daemonize `docker-compose` (i.e., provide the `-d` option)
 during development.
 
 After this, you should have a live-reloading version of the site on
-<http://localhost:5173/> (that's vite's default dev port, for some reason).
+<http://localhost:3000/>.
 
 [Docker Compose]: https://docs.docker.com/compose/
 

@@ -4,9 +4,6 @@ services:
     build:
       context: ./webapp
       target: dev-hot-reload
-    ports:
-      # TODO: make the development server use the same port as prod...
-      - '5173:5173'
     volumes:
       # This mounts the current working directory in the container so that
       # you, Eddie, can continue developing on your cozy little M1 MacBook,
