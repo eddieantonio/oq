@@ -77,12 +77,10 @@ ENTRYPOINT ["docker-entrypoint.sh"]
 USER node
 # Copy just the files needed for SvelteKit and Knex migrations
 # See: https://kit.svelte.dev/docs/adapter-node
-COPY --from=builder \
-     /app/package.json \
-     /app/node_modules \
-     /app/knexfile.mjs \
-     /app/migrations \
-     /app/build ./
+COPY --from=builder /app/package.json /app/knexfile.mjs ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/migrations ./migrations
+COPY --from=builder /app/build ./build
 
 EXPOSE 3000
 CMD ["dumb-init", "node", "build"]

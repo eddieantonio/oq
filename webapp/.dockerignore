@@ -1,6 +1,7 @@
+/.git/
 /build
 /.svelte-kit
-/.git/
 /package
 /node_modules
 *.sqlite3
+README.md
