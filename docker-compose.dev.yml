@@ -5,10 +5,10 @@ services:
             context: ./webapp
             target: dev-hot-reload
         environment:
+            # TODO: TEMPORARY
             DATABASE_PATH: '/app/run/answers.sqlite3'
-        # node is not a good PID 1, so use tini to reap zombies:
-        init: true
         ports:
+            # TODO: make the development server use the same port as prod...
             - '5173:5173'
         volumes:
             # XXX: TEMPORARY
@@ -48,12 +48,7 @@ services:
             # See: https://stackoverflow.com/a/37898591/6626414
             - /app/node_modules
 
-    # The remote code execution engine. For now, this is a quick and dirty engine.
-    # It MUST be replaced with something like Jobe or Piston in production.
     rce:
-        build: ./rce
-        init: true
-        ports:
-            - '8000:8000'
         environment:
+            # We don't need nearly as many workers as in prod.
             GUNICORN_WORKERS: 2

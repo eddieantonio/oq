@@ -52,6 +52,7 @@ You will need:
 
 # Development
 
+
 > [!IMPORTANT]
 > See [Installing new npm packages](#installing-new-npm-packages) as things are not straightforward.
 
@@ -62,7 +63,14 @@ This is my development setup:
  - I use Visual Studio Code with the Prettier extension to edit files.
  - I use [Docker Compose][] to run the development server.
 
-Here's how I get the webapp server started for the first time:
+To setup the dev environment for the first time, you **must** do the following
+after clone:
+
+```sh
+ln -s docker-composer.{dev,override}.yml
+```
+
+Subsequently, you can bring up everything using the following command:
 
 ```sh
 docker-compose up --build
@@ -72,7 +80,7 @@ Note: I do **not** daemonize `docker-compose` (i.e., provide the `-d` option)
 during development.
 
 After this, you should have a live-reloading version of the site on
-<http://localhost:5173/> (that's vite's default port for some reason).
+<http://localhost:5173/> (that's vite's default dev port, for some reason).
 
 [Docker Compose]: https://docs.docker.com/compose/
 
@@ -162,3 +170,13 @@ even if I'm not messing around with npm packages.
 ## Database migrations
 
 See `webapp/README.md` for details on how to run the database migrations.
+
+# Deployment on beckett4
+
+To deploy, you **must** run:
+
+```sh
+ln -s docker-composer.{prod,override}.yml
+```
+
+**TODO**: Eddie needs to write more documentation here!

@@ -1,28 +1,30 @@
+# Common configuration for all services
+#
+# This file should **NOT** be used on its own. Instead, you should copy/symlink
+# either of docker-compose.dev.yml or docker-compose.prod.yml to
+# docker-compose.override.yml as appropriate and use that instead.
+#
+# Development:
+#
+#   ln -s docker-compose.dev.yml docker-compose.override.yml
+#  
+# Production:
+#
+#   ln -s docker-compose.prod.yml docker-compose.override.yml
+#
+# Docker Compose will then combine the common settings here, with the
+# customizations in the override file, and everything will work wonderfully.
 version: '3'
 services:
-    webapp:
-        build:
-            context: ./webapp
-            target: production
-        environment:
-            NODE_ENV: production
-            DATABASE_PATH: '/app/run/answers.sqlite3'
-            # SvelteKit relies on this to know the correct origin:
-            # In real prod, behind nginx, use PROTOCOL_HEADER=x-forwarded-proto HOST_HEADER=x-forwarded-host
-            # See: https://kit.svelte.dev/docs/adapter-node#environment-variables-origin-protocolheader-and-hostheader
-            ORIGIN: 'http://localhost:3000'
-        ports:
-            - '3000:3000'
-        volumes:
-            # XXX: TEMPORARY
-            - /tmp/oq/run:/app/run/
+  webapp:
+    build: ./webapp
+    depends_on:
+      - rce
 
-    # The remote code execution engine. For now, this is a quick and dirty engine.
-    # It MUST be replaced with something like Jobe or Piston in production.
-    rce:
-        build: ./rce
-        init: true
-        ports:
-            - '8000:8000'
-        environment:
-            GUNICORN_WORKERS: 2
+  # The remote code execution engine. For now, this is a quick and dirty engine.
+  # It MUST be replaced with something like Jobe or Piston in production.
+  rce:
+    build: ./rce
+    init: true
+    ports:
+      - '8000:8000'
