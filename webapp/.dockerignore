@@ -1,7 +1,16 @@
-/.git/
+# Node + SvelteKit stuff
 /build
 /.svelte-kit
 /package
 /node_modules
+
+# Runtime
+/run
 *.sqlite3
+
+# Things that are just not needed in Docker:
+/.git/
 README.md
+
+# Is this... legal? I don't know, but it prevents rebuilding, so I'm doing it!
+Dockerfile
