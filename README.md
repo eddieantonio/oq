@@ -179,4 +179,21 @@ To deploy, you **must** run:
 ln -s docker-composer.{prod,override}.yml
 ```
 
+
+The following directory is bind-mounted to the webapp container:
+
+    /home/eddie/oq/run
+
+What this means is that the database can be found in there!
+
 **TODO**: Eddie needs to write more documentation here!
+ 1. how to build
+ 2. how to migrate
+
+### Migration
+
+Make sure all containers are running, then use the following command:
+
+```sh
+docker compose exec webapp node_modules/.bin/knex migrate:latest
+```

@@ -1,9 +1,14 @@
+# This is hard-coded for how I will deploy it on beckett4
 version: '3'
 services:
   webapp:
     build:
       context: ./webapp
       target: production
+      args:
+        # My user/group IDs on the machine. Not sure why they're off by one.
+        GROUP_ID: 1093
+        USER_ID: 1092
     environment:
       NODE_ENV: production
       DATABASE_PATH: '/app/run/answers.sqlite3'
@@ -11,8 +16,10 @@ services:
       # In real prod, behind nginx, use PROTOCOL_HEADER=x-forwarded-proto HOST_HEADER=x-forwarded-host
       # See: https://kit.svelte.dev/docs/adapter-node#environment-variables-origin-protocolheader-and-hostheader
       ORIGIN: 'http://localhost:3000'
-    ports:
-      - '3000:3000'
     volumes:
-      # XXX: TEMPORARY
-      - /tmp/oq/run:/app/run/
+      - /home/eddie/oq/run/:/app/run/
+
+  rce:
+    environment:
+      # We still don't need that many workers
+      GUNICORN_WORKERS: 4

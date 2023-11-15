@@ -8,6 +8,12 @@
 #
 # Arguments:
 #  - ALPINE_VERSION -- Version of alpine to use in all stages
+#  - USER_ID        -- [production] Unix user ID of the node user
+#  - GROUP_ID       -- [production] Unix group ID of the node user
+#
+# For user/group ID, make sure they match whichever user you plan to "own" the
+# processes and data on the host machine. This way, the node user within
+# Docker can write to the host filesystem.
 
 ARG ALPINE_VERSION=3.18
 
@@ -54,22 +60,29 @@ RUN npm run build && \
 # Image used in production.
 FROM alpine:${ALPINE_VERSION} as production
 
+# (See above)
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+
 # Derived from https://github.com/nodejs/docker-node/blob/75c91643fcb23f135720f07bad6465b511f5d9a5/docs/BestPractices.md#smaller-images-without-npmyarn
 WORKDIR /app
 RUN apk add --no-cache libstdc++ dumb-init==1.2.5-r2 && \
-    addgroup -g 1000 node && \
-    adduser -u 1000 node -G node -s /bin/sh -D node && \
+    addgroup -g ${GROUP_ID} node && \
+    adduser -u ${USER_ID} node -G node -s /bin/sh -D node && \
     chown node:node ./
 COPY --from=builder /usr/local/bin/node /usr/local/bin
 COPY --from=builder /usr/local/bin/docker-entrypoint.sh /usr/local/bin
 ENTRYPOINT ["docker-entrypoint.sh"]
 
 USER node
-# Copy just the files needed for SvelteKit
+# Copy just the files needed for SvelteKit and Knex migrations
 # See: https://kit.svelte.dev/docs/adapter-node
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/build ./build
+COPY --from=builder \
+     /app/package.json \
+     /app/node_modules \
+     /app/knexfile.mjs \
+     /app/migrations \
+     /app/build ./
 
 EXPOSE 3000
 CMD ["dumb-init", "node", "build"]

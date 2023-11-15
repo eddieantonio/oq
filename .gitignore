@@ -15,5 +15,8 @@ docker-compose.override.yml
 # Databases
 *.sqlite3
 
+# Files modified during runtime
+run/
+
 # macOS junk
 .DS_Store
