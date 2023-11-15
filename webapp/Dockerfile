@@ -4,7 +4,7 @@
 #  - base           -- Base image for all stages except production
 #  - dev-hot-reload -- Image used when using docker compose in development
 #  - builder        -- Image that builds the application for production
-#  - production     -- Image used in production
+#  - production     -- Image used in production, copies files from builder
 #
 # Arguments:
 #  - ALPINE_VERSION -- Version of alpine to use in all stages
@@ -48,7 +48,7 @@ FROM alpine:${ALPINE_VERSION} as production
 
 # Derived from https://github.com/nodejs/docker-node/blob/main/docs/BestPractices.md#smaller-images-without-npmyarn
 WORKDIR /app
-RUN apk add --no-cache libstdc++ dumb-init && \
+RUN apk add --no-cache libstdc++ dumb-init==1.2.5-r2 && \
     addgroup -g 1000 node && \
     adduser -u 1000 node -G node -s /bin/sh -D node && \
     chown node:node ./
