@@ -4,16 +4,10 @@ services:
         build:
             context: ./webapp
             target: dev-hot-reload
-        environment:
-            # TODO: TEMPORARY
-            DATABASE_PATH: '/app/run/answers.sqlite3'
         ports:
             # TODO: make the development server use the same port as prod...
             - '5173:5173'
         volumes:
-            # XXX: TEMPORARY
-            - /tmp/oq/run:/app/run/
-
             # This mounts the current working directory in the container so that
             # you, Eddie, can continue developing on your cozy little M1 MacBook,
             # with hot reloading in Docker.

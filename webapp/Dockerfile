@@ -39,7 +39,7 @@ CMD ["dumb-init", "node_modules/.bin/vite", "dev"]
 
 ## STAGE ######################### builder ###################################
 
-# Image used to build the application
+# Image used to build the application.
 FROM base as builder
 # Copy remaining files:
 COPY . .
@@ -49,9 +49,11 @@ RUN npm run build && \
 
 
 ## STAGE ######################## production #################################
+
+# Image used in production.
 FROM alpine:${ALPINE_VERSION} as production
 
-# Derived from https://github.com/nodejs/docker-node/blob/main/docs/BestPractices.md#smaller-images-without-npmyarn
+# Derived from https://github.com/nodejs/docker-node/blob/75c91643fcb23f135720f07bad6465b511f5d9a5/docs/BestPractices.md#smaller-images-without-npmyarn
 WORKDIR /app
 RUN apk add --no-cache libstdc++ dumb-init==1.2.5-r2 && \
     addgroup -g 1000 node && \
