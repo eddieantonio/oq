@@ -32,6 +32,7 @@ FROM base as dev-hot-reload
 # docker-compose can add an init, but we might as well just do it right away.
 RUN apk add --no-cache dumb-init==1.2.5-r2
 
+EXPOSE 3000
 # Hardcode the contents of "npm run" to avoid npm from intercepting our exit signals
 # See: https://github.com/nodejs/docker-node/blob/main/docs/BestPractices.md#cmd
 CMD ["dumb-init", "node_modules/.bin/vite", "dev"]
@@ -69,4 +70,6 @@ USER node
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/build ./build
+
+EXPOSE 3000
 CMD ["dumb-init", "node", "build"]
