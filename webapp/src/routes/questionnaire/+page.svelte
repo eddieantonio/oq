@@ -53,8 +53,11 @@
     <button type="submit">Submit</button>
 </form>
 
-<p>
-    <small>
-        (<a href="/_debug/answers">See the answers</a>)
-    </small>
-</p>
+
+{#if dev}
+    <p>
+        <small>
+            (<a href="/_debug/answers">See the answers</a>)
+        </small>
+    </p>
+{/if}
