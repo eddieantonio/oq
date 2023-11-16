@@ -14,18 +14,14 @@ import * as monaco from 'monaco-editor';
 // The ?worker stuff is a Vite specific feature to create a Web Worker.
 // See: https://v3.vitejs.dev/guide/features.html#import-with-query-suffixes
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
-import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
 
 // `self` MUST be the browser context!
 self.MonacoEnvironment = {
     getWorker(_workerId: string, label: string) {
-        switch (label) {
-            case 'typescript':
-            case 'javascript':
-                return new tsWorker();
-            default:
-                return new editorWorker();
-        }
+        // Monaco also bundles a VERY full-featured and heavy-weight
+        // TypeScript/JavaScript worker, but it's WAYYYYY too large, so I've
+        // decided to omit it here.
+        return new editorWorker();
     }
 };
 
