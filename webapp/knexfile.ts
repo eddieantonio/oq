@@ -17,7 +17,7 @@ export default {
     connection: {
         filename: process.env.DATABASE_PATH ?? './answers.sqlite3'
     },
-    debug: process.env.NODE_ENV !== 'production',
+    debug: process.env.NODE_ENV === 'development',
     migrations: {
         directory: './migrations',
         loadExtensions: ['.mjs']
