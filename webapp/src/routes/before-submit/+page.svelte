@@ -14,7 +14,7 @@
     </p>
     <p>You will not be able to unsubmit. Final answers!</p>
 
-    <form>
+    <form method="POST">
         <ActionBar>
             <button type="submit" name="status" value="revoke-consent"> Revoke consent </button>
             <button type="submit" name="status" value="consent"> Submit </button>
