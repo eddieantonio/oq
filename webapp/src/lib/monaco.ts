@@ -17,7 +17,7 @@ import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
 
 // `self` MUST be the browser context!
 self.MonacoEnvironment = {
-    getWorker(_workerId: string, label: string) {
+    getWorker(_workerId: string, _label: string) {
         // Monaco also bundles a VERY full-featured and heavy-weight
         // TypeScript/JavaScript worker, but it's WAYYYYY too large, so I've
         // decided to omit it here.
