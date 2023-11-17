@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { dev } from '$app/environment';
+
     import LikertScale from '$lib/components/LikertScale.svelte';
     import ShortAnswer from '$lib/components/ShortAnswer.svelte';
 </script>
@@ -35,7 +37,6 @@
         />
     </div>
 
-    <!-- we'll come up with better widgets for likert scales later -->
     <LikertScale questionId="experience-likert">
         How would you rate your overall experience with programming?
     </LikertScale>
