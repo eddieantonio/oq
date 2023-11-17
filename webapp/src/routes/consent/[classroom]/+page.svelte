@@ -4,7 +4,7 @@
 
     export let data: PageData;
 
-    let style: 'checkbox' | 'bullet' = 'bullet';
+    let style: 'checkbox' | 'bullet' = 'checkbox';
 
     let participation = false;
     let questionnaire = false;
@@ -12,7 +12,7 @@
     let dataCollection = false;
     let interactionLogged = false;
     let dataUsage = false;
-    $: canContinue =
+    $: consentedToAll =
         style == 'bullet' ||
         (participation &&
             questionnaire &&
@@ -31,6 +31,7 @@
 
 <form method="POST">
     <input type="hidden" name="classroom" value={data.classroom} />
+    <input type="hidden" name="consentedToAll" value={consentedToAll} />
 
     <p>I consent to the following:</p>
 
@@ -73,7 +74,7 @@
     <p>Signed: {today}</p>
 
     {#if style == 'checkbox'}
-        <button type="submit" disabled={!canContinue}>Continue</button>
+        <button type="submit" disabled={!consentedToAll}>Continue</button>
     {:else}
         <button type="submit">I agree to all of the above</button>
     {/if}
