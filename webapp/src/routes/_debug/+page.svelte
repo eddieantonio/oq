@@ -11,6 +11,7 @@
 <nav>
     <p>Jump quickly to…</p>
     <ol>
+        <li><a href="/">Class selection</a></li>
         <li><a href="/consent">Consent</a></li>
         <li><a href="/questionnaire">Questionnaire: Part 1</a></li>
         <li><a href="/briefing">Briefing</a></li>

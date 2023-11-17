@@ -12,6 +12,7 @@ export const actions: Actions = {
 
         // TODO: check that all boxes are truthy, else reject it.
 
+        // TODO: require class sent in post.
         const participantID = makeNewParticipantId();
 
         await saveParticipant(participantID);
