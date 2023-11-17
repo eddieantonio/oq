@@ -1,11 +1,11 @@
 /**
- * Save answers to the database.
+ * Save questionnaire answers to the database.
  */
-import { error } from '@sveltejs/kit';
 
+import { error } from '@sveltejs/kit';
 import { StatusCodes } from 'http-status-codes';
 
-import { saveAnswer } from '$lib/server/database';
+import { saveAnswers } from '$lib/server/database';
 import type { ParticipantId } from '$lib/server/participants';
 
 export const actions: import('./$types').Actions = {
@@ -18,21 +18,21 @@ export const actions: import('./$types').Actions = {
 
         const data = await request.formData();
 
-        // create a question record for each thing in form data
+        // Create an Answer record for each field in form data
+        const answers = [];
         for (const [key, value] of data.entries()) {
             if (typeof value !== 'string') {
-                console.error('Got a non-string value. Ignoring...');
-                continue;
+                throw error(StatusCodes.BAD_REQUEST, 'Cannot upload file as answer');
             }
 
-            // TODO: batch save answers
-            await saveAnswer({
+            answers.push({
                 participant_id: participant,
                 question_id: key,
                 answer: value
             });
         }
 
+        await saveAnswers(answers);
         // TODO: go to next page.
     }
 };

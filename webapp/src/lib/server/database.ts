@@ -10,7 +10,7 @@ const db = knex(config);
 ////////////////////////////////////////////// Tables //////////////////////////////////////////////
 
 /**
- * An answer by a participant to a question.
+ * A participant's answer to a question.
  */
 export interface Answer {
     participant_id: ParticipantId;
@@ -47,8 +47,13 @@ export async function saveParticipant(participantId: ParticipantId) {
         .merge();
 }
 
-export async function saveAnswer(answer: Answer) {
-    await Answers().insert(answer).onConflict(['question_id', 'participant_id']).merge();
+/**
+ * Save all answers to the database. All question IDs must be valid.
+ *
+ * @param answers array of questionnaire answers
+ */
+export async function saveAnswers(answers: Answer[]) {
+    await Answers().insert(answers).onConflict(['question_id', 'participant_id']).merge();
 }
 
 export async function getAllAnswers(): Promise<Answer[]> {
