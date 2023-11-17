@@ -50,8 +50,17 @@ CMD ["dumb-init", "node_modules/.bin/vite", "dev"]
 FROM base as builder
 # Copy remaining files:
 COPY . .
-# Builds the application. The app is now in the /app/build folder
-RUN npm run build && \
+
+# Build the application.
+# The compiled files will be in the /app/build folder
+#
+# NOTE: the knexfile needs to be present in production
+# however, there will be no TypeScript compiler there,
+# so compile it now. Because we have {"type": "module"} in package.json,
+# we need to change the extension to .cjs:
+RUN npx tsc knexfile.ts && \
+    mv knexfile.js knexfile.cjs && \
+    npm run build && \
     npm prune --production
 
 
@@ -77,10 +86,14 @@ ENTRYPOINT ["docker-entrypoint.sh"]
 USER node
 # Copy just the files needed for SvelteKit and Knex migrations
 # See: https://kit.svelte.dev/docs/adapter-node
-COPY --from=builder /app/package.json /app/knexfile.ts ./
+COPY --from=builder /app/package.json /app/knexfile.cjs ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/migrations ./migrations
 COPY --from=builder /app/build ./build
+
+# Add all npm's binaries to the PATH so that we can use knex a little more
+# easily in production:
+ENV PATH="${PATH}:/app/node_modules/.bin"
 
 EXPOSE 3000
 CMD ["dumb-init", "node", "build"]

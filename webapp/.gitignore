@@ -1,0 +1,2 @@
+# Created so that migrations can run in production
+knexfile.cjs
