@@ -33,7 +33,7 @@ interface CommandResponse {
     /**
      * The diagnostic, parsed into a JSON object.
      */
-    parsed?: any;
+    parsed?: unknown;
 }
 
 /** @type {import('@sveltejs/kit').RequestHandler} */
@@ -47,7 +47,7 @@ export async function POST({ cookies, request }) {
     if (!sourceCode || !(typeof sourceCode == 'string'))
         throw fail(StatusCodes.BAD_REQUEST, { sourceCode, missing: true });
 
-    let response = await runCode(sourceCode);
+    const response = await runCode(sourceCode);
     return json(response);
 }
 
