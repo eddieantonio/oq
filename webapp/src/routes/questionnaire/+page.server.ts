@@ -2,7 +2,7 @@
  * Save questionnaire answers to the database.
  */
 
-import { error } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import { StatusCodes } from 'http-status-codes';
 
 import { saveAnswers } from '$lib/server/database';
@@ -33,6 +33,7 @@ export const actions: import('./$types').Actions = {
         }
 
         await saveAnswers(answers);
-        // TODO: go to next page.
+
+        throw redirect(StatusCodes.SEE_OTHER, '/editor');
     }
 };
