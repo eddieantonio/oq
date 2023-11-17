@@ -1,5 +1,6 @@
 <script lang="ts">
     import { dev } from '$app/environment';
+    import ActionBar from '$lib/components/ActionBar.svelte';
 
     import LikertScale from '$lib/components/LikertScale.svelte';
     import ShortAnswer from '$lib/components/ShortAnswer.svelte';
@@ -51,7 +52,9 @@
 
     <ShortAnswer questionId="favourite-ide">What is your favourite code editor or IDE?</ShortAnswer>
 
-    <button type="submit">Submit</button>
+    <ActionBar>
+        <button type="submit">Submit</button>
+    </ActionBar>
 </form>
 
 {#if dev}

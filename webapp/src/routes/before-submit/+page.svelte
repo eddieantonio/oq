@@ -1,3 +1,7 @@
+<script>
+    import ActionBar from '$lib/components/ActionBar.svelte';
+</script>
+
 <header>
     <h1>Almost done…</h1>
 </header>
@@ -11,13 +15,19 @@
     <p>You will not be able to unsubmit. Final answers!</p>
 
     <form>
-        <button type="submit" name="status" value="consent"> Submit </button>
-        <button type="submit" name="status" value="revoke-consent"> Revoke consent </button>
+        <ActionBar>
+            <button type="submit" name="status" value="revoke-consent"> Revoke consent </button>
+            <button type="submit" name="status" value="consent"> Submit </button>
+        </ActionBar>
     </form>
 </article>
 
 <style>
     strong {
         color: red;
+    }
+
+    button[value='revoke-consent'] {
+        background-color: red;
     }
 </style>

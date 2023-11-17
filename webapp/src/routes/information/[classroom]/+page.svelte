@@ -1,4 +1,5 @@
 <script lang="ts">
+    import ActionBar from '$lib/components/ActionBar.svelte';
     import type { PageData } from './$types';
     export let data: PageData;
 </script>
@@ -151,14 +152,7 @@
         </p>
     </section>
 
-    <div class="action-bar">
+    <ActionBar>
         <a href="/consent/{data.classroom}"><button>Continue</button></a>
-    </div>
+    </ActionBar>
 </article>
-
-<style>
-    .action-bar {
-        display: flex;
-        justify-content: flex-end;
-    }
-</style>

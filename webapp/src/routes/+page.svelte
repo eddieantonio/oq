@@ -1,4 +1,6 @@
 <script lang="ts">
+    import ActionBar from '$lib/components/ActionBar.svelte';
+
     let classroom: string | undefined;
     $: disableButton = !classroom;
 </script>
@@ -11,9 +13,10 @@
                 <option value="TEST-CLASS">Test classroom</option>
             </select>
         </div>
-        <div class="action-bar">
+
+        <ActionBar>
             <button type="submit" disabled={disableButton}>Continue</button>
-        </div>
+        </ActionBar>
     </form>
 </div>
 
@@ -27,10 +30,5 @@
     .stacked {
         display: flex;
         flex-flow: column;
-    }
-
-    .action-bar {
-        display: flex;
-        justify-content: flex-end;
     }
 </style>

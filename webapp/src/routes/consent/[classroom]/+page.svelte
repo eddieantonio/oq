@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { PageData } from './$types';
     import ConsentCheckbox from '$lib/components/ConsentCheckbox.svelte';
+    import ActionBar from '$lib/components/ActionBar.svelte';
 
     export let data: PageData;
 
@@ -73,11 +74,13 @@
 
     <p>Signed: {today}</p>
 
-    {#if style == 'checkbox'}
-        <button type="submit" disabled={!consentedToAll}>Continue</button>
-    {:else}
-        <button type="submit">I agree to all of the above</button>
-    {/if}
+    <ActionBar>
+        {#if style == 'checkbox'}
+            <button type="submit" disabled={!consentedToAll}>Continue</button>
+        {:else}
+            <button type="submit">I agree to all of the above</button>
+        {/if}
+    </ActionBar>
 </form>
 
 <style>
