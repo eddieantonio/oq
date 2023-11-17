@@ -4,6 +4,9 @@
  * Use DATABASE_PATH to customize the full path to the SQLite3 database file.
  * Use NODE_ENV to control debug output. It will be off in production.
  *
+ * NOTE: to use this file with ESM modules, you need to set NODE_OPTIONS='--loader ts-node/esm'
+ * See: https://github.com/knex/knex/issues/4793#issuecomment-1429976688
+ *
  * @type {import("knex").Knex.Config}
  */
 export default {

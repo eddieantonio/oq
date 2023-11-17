@@ -1,7 +1,7 @@
 import knex from 'knex';
 
 import type { ParticipantId } from './participants';
-import config from '../../../knexfile.mjs';
+import config from '../../../knexfile';
 
 ////////////////////////////////////////////// Config //////////////////////////////////////////////
 
