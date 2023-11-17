@@ -55,12 +55,12 @@ export async function POST({ cookies, request }) {
 async function runCode(sourceCode: string): Promise<RunResult> {
     const formData = new FormData();
     // TODO: do not hardcode "main.c"
-    formData.append("file", new Blob([sourceCode]), "main.c");
+    formData.append('file', new Blob([sourceCode]), 'main.c');
 
     // POST a file as multipart/form-data
     const res = await fetch(REMOTE_CODE_EXECUTION_URL, {
-        method: "POST",
-        body: formData,
+        method: 'POST',
+        body: formData
     });
     return res.json();
 }

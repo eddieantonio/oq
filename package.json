@@ -1,0 +1,17 @@
+{
+    "name": "oq",
+    "version": "0.0.1",
+    "private": true,
+    "type": "module",
+    "description": "oq monorepo base",
+    "main": "index.js",
+    "scripts": {
+        "format": "prettier --plugin-search-dir . --write ."
+    },
+    "author": "Eddie Antonio Santos <eddie.santos@ucdconnect.ie>",
+    "license": "SEE LICENSE IN README.md",
+    "devDependencies": {
+        "prettier": "^2.8.0",
+        "prettier-plugin-svelte": "^2.10.1"
+    }
+}
