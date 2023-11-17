@@ -14,7 +14,6 @@ const db = knex(config);
  */
 export interface Answer {
     participant_id: ParticipantId;
-    classroom: ParticipantId;
     question_id: string;
     answer: string;
 }
@@ -24,6 +23,7 @@ export interface Answer {
  */
 export interface Participant {
     participant_id: ParticipantId;
+    classroom: ClassroomId;
     started_at: Date;
     consented_to_all: boolean;
 }
