@@ -1,5 +1,8 @@
 <script lang="ts">
+    import type { PageData } from './$types';
     import ConsentCheckbox from '$lib/components/ConsentCheckbox.svelte';
+
+    export let data: PageData;
 
     let style: 'checkbox' | 'bullet' = 'bullet';
 
@@ -27,6 +30,8 @@
 </header>
 
 <form method="POST">
+    <input type="hidden" name="classroom" value={data.classroom} />
+
     <p>I consent to the following:</p>
 
     <ul class:remove-padding={style == 'checkbox'}>

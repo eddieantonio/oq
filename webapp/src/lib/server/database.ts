@@ -1,6 +1,6 @@
 import knex from 'knex';
 
-import type { ParticipantId } from './participants';
+import type { ClassroomId, ParticipantId } from './participants';
 import config from '../../../knexfile';
 
 ////////////////////////////////////////////// Config //////////////////////////////////////////////
@@ -14,6 +14,7 @@ const db = knex(config);
  */
 export interface Answer {
     participant_id: ParticipantId;
+    classroom: ParticipantId;
     question_id: string;
     answer: string;
 }
@@ -34,15 +35,16 @@ const Answers = () => db('answers');
 
 //////////////////////////////////////////// Public API ////////////////////////////////////////////
 
-export async function saveParticipant(participantId: ParticipantId) {
-    // TODO: we... should not merge participants? Should we?
+export async function saveParticipant(participantId: ParticipantId, classroom: ClassroomId) {
     await Participants()
         .insert({
             participant_id: participantId,
+            classroom,
             started_at: new Date(),
             // If we've gotten here, they have consented to all questions.
             consented_to_all: true
         })
+        // TODO: there should NEVER be a duplicate ID, so this merging behavior has to go.
         .onConflict('participant_id')
         .merge();
 }

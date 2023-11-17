@@ -1,14 +1,14 @@
 <script lang="ts">
-    let classId: string | undefined;
-    $: disableButton = !classId;
+    let classroom: string | undefined;
+    $: disableButton = !classroom;
 </script>
 
 <div class="wrapper">
     <form method="POST">
         <div class="stacked">
             <label for="class">Please choose your class/module:</label>
-            <select id="class" name="class" bind:value={classId} required>
-                <option value="test">Test classroom</option>
+            <select id="class" name="classroom" bind:value={classroom} required>
+                <option value="TEST-CLASS">Test classroom</option>
             </select>
         </div>
         <div class="action-bar">

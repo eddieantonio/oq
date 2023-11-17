@@ -8,15 +8,16 @@ import { StatusCodes } from 'http-status-codes';
 
 export const actions: import('./$types').Actions = {
     default: async ({ request }) => {
-        // check that 'class=' is in the query string
+        // check that 'classroom=' is in the query string
         const data = await request.formData();
-        const participantClass = data.get('class');
-        // TODO: Verify that it's a valid class
-        if (!participantClass) {
-            throw error(StatusCodes.BAD_REQUEST, 'No class selected');
+        const classroom = data.get('classroom');
+
+        // TODO: Verify that it's a valid classroom
+        if (!classroom) {
+            throw error(StatusCodes.BAD_REQUEST, 'No classroom selected');
         }
 
         // TODO: go to the information sheet
-        throw redirect(StatusCodes.SEE_OTHER, `/consent?class=${participantClass}`);
+        throw redirect(StatusCodes.SEE_OTHER, `/consent/${classroom}`);
     }
 };
