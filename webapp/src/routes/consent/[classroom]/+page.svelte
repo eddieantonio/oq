@@ -4,7 +4,7 @@
 
     export let data: PageData;
 
-    let style: 'checkbox' | 'bullet' = 'checkbox';
+    let style: 'checkbox' | 'bullet' = 'bullet';
 
     let participation = false;
     let questionnaire = false;
@@ -51,7 +51,7 @@
 
         <ConsentCheckbox {style} name="pseudonymised" bind:value={pseudonymised}>
             I understand that my name will not be identified in any way and that the data generated
-            by me will be appropriately pseudonymised during the data collection.
+            by me will be appropriately anonymised during the data collection.
         </ConsentCheckbox>
 
         <ConsentCheckbox {style} name="data-collection" bind:value={dataCollection}>

@@ -17,7 +17,6 @@ export const actions: import('./$types').Actions = {
             throw error(StatusCodes.BAD_REQUEST, 'No classroom selected');
         }
 
-        // TODO: go to the information sheet
-        throw redirect(StatusCodes.SEE_OTHER, `/consent/${classroom}`);
+        throw redirect(StatusCodes.SEE_OTHER, `/information/${classroom}`);
     }
 };
