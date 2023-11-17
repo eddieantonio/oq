@@ -1,9 +1,8 @@
 <script lang="ts">
-    import type { PageData } from './$types';
     import ConsentCheckbox from '$lib/components/ConsentCheckbox.svelte';
     import ActionBar from '$lib/components/ActionBar.svelte';
 
-    export let data: PageData;
+    export let data: import('./$types').PageData;
 
     let style: 'checkbox' | 'bullet' = 'bullet';
 

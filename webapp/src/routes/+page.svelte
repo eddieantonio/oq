@@ -24,7 +24,16 @@
     .wrapper {
         display: grid;
         place-items: center;
-        min-height: 100vh;
+
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+
+    form {
+        max-width: 70ch;
     }
 
     .stacked {

@@ -4,6 +4,8 @@
 
     import LikertScale from '$lib/components/LikertScale.svelte';
     import ShortAnswer from '$lib/components/ShortAnswer.svelte';
+
+    let totalExperience = 0;
 </script>
 
 <!-- This is the questionnaire for now. Eventually I will refactor this to have its own page. -->
@@ -21,7 +23,7 @@
             min="0"
             max="100"
             step="1"
-            value="0"
+            bind:value={totalExperience}
         />
     </div>
 
@@ -32,7 +34,7 @@
             id="python-experience"
             name="python-experience"
             min="0"
-            max="100"
+            max={totalExperience}
             step="1"
             value="0"
         />
