@@ -13,6 +13,7 @@
     let enableRun = true;
     let pem: string | null = null;
     let programOutput: string | null = null;
+    let bottomTab: 'problems' | 'output' = 'problems';
 
     /**
      * Post content to the server to be compiled and run.
@@ -44,47 +45,72 @@
         } catch (error) {
             console.error(error);
         }
+
+        if (pem !== null) {
+            bottomTab = 'problems';
+        } else {
+            bottomTab = 'output';
+        }
+
         enableRun = true;
     }
 </script>
 
 <div class="ide">
-    <div class="tabs-and-actions-container">
-        <ul class="tabs-container unstyle">
-            <li class="tab">main.c</li>
-        </ul>
-        <ul class="actions-container unstyle">
-            <li><button type="submit" disabled>Pass</button></li>
-            <li><button type="submit" disabled>Submit</button></li>
-            <li class="more-space">
-                <button type="submit" on:click={runCode} disabled={!enableRun}>Run</button>
-            </li>
-        </ul>
-    </div>
     <div class="editor">
+        <div class="tabs-and-actions-container">
+            <ul class="tabs-container unstyle">
+                <li class="tab">main.c</li>
+            </ul>
+            <ul class="actions-container unstyle">
+                <li><button type="submit" disabled>Pass</button></li>
+                <li><button type="submit" disabled>Submit</button></li>
+                <li class="more-space">
+                    <button type="submit" on:click={runCode} disabled={!enableRun}>Run</button>
+                </li>
+            </ul>
+        </div>
         <Editor bind:content language="c" />
     </div>
-    <div class="problems-pane">
-        {#if pem}
-            <pre class="problem"><code>{pem}</code></pre>
-        {/if}
-        {#if programOutput}
-            <pre class="success"><code>{programOutput}</code></pre>
-        {/if}
+
+    <div class="bottom-pane">
+        <div class="bottom-tabs">
+            <ul class="tabs-container unstyle">
+                <li class="tab">
+                    <button on:click={() => (bottomTab = 'problems')}> Problems </button>
+                </li>
+                <li class="tab">
+                    <button on:click={() => (bottomTab = 'output')}> Output </button>
+                </li>
+            </ul>
+        </div>
+        <div class="pane-contents">
+            {#if bottomTab == 'problems'}
+                {#if pem == null}
+                    <p>No problems!</p>
+                {:else}
+                    <pre class="problem"><code>{pem}</code></pre>
+                {/if}
+            {/if}
+            {#if bottomTab == 'output'}
+                {#if programOutput == null}
+                    <p>Run the program to see output</p>
+                {:else}
+                    <pre class="output"><code>{programOutput}</code></pre>
+                {/if}
+            {/if}
+        </div>
     </div>
 </div>
 
 <style>
     .ide {
-        display: flex;
-
-        flex-flow: column nowrap;
-
         position: absolute;
         top: 0;
         left: 0;
-        width: 100vw;
-        height: 100vh;
+        right: 0;
+        bottom: 0;
+        overflow: hidden;
 
         /* stolen from vscode */
         --editor-bg: #f3f3f3;
@@ -95,19 +121,17 @@
 
         background-color: var(--editor-bg);
     }
-    .tabs-and-actions-container {
-        flex: 0;
-    }
     .editor {
-        flex: 1;
+        height: calc(2 * 100% / 3);
     }
-    .problems-pane {
-        /* flex with at least a height of 100px */
-        flex: 0 1 100px;
+    .bottom-pane {
+        height: calc(1 * 100% / 3);
     }
 
     .editor {
-        border-top: 1px solid var(--nc-bg-2);
+        display: flex;
+        flex-flow: column nowrap;
+        overflow: hidden;
     }
 
     .tabs-and-actions-container {
@@ -116,10 +140,25 @@
         display: flex;
         flex-flow: row nowrap;
         justify-content: space-between;
+        border-bottom: 1px solid var(--nc-bg-2);
     }
 
     .tabs-container {
         display: flex;
+    }
+
+    .bottom-pane {
+        display: flex;
+        flex-flow: column nowrap;
+    }
+
+    .bottom-tabs {
+        flex: 0;
+    }
+
+    .pane-contents {
+        flex: 1;
+        overflow: scroll;
     }
 
     @media (prefers-color-scheme: dark) {
