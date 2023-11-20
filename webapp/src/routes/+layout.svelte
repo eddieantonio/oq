@@ -21,6 +21,7 @@
 
         --bg: var(--nc-bg-3, #e5e7eb);
         --fg: var(--nc-tx-1, #000);
+        --link: var(--nc-lk-1, #0070f3);
     }
 
     /* colors for dark mode */

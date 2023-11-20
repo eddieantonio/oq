@@ -81,7 +81,10 @@ def compile_c_program(app, filename, executable_name):
     return compile_result.returncode == 0, {
         "exitCode": compile_result.returncode,
         "stderr": compile_result.stderr,
-        "parsed": parsed,
+        "parsed": {
+            "format": "gcc-json",
+            "diagnostics": parsed,
+        },
     }
 
 

@@ -11,7 +11,7 @@
     ].join('\n');
 
     let enableRun = true;
-    let pem: string | null = null;
+    let pem: Diagnostics | null = null;
     let programOutput: string | null = null;
     let bottomTab: 'problems' | 'output' = 'problems';
 
@@ -23,27 +23,32 @@
         const formData = new FormData();
         formData.append('sourceCode', content);
 
+        let data;
         enableRun = false;
         try {
             const res = await fetch('/api/run', {
                 method: 'POST',
                 body: formData
             });
-            const data = await res.json();
-
-            if (data.compilation.exitCode != 0) {
-                pem = JSON.stringify(data.compilation.parsed, null, 4);
-            } else {
-                pem = null;
-            }
-
-            if (data.execution) {
-                programOutput = data.execution.stdout;
-            } else {
-                programOutput = null;
-            }
+            data = await res.json();
         } catch (error) {
+            // TODO: show some sort of application error message
             console.error(error);
+            return;
+        } finally {
+            enableRun = true;
+        }
+
+        if (data.compilation.exitCode != 0) {
+            pem = parseDiagnostics(data.compilation);
+        } else {
+            pem = null;
+        }
+
+        if (data.execution) {
+            programOutput = data.execution.stdout;
+        } else {
+            programOutput = null;
         }
 
         if (pem !== null) {
@@ -53,6 +58,21 @@
         }
 
         enableRun = true;
+    }
+
+    /**
+     * This is a really awful function that "parses" whatever the web hook gave us.
+     * @param compilation
+     */
+    function parseDiagnostics(compilation: any): Diagnostics {
+        if (compilation?.parsed?.format == 'gcc-json') {
+            return compilation.parsed as GCCDiagnostics;
+        } else {
+            return {
+                format: 'plain-text',
+                diagnostics: [compilation.stderr]
+            };
+        }
     }
 </script>
 
@@ -89,7 +109,7 @@
                 {#if pem == null}
                     <p>No problems have been detected in the code.</p>
                 {:else}
-                    <pre class="problem"><code>{pem}</code></pre>
+                    <pre class="problem"><code>{JSON.stringify(pem, null, 4)}</code></pre>
                 {/if}
             {/if}
             {#if bottomTab == 'output'}
