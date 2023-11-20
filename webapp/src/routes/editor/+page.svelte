@@ -60,7 +60,7 @@
     <div class="editor">
         <div class="tabs-and-actions-container">
             <ul class="tabs-container unstyle">
-                <li class="tab">main.c</li>
+                <li class="tab tab-active">main.c</li>
             </ul>
             <ul class="actions-container unstyle">
                 <li><button type="submit" disabled>Pass</button></li>
@@ -87,7 +87,7 @@
         <div class="pane-contents">
             {#if bottomTab == 'problems'}
                 {#if pem == null}
-                    <p>No problems!</p>
+                    <p>No problems have been detected in the code.</p>
                 {:else}
                     <pre class="problem"><code>{pem}</code></pre>
                 {/if}
@@ -104,6 +104,7 @@
 </div>
 
 <style>
+    /* Full IDE styles */
     .ide {
         position: absolute;
         top: 0;
@@ -112,53 +113,16 @@
         bottom: 0;
         overflow: hidden;
 
-        /* stolen from vscode */
+        /* Styles stolen from VS Code: */
+        --nc-font-mono: 'SF Mono', Monaco, Menlo, Consolas, 'Ubuntu Mono', 'Liberation Mono',
+            'DejaVu Sans Mono', 'Courier New', monospace;
         --editor-bg: #f3f3f3;
         --tab-border-right-color: rgb(229, 229, 229);
         --tab-bg-color: white;
-        --tab-border-top-color: #005fb8;
+        --tab-border-active-color: #005fb8;
         --tab-text-color: rgb(59, 59, 59);
 
         background-color: var(--editor-bg);
-    }
-    .editor {
-        height: calc(2 * 100% / 3);
-    }
-    .bottom-pane {
-        height: calc(1 * 100% / 3);
-    }
-
-    .editor {
-        display: flex;
-        flex-flow: column nowrap;
-        overflow: hidden;
-    }
-
-    .tabs-and-actions-container {
-        margin: 0;
-
-        display: flex;
-        flex-flow: row nowrap;
-        justify-content: space-between;
-        border-bottom: 1px solid var(--nc-bg-2);
-    }
-
-    .tabs-container {
-        display: flex;
-    }
-
-    .bottom-pane {
-        display: flex;
-        flex-flow: column nowrap;
-    }
-
-    .bottom-tabs {
-        flex: 0;
-    }
-
-    .pane-contents {
-        flex: 1;
-        overflow: scroll;
     }
 
     @media (prefers-color-scheme: dark) {
@@ -166,17 +130,65 @@
             /* These colours, once again, stolen from VS Code's default theme. */
             --editor-bg: #252525;
             --tab-bg-color: #1e1e1e;
-            --tab-border-top-color: #005fb8;
+            --tab-border-active-color: #005fb8;
             --tab-border-inline-color: #252525;
             --tab-text-color: #ccc;
         }
+    }
+
+    .editor {
+        height: calc(2 * 100% / 3);
+    }
+    .bottom-pane {
+        height: calc(1 * 100% / 3);
+    }
+
+    /* Editor is a container for Monaco and the top tab bar. */
+    .editor {
+        display: flex;
+        flex-flow: column nowrap;
+        overflow: hidden;
+    }
+
+    .tabs-and-actions-container {
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+
+        margin: 0;
+        border-bottom: 1px solid var(--nc-bg-2);
+    }
+
+    .tabs-container {
+        display: flex;
+    }
+
+    /* The bottom panel shows "Problems" and "Output" */
+    .bottom-pane {
+        display: flex;
+        flex-flow: column nowrap;
+    }
+    .bottom-tabs {
+        flex: 0;
+    }
+    .bottom-tabs .tab > button {
+        text-transform: lowercase;
+        font-variant: small-caps;
+    }
+
+    .pane-contents {
+        flex: 1;
+    }
+
+    .pane-contents {
+        overflow: scroll;
     }
 
     /* I stole a lot of these stylings directly from VS code. */
     .tab {
         color: var(--tab-text-color);
         background-color: var(--tab-bg-color);
-        border-top: 2px solid var(--tab-border-top-color);
+        border-top: 2px solid transparent;
         /* It seems like this border colour can be on either side of the tab. */
         border-right: 1px solid var(--tab-border-inline-color);
 
@@ -188,6 +200,10 @@
 
         font-size: 13px;
         line-height: 2;
+    }
+
+    .tab-active {
+        border-top-color: var(--tab-border-active-color);
     }
 
     .unstyle {
@@ -211,8 +227,5 @@
 
     .problem {
         color: red;
-    }
-    .success {
-        color: green;
     }
 </style>
