@@ -118,7 +118,9 @@
                     <DiagnosticDisplay diagnostics={pem} />
                 {/if}
             {:else if bottomTab == 'output'}
-                {#if programOutput == null}
+                {#if pem != null}
+                    <p>Fix the errors, then run the program to see output.</p>
+                {:else if programOutput == null}
                     <p>Run the program to see output</p>
                 {:else}
                     <pre class="output"><code>{programOutput}</code></pre>
@@ -158,11 +160,16 @@
     @media (prefers-color-scheme: dark) {
         .ide {
             /* These colours, once again, stolen from VS Code's default theme. */
-            --editor-bg: #252525;
+            --editor-bg: #181818;
+            --tab-border-right-color: #2b2b2b;
             --tab-bg-color: #1e1e1e;
             --tab-border-active-color: #005fb8;
             --tab-border-inline-color: #252525;
             --tab-text-color: #ccc;
+            --separator-color: #2b2b2b;
+            --bottom-pane-color: #181818;
+
+            color: #ccc;
         }
     }
 
@@ -180,6 +187,7 @@
         display: inline-block;
         border: 0;
         background: none;
+        color: inherit;
         padding: 0;
         margin: 0;
     }
