@@ -98,10 +98,14 @@
         <div class="bottom-tabs">
             <ul class="tabs-container unstyle">
                 <li class="tab" class:tab-active={bottomTab == 'problems'}>
-                    <button on:click={() => (bottomTab = 'problems')}> Problems </button>
+                    <button class="unbutton tab-button" on:click={() => (bottomTab = 'problems')}>
+                        Problems
+                    </button>
                 </li>
                 <li class="tab" class:tab-active={bottomTab == 'output'}>
-                    <button on:click={() => (bottomTab = 'output')}> Output </button>
+                    <button class="unbutton tab-button" on:click={() => (bottomTab = 'output')}>
+                        Output
+                    </button>
                 </li>
             </ul>
         </div>
@@ -135,13 +139,18 @@
         overflow: hidden;
 
         /* Styles stolen from VS Code: */
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI',
+            'HelveticaNeue-Light', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
         --nc-font-mono: 'SF Mono', Monaco, Menlo, Consolas, 'Ubuntu Mono', 'Liberation Mono',
             'DejaVu Sans Mono', 'Courier New', monospace;
+
         --editor-bg: #f3f3f3;
         --tab-border-right-color: rgb(229, 229, 229);
         --tab-bg-color: white;
         --tab-border-active-color: #005fb8;
         --tab-text-color: rgb(59, 59, 59);
+        --separator-color: #e5e5e5;
+        --bottom-pane-color: #f8f8f8;
 
         background-color: var(--editor-bg);
     }
@@ -155,6 +164,24 @@
             --tab-border-inline-color: #252525;
             --tab-text-color: #ccc;
         }
+    }
+
+    .unstyle {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .unstyle > li {
+        display: inline-block;
+    }
+
+    .unbutton {
+        display: inline-block;
+        border: 0;
+        background: none;
+        padding: 0;
+        margin: 0;
     }
 
     .editor {
@@ -177,7 +204,7 @@
         justify-content: space-between;
 
         margin: 0;
-        border-bottom: 1px solid var(--nc-bg-2);
+        border-bottom: 1px solid var(--separator-color);
     }
 
     .tabs-container {
@@ -188,11 +215,13 @@
     .bottom-pane {
         display: flex;
         flex-flow: column nowrap;
+        background-color: var(--bottom-pane-color);
+        border-top: 1px solid var(--separator-color);
     }
     .bottom-tabs {
         flex: 0;
     }
-    .bottom-tabs .tab > button {
+    .bottom-tabs .tab-button {
         text-transform: lowercase;
         font-variant: small-caps;
     }
@@ -207,34 +236,40 @@
 
     /* I stole a lot of these stylings directly from VS code. */
     .tab {
-        color: var(--tab-text-color);
-        background-color: var(--tab-bg-color);
-        border-top: 2px solid transparent;
-        /* It seems like this border colour can be on either side of the tab. */
-        border-right: 1px solid var(--tab-border-inline-color);
-
-        width: 120px;
-        padding-left: 10px;
         min-width: fit-content;
         white-space: nowrap;
         cursor: pointer;
 
         font-size: 13px;
         line-height: 2;
+
+        --tab-highlight: transparent;
     }
 
     .tab-active {
-        border-top-color: var(--tab-border-active-color);
+        --tab-highlight: var(--tab-border-active-color);
     }
 
-    .unstyle {
-        list-style: none;
-        margin: 0;
-        padding: 0;
+    .tabs-and-actions-container .tab {
+        color: var(--tab-text-color);
+        background-color: var(--tab-bg-color);
+        border-top: 2px solid var(--tab-highlight);
+        /* It seems like this border colour can be on either side of the tab. */
+        border-right: 1px solid var(--tab-border-inline-color);
+
+        min-width: 120px;
+        padding-left: 10px;
     }
 
-    .unstyle > li {
-        display: inline-block;
+    .bottom-tabs .tab {
+        border-bottom: 1px solid var(--tab-highlight);
+    }
+
+    .tab-button {
+        width: 100%;
+        height: 100%;
+        padding-inline: 1rem;
+        cursor: pointer;
     }
 
     .actions-container {
@@ -242,11 +277,12 @@
         padding-inline: 8px;
         gap: 4px;
     }
+
     .more-space {
         margin-inline-start: 16px;
     }
 
-    .problem {
-        color: red;
+    .pane-contents {
+        padding: 4px 16px;
     }
 </style>
