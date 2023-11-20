@@ -1,7 +1,13 @@
 <script lang="ts">
     import { dev } from '$app/environment';
+    import { assets } from '$app/paths';
+
     export let data;
 </script>
+
+<svelte:head>
+    <link rel="stylesheet" href="{assets}/new.min.css" />
+</svelte:head>
 
 <slot />
 
