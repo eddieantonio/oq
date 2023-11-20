@@ -1,13 +1,8 @@
 <script lang="ts">
     import { dev } from '$app/environment';
-    import { assets } from '$app/paths';
 
     export let data;
 </script>
-
-<svelte:head>
-    <link rel="stylesheet" href="{assets}/new.min.css" />
-</svelte:head>
 
 <slot />
 
@@ -23,6 +18,18 @@
 <style>
     footer {
         margin-block-start: 2rem;
+
+        --bg: var(--nc-bg-3, #e5e7eb);
+        --fg: var(--nc-tx-1, #000);
+    }
+
+    /* colors for dark mode */
+    @media (prefers-color-scheme: dark) {
+        footer {
+            --bg: var(--nc-bg-3, #222);
+            --fg: var(--nc-tx-1, #fff);
+            --link: var(--nc-lk-1, #3291ff);
+        }
     }
 
     nav {
@@ -41,12 +48,16 @@
 
         font-size: small;
 
-        background-color: var(--nc-bg-3);
+        color: var(--fg);
+        background-color: var(--bg);
         opacity: 0.5;
         transition: opacity 0.2s ease-in-out;
     }
-
     nav:hover {
         opacity: 1;
+    }
+
+    a {
+        color: var(--link);
     }
 </style>
