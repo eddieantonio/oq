@@ -1,4 +1,5 @@
 <script lang="ts">
+    import DiagnosticDisplay from '$lib/components/DiagnosticDisplay.svelte';
     import Editor from '$lib/components/Editor.svelte';
 
     /* A C hello world program with an error in it! */
@@ -109,7 +110,7 @@
                 {#if pem == null}
                     <p>No problems have been detected in the code.</p>
                 {:else}
-                    <pre class="problem"><code>{JSON.stringify(pem, null, 4)}</code></pre>
+                    <DiagnosticDisplay diagnostics={pem} />
                 {/if}
             {/if}
             {#if bottomTab == 'output'}
