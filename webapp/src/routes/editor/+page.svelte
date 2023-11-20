@@ -97,14 +97,15 @@
     <div class="bottom-pane">
         <div class="bottom-tabs">
             <ul class="tabs-container unstyle">
-                <li class="tab">
+                <li class="tab" class:tab-active={bottomTab == 'problems'}>
                     <button on:click={() => (bottomTab = 'problems')}> Problems </button>
                 </li>
-                <li class="tab">
+                <li class="tab" class:tab-active={bottomTab == 'output'}>
                     <button on:click={() => (bottomTab = 'output')}> Output </button>
                 </li>
             </ul>
         </div>
+
         <div class="pane-contents">
             {#if bottomTab == 'problems'}
                 {#if pem == null}
@@ -112,8 +113,7 @@
                 {:else}
                     <DiagnosticDisplay diagnostics={pem} />
                 {/if}
-            {/if}
-            {#if bottomTab == 'output'}
+            {:else if bottomTab == 'output'}
                 {#if programOutput == null}
                     <p>Run the program to see output</p>
                 {:else}
