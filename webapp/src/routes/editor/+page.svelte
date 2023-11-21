@@ -6,7 +6,7 @@
     let content = [
         'include <stdio.h>',
         'int main() {',
-        '   printf("Hello, World!");',
+        '   printf("Hello, World!\\n");',
         '   return 0;',
         '}'
     ].join('\n');
@@ -91,7 +91,7 @@
                 </li>
             </ul>
         </div>
-        <Editor bind:content language="c" />
+        <Editor bind:content diagnostics={pem} language="c" />
     </div>
 
     <div class="bottom-pane">
