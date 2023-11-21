@@ -13,8 +13,8 @@
     <ol>
         <li><a href="/">Class selection</a></li>
         <!-- TODO: use current classroom: -->
-        <li><a href="/information/TEST-CLASSROOM">Information sheet</a></li>
-        <li><a href="/consent/TEST-CLASSROOM">Consent</a></li>
+        <li><a href="/information/TEST-CLASS">Information sheet</a></li>
+        <li><a href="/consent/TEST-CLASS">Consent</a></li>
         <li><a href="/questionnaire">Questionnaire: Part 1</a></li>
         <li><a href="/briefing">Briefing</a></li>
         <li><a href="/editor">Editor experiment</a></li>

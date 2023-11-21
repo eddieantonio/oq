@@ -37,14 +37,14 @@ export interface Participant {
  */
 export interface Classroom {
     classroom_id: ClassroomId;
-    hashed_participation_code: string;
+    hashed_participation_code: PasswordHash;
 }
 
 ////////////////////////////////// Tables (for use in TypeScript) //////////////////////////////////
 
-const Participants = () => db('participants');
-const Answers = () => db('answers');
-const Classrooms = () => db('classrooms');
+const Participants = () => db<Participant>('participants');
+const Answers = () => db<Answer>('answers');
+const Classrooms = () => db<Classroom>('classrooms');
 
 //////////////////////////////////////////// Public API ////////////////////////////////////////////
 
@@ -71,12 +71,10 @@ export async function getParticipationCode(classroomId: ClassroomId): Promise<Pa
         .where('classroom_id', classroomId)
         .first();
 
-    console.log({ result });
+    // TODO: better error handling. An unknown classroom ID should not crash the server.
+    if (!result) throw new Error(`No classroom with ID '${classroomId}' exists.`);
 
-    // TODO: better error handling. an unknown classroom ID should not crash the server.
-    if (result == undefined) throw new Error(`No classroom with ID '${classroomId}' exists.`);
-
-    return result.hashed_participation_code as PasswordHash;
+    return result.hashed_participation_code;
 }
 
 /**

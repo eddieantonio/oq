@@ -6,6 +6,13 @@ import { StatusCodes } from 'http-status-codes';
 import { validateParticipationCode } from '$lib/server/validate-participation-codes';
 
 export const actions: import('./$types').Actions = {
+    /**
+     * Handles the POST from the consent form. With the participant's consent,
+     * we store their data, and give them a cookie to track their requests.
+     *
+     * Presently, the participation ID must be checked here, so that we don't
+     * have to validate it anywhere else.
+     */
     default: async ({ request, cookies }) => {
         const data = await request.formData();
 
