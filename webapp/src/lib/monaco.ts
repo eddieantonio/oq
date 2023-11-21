@@ -85,39 +85,4 @@ function gccKindToMonacoSeverity(kind: GCCDiagnostic['kind']): monaco.MarkerSeve
     }
 }
 
-/**
- * A placeholder validator that creates an ERROR marker any time there's an
- * `include` in the code.
- *
- * @param model The Monaco editor model to validate
- */
-export function cIncludeValidator(model: monaco.editor.ITextModel) {
-    const markers = [];
-    // monaco line numbers START AT 1 and also, there is no iterator for lines?!??!?!
-    for (let i = 1; i < model.getLineCount() + 1; i++) {
-        const range = {
-            startLineNumber: i,
-            startColumn: 1,
-            endLineNumber: i,
-            endColumn: model.getLineLength(i) + 1
-        };
-        const content = model.getValueInRange(range);
-
-        const match = /\binclude\b/.exec(content);
-        if (match) {
-            const startColumn = match.index + 1;
-            const endColumn = startColumn + match[0].length;
-            markers.push({
-                message: "I don't like includes >:(",
-                severity: monaco.MarkerSeverity.Error,
-                startLineNumber: i,
-                endLineNumber: i,
-                startColumn,
-                endColumn
-            });
-        }
-    }
-    monaco.editor.setModelMarkers(model, 'owner', markers);
-}
-
 export { monaco };
