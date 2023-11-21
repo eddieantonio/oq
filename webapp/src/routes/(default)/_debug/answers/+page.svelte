@@ -6,9 +6,21 @@
     <h1>Answers</h1>
 </header>
 
-<dl>
-    {#each data.answers as answer}
-        <dt><code>{answer.question_id}</code></dt>
-        <dd>{answer.answer}</dd>
-    {/each}
-</dl>
+<table>
+    <thead>
+        <tr>
+            <th>Participant ID</th>
+            <th>Question ID</th>
+            <th>Answer</th>
+        </tr>
+    </thead>
+    <tbody>
+        {#each data.answers as answer}
+            <tr>
+                <td>{answer.participant_id}</td>
+                <td>{answer.question_id}</td>
+                <td>{answer.answer}</td>
+            </tr>
+        {/each}
+    </tbody>
+</table>
