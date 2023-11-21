@@ -21,5 +21,9 @@ export default {
     migrations: {
         directory: './migrations',
         loadExtensions: ['.mjs']
+    },
+    seeds: {
+        directory: './seeds',
+        loadExtensions: ['.mjs']
     }
 };
