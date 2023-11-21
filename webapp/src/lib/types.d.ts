@@ -39,15 +39,22 @@ interface GCCDiagnostic {
      * A diagnostic can contain zero or more locations.
      */
     locations: Location[];
+    /**
+     * Diagnostics can have child diagnostics.
+     * Eddie says: "This will often be a 'note' that provides some additional context".
+     */
     children: GCCDiagnostic[];
     /**
-     * [hints] whether non-ASCII bytes should be escaped when printing the
+     * [Hints] whether non-ASCII bytes should be escaped when printing the
      * pertinent lines of source code (true for diagnostics involving source
      * encoding issues).
      */
     'escape-source': boolean;
 }
 
+/**
+ * A non-child GCC diagnostic. This will contain the column-origin field.
+ */
 interface RootGCCDiagnostic extends GCCDiagnostic {
     /**
      * What kind of indexing to use for the column numbers in the locations.
@@ -61,8 +68,17 @@ interface Location {
      * Each location has an optional label string and up to three positions within it: a caret position and optional start and finish positions.
      */
     label?: string;
+    /**
+     * The primary position of a location (where you would put the ^ when printing the message).
+     */
     caret: Position;
+    /**
+     * Eddie says: "I have never seen GCC generate a start position outside a fixit hint"
+     */
     start?: Position;
+    /**
+     * A position to the right of the caret.
+     */
     finish?: Position;
 }
 
@@ -95,7 +111,13 @@ interface Position {
  * following structure:
  */
 interface RunResult {
+    /**
+     * Diagnostics from the compilation step.
+     */
     compilation: CommandResponse;
+    /**
+     * Output from running the code.
+     */
     execution: CommandResponse | null;
 }
 

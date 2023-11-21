@@ -33,12 +33,19 @@ self.MonacoEnvironment = {
     }
 };
 
+/**
+ * Places markers (red squiggly lines) in the editor based on the diagnostics provided.
+ *
+ * @param model The current editor model
+ * @param diagnostics the main diagnostics object from the RCE
+ */
 export function setMarkersFromDiagnostics(
     model: monaco.editor.ITextModel,
     diagnostics: Diagnostics
 ) {
     clearAllMarkers();
 
+    // TODO: ensure that the diagnostics are ACTUALLY for the current model
     let markers: monaco.editor.IMarkerData[];
     if (diagnostics.format === 'gcc-json') {
         markers = setMarkersFromGCCDiagnostics(diagnostics);
@@ -50,18 +57,28 @@ export function setMarkersFromDiagnostics(
     monaco.editor.setModelMarkers(model, OQ_OWNER, markers);
 }
 
+/**
+ * Removes all markers from the editor.
+ */
 export function clearAllMarkers() {
     monaco.editor.removeAllMarkers(OQ_OWNER);
 }
 
 function setMarkersFromGCCDiagnostics(diagnostics: GCCDiagnostics): monaco.editor.IMarkerData[] {
-    return diagnostics.diagnostics.map((diagnostic) => {
-        console.assert(diagnostic.locations.length > 0);
+    const markers = [];
+
+    for (const diagnostic of diagnostics.diagnostics) {
+        // If there's no location, then we don't know where to put the marker.
+        // So just skip it.
+        if (diagnostic.locations.length === 0) {
+            continue;
+        }
+
+        console.assert(diagnostic['column-origin'] === 1, 'assuming 1-based indexing');
 
         const start = diagnostic.locations[0].caret;
         const end = diagnostic.locations[0].finish || start;
-
-        return {
+        markers.push({
             message: diagnostic.message,
             severity: gccKindToMonacoSeverity(diagnostic.kind),
             startLineNumber: start.line,
@@ -70,19 +87,18 @@ function setMarkersFromGCCDiagnostics(diagnostics: GCCDiagnostics): monaco.edito
             // TODO: test with various multi-byte characters!
             startColumn: start.column,
             endColumn: end.column
-        };
-    });
+        });
+    }
+
+    return markers;
 }
 
 function gccKindToMonacoSeverity(kind: GCCDiagnostic['kind']): monaco.MarkerSeverity {
-    switch (kind) {
-        case 'error':
-            return monaco.MarkerSeverity.Error;
-        case 'warning':
-            return monaco.MarkerSeverity.Warning;
-        case 'note':
-            return monaco.MarkerSeverity.Info;
-    }
+    return {
+        error: monaco.MarkerSeverity.Error,
+        warning: monaco.MarkerSeverity.Warning,
+        note: monaco.MarkerSeverity.Info
+    }[kind];
 }
 
 export { monaco };

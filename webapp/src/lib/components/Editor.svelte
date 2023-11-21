@@ -11,13 +11,17 @@
     /** The DOM element that the editor will be mounted to. */
     let element: HTMLDivElement;
 
+    /**
+     * The monaco module. It is imported in onMount(), as Monaco can only be
+     * used in the browser.
+     */
     let monaco: typeof Monaco;
     let editor: Monaco.editor.IStandaloneCodeEditor;
     let model: Monaco.editor.ITextModel;
 
     // Resource management
     /**
-     * These are things that Monaco creates and need to have .dispose() called
+     * These are resources that Monaco creates and need to have .dispose() called
      * on them when the current component is destroyed.
      */
     let disposables: Monaco.IDisposable[] = [];
@@ -26,14 +30,19 @@
      */
     const controller = new AbortController();
 
+    /**
+     * Called when the diagnostics prop changes.
+     */
     let onDiagnosticsChange = function (_: typeof diagnostics) {
         // Do nothing. The real handler will be installed in onMount().
     };
+    $: onDiagnosticsChange(diagnostics);
 
+    // This will actually import Monaco and setup the editor and all required event listeners.
     onMount(async () => {
         // Importing the monaco module MUST be done onMount, otherwise Sveltekit
         // will attempt loading the client-only library on the server which
-        // would make node upsetti.
+        // makes node.js very upsetti.
         let monacoModule = await import('$lib/monaco');
         monaco = monacoModule.monaco;
 
@@ -67,7 +76,8 @@
             }
         };
 
-        // Using { signal } enables controller.abort() to remove all the event listeners in one go
+        // Using { signal } enables controller.abort() to remove the following
+        // event listeners all in one go
         const { signal } = controller;
 
         // Change editor theme if dark mode changes
@@ -88,8 +98,6 @@
         disposables.forEach((d) => d.dispose());
         controller.abort();
     });
-
-    $: onDiagnosticsChange(diagnostics);
 
     function prefersDarkMode(): boolean {
         return window.matchMedia('(prefers-color-scheme: dark)').matches;
