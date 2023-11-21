@@ -6,6 +6,7 @@
     "scripts": {
         "dev": "vite dev",
         "build": "vite build",
+        "unmigrate": "NODE_OPTIONS='--loader ts-node/esm' knex migrate:down",
         "migrate": "NODE_OPTIONS='--loader ts-node/esm' knex migrate:latest",
         "preview": "vite preview",
         "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",

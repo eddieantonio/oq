@@ -9,9 +9,22 @@
  */
 export const up = async (knex) => {
     return knex.schema
+        .createTable('classrooms', (table) => {
+            table.string('classroom_id', 16).notNullable();
+            // We'll store the hashed participation code in a format that sort of resembles
+            // PHP's password_hash() function. Namely,
+            // $scrypt$cost$salt$hash
+            table.string('hashed_participation_code', 255).notNullable();
+
+            table.primary(['classroom_id']);
+        })
         .createTable('participants', (table) => {
             table.string('participant_id', 8).notNullable();
-            table.string('classroom', 16).notNullable();
+            table
+                .string('classroom_id', 16)
+                .references('classroom_id')
+                .inTable('classrooms')
+                .notNullable();
             table.timestamp('started_at', { useTz: true }).notNullable();
             table.boolean('consented_to_all').notNullable();
 
@@ -35,5 +48,5 @@ export const up = async (knex) => {
  * @returns { Promise<void> }
  */
 export const down = async (knex) => {
-    return knex.schema.dropTable('answers').dropTable('participants');
+    return knex.schema.dropTable('classrooms').dropTable('participants').dropTable('answers');
 };

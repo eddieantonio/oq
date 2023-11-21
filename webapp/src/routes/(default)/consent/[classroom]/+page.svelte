@@ -73,6 +73,11 @@
 
     <p>Signed: {today}</p>
 
+    <div>
+        <label for="participation_code">Participation code:</label>
+        <input type="password" name="participation_code" id="participation_code" required />
+    </div>
+
     <ActionBar>
         {#if style == 'checkbox'}
             <button type="submit" disabled={!consentedToAll}>Continue</button>

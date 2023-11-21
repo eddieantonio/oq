@@ -1,8 +1,9 @@
 import { error, redirect } from '@sveltejs/kit';
 import { makeNewParticipantId, type ClassroomId } from '$lib/server/participants';
-import { saveParticipant } from '$lib/server/database';
+import { getParticipationCode, saveParticipant } from '$lib/server/database';
 
 import { StatusCodes } from 'http-status-codes';
+import { validateParticipationCode } from '$lib/server/validate-participation-codes';
 
 export const actions: import('./$types').Actions = {
     default: async ({ request, cookies }) => {
@@ -15,8 +16,20 @@ export const actions: import('./$types').Actions = {
                 'You must consent to all of the above to participate.'
             );
 
-        // TODO: validate the classroom
+        // Make sure the classroom and participation code were specified:
+        if (!data.has('classroom'))
+            throw error(StatusCodes.BAD_REQUEST, 'The classroom was not specified.');
+        if (!data.has('participation_code'))
+            throw error(StatusCodes.BAD_REQUEST, 'The participation code was not specified.');
+
         const classroom = data.get('classroom') as ClassroomId;
+        const participationCode = data.get('participation_code') as string;
+
+        // Check that the participation code is correct before continuing:
+        const hashedParticipationCode = await getParticipationCode(classroom);
+        if (!validateParticipationCode(hashedParticipationCode, participationCode))
+            throw error(StatusCodes.BAD_REQUEST, 'The participation code was incorrect.');
+
         const participantID = makeNewParticipantId();
 
         await saveParticipant(participantID, classroom);
