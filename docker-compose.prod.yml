@@ -11,11 +11,12 @@ services:
         USER_ID: 1092
     environment:
       NODE_ENV: production
-      DATABASE_PATH: '/app/run/answers.sqlite3'
-      # SvelteKit relies on this to know the correct origin:
-      # In real prod, behind nginx, use PROTOCOL_HEADER=x-forwarded-proto HOST_HEADER=x-forwarded-host
+      DATABASE_PATH: /app/run/answers.sqlite3
+      # SvelteKit relies on these to know the correct origin:
+      PROTOCOL_HEADER: x-forwarded-proto
+      HOST_HEADER: x-forwarded-host
+      # Nginx has to be configured to pass "https" and the hostname (e.g., beckett4.ucd.ie), respectively
       # See: https://kit.svelte.dev/docs/adapter-node#environment-variables-origin-protocolheader-and-hostheader
-      ORIGIN: 'http://localhost:3000'
     volumes:
       - /home/eddie/oq/run/:/app/run/
 
