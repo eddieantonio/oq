@@ -28,11 +28,11 @@
     </div>
 
     <div class="input-group">
-        <label for="python-experience">How many years have you been programming in Python?</label>
+        <label for="python-experience">How many years have you been programming in C?</label>
         <input
             type="number"
-            id="python-experience"
-            name="python-experience"
+            id="study-lang-experience"
+            name="study-lang-experience"
             min="0"
             max={totalExperience}
             step="1"
