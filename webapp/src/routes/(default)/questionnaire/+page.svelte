@@ -5,6 +5,9 @@
     import LikertScale from '$lib/components/LikertScale.svelte';
     import ShortAnswer from '$lib/components/ShortAnswer.svelte';
 
+    const studyLanguage = 'C';
+
+    // Use this to put an upper-bound on the study language experience.
     let totalExperience = 0;
 </script>
 
@@ -28,7 +31,9 @@
     </div>
 
     <div class="input-group">
-        <label for="python-experience">How many years have you been programming in C?</label>
+        <label for="study-lang-experience"
+            >How many years have you been programming in {studyLanguage}?</label
+        >
         <input
             type="number"
             id="study-lang-experience"
@@ -48,10 +53,10 @@
     </LikertScale>
 
     <LikertScale
-        questionId="python-familiarity-likert"
+        questionId="study-lang-familiarity-likert"
         labels={['Complete Beginner', '', '', 'Intermediate', '', '', 'Expert']}
     >
-        How would you rate your overall familiarity with Python?
+        How would you rate your overall familiarity with {studyLanguage}?
     </LikertScale>
 
     <ShortAnswer questionId="best-language">
