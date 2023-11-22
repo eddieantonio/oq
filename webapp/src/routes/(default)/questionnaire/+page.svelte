@@ -40,11 +40,17 @@
         />
     </div>
 
-    <LikertScale questionId="experience-likert">
+    <LikertScale
+        questionId="experience-likert"
+        labels={['Complete Beginner', '', '', 'Intermediate', '', '', 'Expert']}
+    >
         How would you rate your overall experience with programming?
     </LikertScale>
 
-    <LikertScale questionId="python-familiarity-likert">
+    <LikertScale
+        questionId="python-familiarity-likert"
+        labels={['Complete Beginner', '', '', 'Intermediate', '', '', 'Expert']}
+    >
         How would you rate your overall familiarity with Python?
     </LikertScale>
 

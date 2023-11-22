@@ -1,5 +1,14 @@
 <script lang="ts">
     export let questionId: string;
+    export let labels: string[] = [
+        'Strongly disagree',
+        '',
+        '',
+        'Neutral',
+        '',
+        '',
+        'Strongly agree'
+    ];
 
     function id(num: number) {
         return `${questionId}-${num}`;
@@ -12,24 +21,17 @@
     <table>
         <thead>
             <tr>
-                <th><label for={id(1)}>Complete Beginner</label></th>
-                <th><label for={id(2)} /></th>
-                <th><label for={id(3)} /></th>
-                <th><label for={id(4)}>Intermediate</label></th>
-                <th><label for={id(5)} /></th>
-                <th><label for={id(6)} /></th>
-                <th><label for={id(7)}>Expert</label></th>
+                {#each labels as label, index}
+                    <th><label for={id(index + 1)}>{label}</label></th>
+                {/each}
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td><input id={id(1)} type="radio" name={questionId} value="1" /></td>
-                <td><input id={id(2)} type="radio" name={questionId} value="2" /></td>
-                <td><input id={id(3)} type="radio" name={questionId} value="3" /></td>
-                <td><input id={id(4)} type="radio" name={questionId} value="4" /></td>
-                <td><input id={id(5)} type="radio" name={questionId} value="5" /></td>
-                <td><input id={id(6)} type="radio" name={questionId} value="6" /></td>
-                <td><input id={id(7)} type="radio" name={questionId} value="7" /></td>
+                {#each labels as _label, index}
+                    {@const num = index + 1}
+                    <td><input id={id(num)} type="radio" name={questionId} value={num} /></td>
+                {/each}
             </tr>
         </tbody>
     </table>
