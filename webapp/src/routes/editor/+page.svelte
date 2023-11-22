@@ -16,6 +16,10 @@
     let pem: Diagnostics | null = null;
     let programOutput: string | null = null;
     let bottomTab: 'problems' | 'output' = 'problems';
+    let okayToContinue = false;
+
+    // It's okay to continue if there are no errors.
+    $: okayToContinue = pem === null;
 
     // Compile the code when the page first loads.
     // This should initialize the diagnostics.
@@ -90,7 +94,11 @@
             </ul>
             <ul class="actions-container unstyle">
                 <li><button type="submit" disabled>Pass</button></li>
-                <li><button type="submit" disabled>Submit</button></li>
+                <li>
+                    <form method="POST" action="?/submit">
+                        <button type="submit" disabled={!okayToContinue}>Submit</button>
+                    </form>
+                </li>
                 <li class="more-space">
                     <button type="submit" on:click={runCode} disabled={!enableRun}>Run</button>
                 </li>
