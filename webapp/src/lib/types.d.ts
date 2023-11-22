@@ -38,7 +38,7 @@ interface GCCDiagnostic {
     /**
      * A diagnostic can contain zero or more locations.
      */
-    locations: Location[];
+    locations: GCCLocation[];
     /**
      * Diagnostics can have child diagnostics.
      * Eddie says: "This will often be a 'note' that provides some additional context".
@@ -63,7 +63,7 @@ interface RootGCCDiagnostic extends GCCDiagnostic {
     'column-origin': number;
 }
 
-interface Location {
+interface GCCLocation {
     /**
      * Each location has an optional label string and up to three positions within it: a caret position and optional start and finish positions.
      */
@@ -71,18 +71,18 @@ interface Location {
     /**
      * The primary position of a location (where you would put the ^ when printing the message).
      */
-    caret: Position;
+    caret: GCCPosition;
     /**
      * Eddie says: "I have never seen GCC generate a start position outside a fixit hint"
      */
-    start?: Position;
+    start?: GCCPosition;
     /**
      * A position to the right of the caret.
      */
-    finish?: Position;
+    finish?: GCCPosition;
 }
 
-interface Position {
+interface GCCPosition {
     /**
      * A position is described by a file name, a line number, and three numbers indicating a column position.
      */
