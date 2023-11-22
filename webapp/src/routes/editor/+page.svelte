@@ -1,6 +1,7 @@
 <script lang="ts">
     import DiagnosticDisplay from '$lib/components/DiagnosticDisplay.svelte';
     import Editor from '$lib/components/Editor.svelte';
+    import { onMount } from 'svelte';
 
     /* A C hello world program with an error in it! */
     let content = [
@@ -15,6 +16,10 @@
     let pem: Diagnostics | null = null;
     let programOutput: string | null = null;
     let bottomTab: 'problems' | 'output' = 'problems';
+
+    // Compile the code when the page first loads.
+    // This should initialize the diagnostics.
+    onMount(() => void runCode());
 
     /**
      * Post content to the server to be compiled and run.
