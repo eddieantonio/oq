@@ -41,20 +41,27 @@
     th {
         width: calc(100% / 7);
         font-size: small;
-        vertical-align: bottom;
+        vertical-align: middle;
     }
+
     th,
     td {
         text-align: center;
         border: 0;
         padding-inline: 0;
     }
+
     label {
         display: inline-block;
-        width: 100%;
     }
+
+    label,
     input {
-        cursor: pointer;
         width: 100%;
+        cursor: pointer;
+    }
+
+    td:hover {
+        background-color: var(--nc-bg-3);
     }
 </style>
