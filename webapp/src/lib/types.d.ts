@@ -4,6 +4,9 @@
  * This is a discriminated union, with `format` as the discriminator.
  * See: https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes-func.html#discriminated-unions
  */
+
+// TODO: Move these to a different file so that they don't polute the global namespace.
+
 type Diagnostics = GCCDiagnostics | PlainTextDiagnostics;
 
 /**

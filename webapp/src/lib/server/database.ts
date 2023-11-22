@@ -3,6 +3,7 @@ import knex from 'knex';
 import type { ClassroomId, ParticipantId } from './participants';
 import config from '../../../knexfile';
 import type { PasswordHash } from './validate-participation-codes';
+import crypto from 'node:crypto';
 
 ////////////////////////////////////////////// Config //////////////////////////////////////////////
 
@@ -40,14 +41,59 @@ export interface Classroom {
     hashed_participation_code: PasswordHash;
 }
 
+export type CompileEventId = number & { __CompileEventId: never };
+export type SHA256Hash = string & { __SHA256Hash: never };
+
+/**
+ * A compile event is logged when a user presses "run code", and it is received
+ * by the server. This logs
+ *
+ */
+export interface CompileEvent {
+    compile_event_id: number;
+    participant_id: ParticipantId;
+    submitted_at: Date;
+    snapshot_id: SHA256Hash;
+}
+
+/**
+ * A code snapshot is the full source code that was submitted as a compile
+ * event. To save space, snapshots are shared by multiple users if they submit
+ * the exact same code (byte-for-byte). This happens at the very start (all
+ * users "compile" code immediately when starting the editor) or for getting the
+ * solution (there are usually only a few valid solutions).
+ */
+export interface Snapshot {
+    /* The hash of the utf8 bytes of the entire source code. */
+    snapshot_id: SHA256Hash;
+    source_code: string;
+}
+
+/**
+ * The result of compiling or running code. At present, this includes the
+ * entire, unedited output from the RCE server, and a redundant field that
+ * indicates whether the file was successfully run/compiled.
+ */
+export interface CompileOutput {
+    compile_event_id: number;
+    success: boolean;
+    compile_errors: RunResult;
+}
+
 ////////////////////////////////// Tables (for use in TypeScript) //////////////////////////////////
 
 const Participants = () => db<Participant>('participants');
 const Answers = () => db<Answer>('answers');
 const Classrooms = () => db<Classroom>('classrooms');
+const CompileEvent = () => db<CompileEvent>('compile_events');
+const Snapshot = () => db<Snapshot>('snapshots');
+const CompileOutputs = () => db<CompileOutput>('compile_outputs');
 
 //////////////////////////////////////////// Public API ////////////////////////////////////////////
 
+/**
+ * Saves a new participant to the database.
+ */
 export async function saveParticipant(participantId: ParticipantId, classroomId: ClassroomId) {
     await Participants()
         .insert({
@@ -88,4 +134,64 @@ export async function saveAnswers(answers: Answer[]) {
 
 export async function getAllAnswers(): Promise<Answer[]> {
     return await Answers().select('*');
+}
+
+/**
+ * Records a new compile event.
+ *
+ * @param participantId ID of the participant who submitted the code
+ * @param sourceCode The source code they submitted
+ * @returns the compile event, useful for later.
+ */
+export async function logCompileEvent(
+    participantId: ParticipantId,
+    sourceCode: string
+): Promise<CompileEventId> {
+    const snapshotId = hashSourceCode(sourceCode);
+
+    // Insert the code snapshot, ignoring if it already exists.
+    await Snapshot()
+        .insert({
+            snapshot_id: snapshotId,
+            source_code: sourceCode
+        })
+        .onConflict('snapshot_id')
+        .ignore();
+
+    const [result] = await CompileEvent()
+        .insert({
+            participant_id: participantId,
+            submitted_at: new Date(),
+            snapshot_id: snapshotId
+        })
+        .returning('compile_event_id');
+
+    return result.compile_event_id as CompileEventId;
+}
+
+/**
+ * Records the result of a compile event.
+ *
+ * @param compileEventId ID of the compile event
+ * @param success Whether the code compiled successfully
+ * @param compileErrors Any compile errors that occurred
+ */
+export async function logCompileOutput(
+    compileEventId: CompileEventId,
+    results: RunResult
+): Promise<void> {
+    const success = results.compilation.exitCode === 0;
+    await CompileOutputs().insert({
+        compile_event_id: compileEventId,
+        success,
+        compile_errors: results
+    });
+}
+
+// TODO: is this the right module for this function?
+/**
+ * Returns the SHA256 hash of the given source code.
+ */
+function hashSourceCode(sourceCode: string): SHA256Hash {
+    return crypto.createHash('sha256').update(sourceCode).digest('hex') as SHA256Hash;
 }

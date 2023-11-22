@@ -1,7 +1,9 @@
 /**
- * Handles running the code
+ * Sends code to be run on the RCE server, and logs all necessary study data.
  */
 
+import { logCompileOutput, logCompileEvent } from '$lib/server/database';
+import type { ParticipantId } from '$lib/server/participants.js';
 import { error, fail, json } from '@sveltejs/kit';
 import { StatusCodes } from 'http-status-codes';
 
@@ -13,16 +15,27 @@ const REMOTE_CODE_EXECUTION_URL = 'http://rce:8000/run/gcc';
 
 /** @type {import('@sveltejs/kit').RequestHandler} */
 export async function POST({ cookies, request }) {
-    const participantId = cookies.get('participant_id');
+    const participantId = cookies.get('participant_id') as ParticipantId;
     if (!participantId) throw error(StatusCodes.BAD_REQUEST, 'No participantId cookie found');
 
     const data = await request.formData();
-    const sourceCode = data.get('sourceCode');
 
+    // TODO: Need to get what "scenario" the participant is completing this for
+    // TODO: Should I accept a file upload?
+    const sourceCode = data.get('sourceCode');
     if (!sourceCode || !(typeof sourceCode == 'string'))
         throw fail(StatusCodes.BAD_REQUEST, { sourceCode, missing: true });
 
-    const response = await runCode(sourceCode);
+    // Simultaneously insert a new compile event while running the actual code.
+    const [compileEventId, response] = await Promise.all([
+        logCompileEvent(participantId, sourceCode),
+        runCode(sourceCode)
+    ]);
+
+    // Log the result of the run.
+    await logCompileOutput(compileEventId, response);
+
+    // Okay, good to go!
     return json(response);
 }
 
