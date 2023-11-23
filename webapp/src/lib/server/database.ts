@@ -2,8 +2,8 @@ import knex from 'knex';
 
 import config from '../../../knexfile';
 import type { PasswordHash } from './validate-participation-codes';
-import crypto from 'node:crypto';
 import type { ClassroomId, CompileEventId, ParticipantId, SHA256Hash } from './newtypes';
+import { hashSourceCode } from './hash';
 
 ////////////////////////////////////////////// Config //////////////////////////////////////////////
 
@@ -183,12 +183,4 @@ export async function logCompileOutput(
         success,
         compile_errors: results
     });
-}
-
-// TODO: is this the right module for this function?
-/**
- * Returns the SHA256 hash of the given source code.
- */
-function hashSourceCode(sourceCode: string): SHA256Hash {
-    return crypto.createHash('sha256').update(sourceCode).digest('hex') as SHA256Hash;
 }
