@@ -1,9 +1,9 @@
 import knex from 'knex';
 
-import type { ClassroomId, ParticipantId } from './participants';
 import config from '../../../knexfile';
 import type { PasswordHash } from './validate-participation-codes';
 import crypto from 'node:crypto';
+import type { ClassroomId, CompileEventId, ParticipantId, SHA256Hash } from './newtypes';
 
 ////////////////////////////////////////////// Config //////////////////////////////////////////////
 
@@ -40,9 +40,6 @@ export interface Classroom {
     classroom_id: ClassroomId;
     hashed_participation_code: PasswordHash;
 }
-
-export type CompileEventId = number & { __CompileEventId: never };
-export type SHA256Hash = string & { __SHA256Hash: never };
 
 /**
  * A compile event is logged when a user presses "run code", and it is received

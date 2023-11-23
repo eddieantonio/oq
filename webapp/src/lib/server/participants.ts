@@ -1,16 +1,4 @@
-/**
- * Newtype for participant IDs.
- *
- * Try to avoid using raw strings when dealing with participant IDs.
- */
-export type ParticipantId = string & { __participantId: never };
-
-/**
- * Newtype for classroom IDs.
-
- * Try to avoid using raw strings when dealing with classroom IDs.
- */
-export type ClassroomId = string & { __classroomId: never };
+import type { ParticipantId } from './newtypes';
 
 /**
  * Creates a new, unique participant ID.

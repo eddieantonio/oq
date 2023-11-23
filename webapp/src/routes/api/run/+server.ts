@@ -3,7 +3,7 @@
  */
 
 import { logCompileOutput, logCompileEvent } from '$lib/server/database';
-import type { ParticipantId } from '$lib/server/participants.js';
+import type { ParticipantId } from '$lib/server/newtypes';
 import { error, fail, json } from '@sveltejs/kit';
 import { StatusCodes } from 'http-status-codes';
 
