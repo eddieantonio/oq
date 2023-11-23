@@ -49,13 +49,13 @@
 </blockquote>
 
 <form method="post">
-    <LikertScale questionId="gcc-error-helpfulness" labels={helpfullnessLabels}>
+    <LikertScale questionId="control-error-helpfulness" labels={helpfullnessLabels}>
         How helpful did you find this error messages?
     </LikertScale>
 
     <div class="input-group">
-        <label for="gcc-explanation">Could you explain your answers above? (optional)</label>
-        <textarea id="gcc-explanation" name="gcc-explanation" rows="4" cols="50" />
+        <label for="control-explanation">Could you explain your answers above? (optional)</label>
+        <textarea id="control-explanation" name="control-explanation" rows="4" cols="50" />
     </div>
 
     <ActionBar>
