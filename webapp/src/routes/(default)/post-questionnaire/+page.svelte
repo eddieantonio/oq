@@ -44,9 +44,9 @@
 <h1>Post-questionnaire</h1>
 
 <p>You just saw this error message:</p>
-<figure>
+<blockquote>
     <DiagnosticDisplay diagnostics={pem} />
-</figure>
+</blockquote>
 
 <form method="post">
     <LikertScale questionId="gcc-error-helpfulness" labels={helpfullnessLabels}>
