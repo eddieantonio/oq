@@ -104,7 +104,7 @@
                 </li>
             </ul>
         </div>
-        <Editor bind:content diagnostics={pem} language="c" />
+        <Editor bind:content diagnostics={pem} language="c" clearMarkersOnChange={true} />
     </div>
 
     <div class="bottom-pane">

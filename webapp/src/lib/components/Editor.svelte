@@ -7,6 +7,8 @@
     export let content: string = '';
     export let language: string = '';
     export let diagnostics: Diagnostics | null = null;
+    /** Whether to get rid of markers (red squiglies) when the text is changed. */
+    export let clearMarkersOnChange: boolean = false;
 
     /** The DOM element that the editor will be mounted to. */
     let element: HTMLDivElement;
@@ -60,12 +62,6 @@
         editor.setModel(model);
         disposables.push(model);
 
-        // Listen to when the text changes:
-        model.onDidChangeContent(() => {
-            // Update the content prop:
-            content = model.getValue();
-        });
-
         // When the diagnostics props change, update the markers in the editor:
         let { setMarkersFromDiagnostics, clearAllMarkers } = monacoModule;
         onDiagnosticsChange = (diagnostics) => {
@@ -75,6 +71,14 @@
                 setMarkersFromDiagnostics(model, diagnostics);
             }
         };
+
+        // Listen to when the source code changes:
+        model.onDidChangeContent(() => {
+            // Update the content prop:
+            content = model.getValue();
+
+            if (clearMarkersOnChange) clearAllMarkers();
+        });
 
         // Using { signal } enables controller.abort() to remove the following
         // event listeners all in one go
