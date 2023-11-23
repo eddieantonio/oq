@@ -2,12 +2,9 @@
  * Save code submission to the database.
  */
 
+import type { ParticipantId } from '$lib/server/newtypes';
 import { error, redirect } from '@sveltejs/kit';
 import { StatusCodes } from 'http-status-codes';
-
-import type { ParticipantId } from '$lib/server/participants';
-
-// TODO: refactor this so that questionnaire and post-questionnaire share code?
 
 export const actions: import('./$types').Actions = {
     /**
