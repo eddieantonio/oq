@@ -8,12 +8,21 @@
 
     export let data: import('./$types').PageData;
 
-    /* A C hello world program with an error in it! */
+    /* A C program with an error in it! */
     let content = [
-        'include <stdio.h>',
+        '#include <stdio.h>',
+        '',
+        'struct complex {',
+        '    double real;',
+        '    double imag;',
+        '};',
+        '',
         'int main() {',
-        '   printf("Hello, World!\\n");',
-        '   return 0;',
+        '    struct complex z = { .real  = 1, .imag = 1};',
+        '    struct complex z_squared = z * z;',
+        '    printf("%lf+%lfi", z_squared.real, z_squared.imag);',
+        '',
+        '    return 0;',
         '}'
     ].join('\n');
 
@@ -45,6 +54,7 @@
         /* Prepare FormData for the post including the contents */
         const formData = new FormData();
         formData.append('sourceCode', content);
+        formData.append('scenario', 'llm');
 
         let data;
         enableRun = false;
@@ -83,6 +93,7 @@
         enableRun = true;
     }
 
+    // TODO: make this way better!
     /**
      * This is a really awful function that "parses" whatever the web hook gave us.
      * @param compilation
@@ -90,6 +101,8 @@
     function parseDiagnostics(compilation: any): Diagnostics {
         if (compilation?.parsed?.format == 'gcc-json') {
             return compilation.parsed as GCCDiagnostics;
+        } else if (compilation?.parsed?.format === 'llm-enhanced') {
+            return compilation.parsed as LLMEnhancedDiagnostics;
         } else {
             return {
                 format: 'plain-text',

@@ -1,4 +1,6 @@
 <script lang="ts">
+    import * as marked from 'marked';
+
     /**
      * The diagnostics object returned by the RCE server.
      */
@@ -16,6 +18,11 @@
                     style="color: {d.kind == 'error' ? 'red' : 'orange'}">{d.kind}:</b
                 > {d.message}{'\n'}{/each}</code
         ></pre>
+{:else if diagnostics.format === 'llm-enhanced'}
+    <blockquote>
+        <svelte:self diagnostics={diagnostics.original} />
+    </blockquote>
+    {@html marked.parse(diagnostics.diagnostics.choices[0].message.content)}
 {:else}
     <pre class="problem"><code>{JSON.stringify(diagnostics, null, 4)}</code></pre>
 {/if}
