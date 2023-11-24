@@ -1,7 +1,9 @@
 <script lang="ts">
+    import { onMount } from 'svelte';
+    import { Pane, Splitpanes } from 'svelte-splitpanes';
+
     import DiagnosticDisplay from '$lib/components/DiagnosticDisplay.svelte';
     import Editor from '$lib/components/Editor.svelte';
-    import { onMount } from 'svelte';
 
     /* A C hello world program with an error in it! */
     let content = [
@@ -17,6 +19,7 @@
     let programOutput: string | null = null;
     let bottomTab: 'problems' | 'output' = 'problems';
     let okayToContinue = false;
+    let editorHeight = 0;
 
     // It's okay to continue if there are no errors.
     $: okayToContinue = pem === null;
@@ -24,6 +27,10 @@
     // Compile the code when the page first loads.
     // This should initialize the diagnostics.
     onMount(() => void runCode());
+
+    function resizeEditor(e: CustomEvent & { detail: { size: number }[] }) {
+        editorHeight = e.detail[0].size;
+    }
 
     /**
      * Post content to the server to be compiled and run.
@@ -87,67 +94,87 @@
 </script>
 
 <div class="ide">
-    <div class="editor">
-        <div class="tabs-and-actions-container">
-            <ul class="tabs-container unstyle">
-                <li class="tab tab-active">main.c</li>
-            </ul>
-            <ul class="actions-container unstyle">
-                <li><button class="btn btn--pass" type="submit" disabled>Pass</button></li>
-                <li>
-                    <form method="POST" action="?/submit">
-                        <button class="btn btn--submit" type="submit" disabled={!okayToContinue}
-                            >Submit</button
-                        >
-                    </form>
-                </li>
-                <li class="more-space">
-                    <button
-                        class="btn btn--run"
-                        type="submit"
-                        on:click={runCode}
-                        disabled={!enableRun}>Run</button
-                    >
-                </li>
-            </ul>
-        </div>
-        <Editor bind:content diagnostics={pem} language="c" clearMarkersOnChange={true} />
-    </div>
+    <Splitpanes horizontal={true} on:resize={resizeEditor}>
+        <Pane minSize={20}>
+            <div class="editor">
+                <div class="tabs-and-actions-container">
+                    <ul class="tabs-container unstyle">
+                        <li class="tab tab-active">main.c</li>
+                    </ul>
+                    <ul class="actions-container unstyle">
+                        <li><button class="btn btn--pass" type="submit" disabled>Pass</button></li>
+                        <li>
+                            <form method="POST" action="?/submit">
+                                <button
+                                    class="btn btn--submit"
+                                    type="submit"
+                                    disabled={!okayToContinue}>Submit</button
+                                >
+                            </form>
+                        </li>
+                        <li class="more-space">
+                            <button
+                                class="btn btn--run"
+                                type="submit"
+                                on:click={runCode}
+                                disabled={!enableRun}>Run</button
+                            >
+                        </li>
+                    </ul>
+                </div>
+                <Editor
+                    bind:content
+                    diagnostics={pem}
+                    language="c"
+                    clearMarkersOnChange={true}
+                    editorHeightHint={editorHeight}
+                />
+            </div>
+        </Pane>
 
-    <div class="bottom-pane">
-        <div class="bottom-tabs">
-            <ul class="tabs-container unstyle">
-                <li class="tab" class:tab-active={bottomTab == 'problems'}>
-                    <button class="unbutton tab-button" on:click={() => (bottomTab = 'problems')}>
-                        Problems
-                    </button>
-                </li>
-                <li class="tab" class:tab-active={bottomTab == 'output'}>
-                    <button class="unbutton tab-button" on:click={() => (bottomTab = 'output')}>
-                        Output
-                    </button>
-                </li>
-            </ul>
-        </div>
+        <Pane minSize={10}>
+            <div class="bottom-pane">
+                <div class="bottom-tabs">
+                    <ul class="tabs-container unstyle">
+                        <li class="tab" class:tab-active={bottomTab == 'problems'}>
+                            <button
+                                class="unbutton tab-button"
+                                on:click={() => (bottomTab = 'problems')}
+                            >
+                                Problems
+                            </button>
+                        </li>
+                        <li class="tab" class:tab-active={bottomTab == 'output'}>
+                            <button
+                                class="unbutton tab-button"
+                                on:click={() => (bottomTab = 'output')}
+                            >
+                                Output
+                            </button>
+                        </li>
+                    </ul>
+                </div>
 
-        <div class="pane-contents">
-            {#if bottomTab == 'problems'}
-                {#if pem == null}
-                    <p>No problems have been detected in the code.</p>
-                {:else}
-                    <DiagnosticDisplay diagnostics={pem} />
-                {/if}
-            {:else if bottomTab == 'output'}
-                {#if pem != null}
-                    <p>Fix the errors, then run the program to see output.</p>
-                {:else if programOutput == null}
-                    <p>Run the program to see output</p>
-                {:else}
-                    <pre class="output"><code>{programOutput}</code></pre>
-                {/if}
-            {/if}
-        </div>
-    </div>
+                <div class="pane-contents">
+                    {#if bottomTab == 'problems'}
+                        {#if pem == null}
+                            <p>No problems have been detected in the code.</p>
+                        {:else}
+                            <DiagnosticDisplay diagnostics={pem} />
+                        {/if}
+                    {:else if bottomTab == 'output'}
+                        {#if pem != null}
+                            <p>Fix the errors, then run the program to see output.</p>
+                        {:else if programOutput == null}
+                            <p>Run the program to see output</p>
+                        {:else}
+                            <pre class="output"><code>{programOutput}</code></pre>
+                        {/if}
+                    {/if}
+                </div>
+            </div>
+        </Pane>
+    </Splitpanes>
 </div>
 
 <style>
@@ -212,11 +239,9 @@
         margin: 0;
     }
 
-    .editor {
-        height: calc(2 * 100% / 3);
-    }
+    .editor,
     .bottom-pane {
-        height: calc(1 * 100% / 3);
+        height: 100%;
     }
 
     /* Editor is a container for Monaco and the top tab bar. */

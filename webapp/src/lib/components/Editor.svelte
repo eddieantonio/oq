@@ -4,11 +4,16 @@
     import { onDestroy, onMount } from 'svelte';
 
     // Props
+    /** The text content of the editor. */
     export let content: string = '';
+    /** The source code language. */
     export let language: string = '';
+    /** The diagnostics to display as markers. */
     export let diagnostics: Diagnostics | null = null;
-    /** Whether to get rid of markers (red squiglies) when the text is changed. */
+    /** Whether to remove markers (red squiglies) when the text is changed. */
     export let clearMarkersOnChange: boolean = false;
+    /** A hint of the requested height of the editor. This may or may not be ignored. */
+    export let editorHeightHint: number = 500;
 
     /** The DOM element that the editor will be mounted to. */
     let element: HTMLDivElement;
@@ -39,6 +44,14 @@
         // Do nothing. The real handler will be installed in onMount().
     };
     $: onDiagnosticsChange(diagnostics);
+
+    /**
+     * Called when the editorHeightHint prop changes.
+     */
+    let onEditorSizeChange = function (_: typeof editorHeightHint) {
+        // Do nothing. The real handler will be installed in onMount().
+    };
+    $: onEditorSizeChange(editorHeightHint);
 
     // This will actually import Monaco and setup the editor and all required event listeners.
     onMount(async () => {
@@ -71,6 +84,10 @@
                 setMarkersFromDiagnostics(model, diagnostics);
             }
         };
+
+        // When the editorHeightHint prop changes, update the editor size.
+        // (Ignore the editorHeightHint, and just use the maximum available space.)
+        onEditorSizeChange = () => void editor.layout();
 
         // Listen to when the source code changes:
         model.onDidChangeContent(() => {
