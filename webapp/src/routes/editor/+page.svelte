@@ -19,7 +19,7 @@
     let programOutput: string | null = null;
     let bottomTab: 'problems' | 'output' = 'problems';
     let okayToContinue = false;
-    let editorHeight = 0;
+    let editorHeightHint = 0;
 
     // It's okay to continue if there are no errors.
     $: okayToContinue = pem === null;
@@ -27,10 +27,6 @@
     // Compile the code when the page first loads.
     // This should initialize the diagnostics.
     onMount(() => void runCode());
-
-    function resizeEditor(e: CustomEvent & { detail: { size: number }[] }) {
-        editorHeight = e.detail[0].size;
-    }
 
     /**
      * Post content to the server to be compiled and run.
@@ -94,7 +90,7 @@
 </script>
 
 <div class="ide">
-    <Splitpanes horizontal={true} on:resize={resizeEditor}>
+    <Splitpanes horizontal={true} on:resize={(e) => (editorHeightHint = e.detail[0].size)}>
         <Pane minSize={20}>
             <div class="editor">
                 <div class="tabs-and-actions-container">
@@ -127,7 +123,7 @@
                     diagnostics={pem}
                     language="c"
                     clearMarkersOnChange={true}
-                    editorHeightHint={editorHeight}
+                    {editorHeightHint}
                 />
             </div>
         </Pane>
@@ -200,8 +196,6 @@
         --tab-text-color: rgb(59, 59, 59);
         --separator-color: #e5e5e5;
         --bottom-pane-color: #f8f8f8;
-
-        background-color: var(--editor-bg);
     }
 
     @media (prefers-color-scheme: dark) {
@@ -249,6 +243,7 @@
         display: flex;
         flex-flow: column nowrap;
         overflow: hidden;
+        background-color: var(--editor-bg);
     }
 
     .tabs-and-actions-container {
