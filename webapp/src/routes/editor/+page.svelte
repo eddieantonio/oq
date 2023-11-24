@@ -4,6 +4,7 @@
 
     import DiagnosticDisplay from '$lib/components/DiagnosticDisplay.svelte';
     import Editor from '$lib/components/Editor.svelte';
+    import { assets } from '$app/paths';
 
     /* A C hello world program with an error in it! */
     let content = [
@@ -90,7 +91,11 @@
 </script>
 
 <div class="ide">
-    <Splitpanes horizontal={true} on:resize={(e) => (editorHeightHint = e.detail[0].size)}>
+    <Splitpanes
+        horizontal={true}
+        theme="vscode-theme"
+        on:resize={(e) => (editorHeightHint = e.detail[0].size)}
+    >
         <Pane minSize={20}>
             <div class="editor">
                 <div class="tabs-and-actions-container">
@@ -172,6 +177,11 @@
         </Pane>
     </Splitpanes>
 </div>
+
+<!-- It was easier to style the <Splitpane> in a separate CSS file. -->
+<svelte:head>
+    <link rel="stylesheet" href="{assets}/splitpanes-vscode-theme.css" />
+</svelte:head>
 
 <style>
     /* Full IDE styles */
