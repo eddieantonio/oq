@@ -93,14 +93,21 @@
                 <li class="tab tab-active">main.c</li>
             </ul>
             <ul class="actions-container unstyle">
-                <li><button type="submit" disabled>Pass</button></li>
+                <li><button class="btn btn--pass" type="submit" disabled>Pass</button></li>
                 <li>
                     <form method="POST" action="?/submit">
-                        <button type="submit" disabled={!okayToContinue}>Submit</button>
+                        <button class="btn btn--submit" type="submit" disabled={!okayToContinue}
+                            >Submit</button
+                        >
                     </form>
                 </li>
                 <li class="more-space">
-                    <button type="submit" on:click={runCode} disabled={!enableRun}>Run</button>
+                    <button
+                        class="btn btn--run"
+                        type="submit"
+                        on:click={runCode}
+                        disabled={!enableRun}>Run</button
+                    >
                 </li>
             </ul>
         </div>
@@ -223,6 +230,7 @@
         display: flex;
         flex-flow: row nowrap;
         justify-content: space-between;
+        align-items: flex-end;
 
         margin: 0;
         border-bottom: 1px solid var(--separator-color);
@@ -295,7 +303,7 @@
 
     .actions-container {
         display: flex;
-        padding-inline: 8px;
+        margin: 2px 8px;
         gap: 4px;
     }
 
@@ -305,5 +313,44 @@
 
     .pane-contents {
         padding: 4px 16px;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #fff;
+        color: #333;
+        font-size: 1rem;
+        line-height: 1.5;
+        cursor: pointer;
+    }
+
+    .btn[disabled] {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+
+    .btn--run {
+        /* make it a nice "green" play button kind of vibe */
+        background-color: #28a745;
+        color: #fff;
+        border-color: #28a745;
+    }
+    .btn--run:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+
+    .btn--submit {
+        /* make it a nice "blue" submit button kind of vibe */
+        background-color: #007bff;
+        color: #fff;
+        border-color: #007bff;
+    }
+    .btn--submit:hover:not([disabled]) {
+        background-color: #0069d9;
+        border-color: #0062cc;
     }
 </style>
