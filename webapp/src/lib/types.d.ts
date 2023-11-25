@@ -41,15 +41,3 @@ interface RunResult {
     /** (optional) The raw response from enhancing the diagnostics with an LLM. */
     apiResponse?: RawLLMResponse;
 }
-
-/**
- * Results to be sent to the client.
- */
-interface ClientSideRunResult {
-    /** True when the source code can be submitted. */
-    success: boolean;
-    /** (optional) Diagnostics for this code run. */
-    diagnostics?: Diagnostics;
-    /** (optional) Runtime output for this code run. */
-    output?: string;
-}
