@@ -1,4 +1,4 @@
-const llmResponse: RawLLMResponse = {
+const complexMultllmResponse: RawLLMResponse = {
     id: '<redacted>',
     object: 'chat.completion',
     created: 1700779908,
@@ -21,9 +21,36 @@ const llmResponse: RawLLMResponse = {
     }
 };
 
+const helloWorldLLMResponse: RawLLMResponse = {
+    id: 'chatcmpl-8OqFtCQIYqDoE8gjvTEWQ5lWaJzri',
+    object: 'chat.completion',
+    created: 1700931433,
+    model: 'gpt-4-0613',
+    choices: [
+        {
+            index: 0,
+            message: {
+                role: 'assistant',
+                content:
+                    'The error is caused because the keyword `include` is not correctly used. In C programming, the correct keyword is `#include`. The `#include` directive is used to include the contents of any other file in the program at the time of preprocessing.\n\nThe corrected code should be:\n\n```c\n#include <stdio.h>\n\nint main(void) {\n   printf("Hello, world!\\n");\n   return 0;\n}\n```\n\nIn this corrected code, `#include <stdio.h>` is used to include the standard input/output library in C. This library is necessary for the `printf` function used in the program. Also, it\'s a good practice to return a value from the `main` function, typically `return 0;` is used to indicate that the program has run successfully.'
+            },
+            finish_reason: 'stop'
+        }
+    ],
+    usage: {
+        prompt_tokens: 108,
+        completion_tokens: 163,
+        total_tokens: 271
+    }
+};
+
 export async function fakeEnhanceWithLLM(
     _diagnostics: Diagnostics,
-    _sourceCode: string
+    sourceCode: string
 ): Promise<RawLLMResponse> {
-    return llmResponse;
+    if (sourceCode.includes('complex')) {
+        return complexMultllmResponse;
+    } else {
+        return helloWorldLLMResponse;
+    }
 }

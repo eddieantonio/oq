@@ -10,19 +10,11 @@
 
     /* A C program with an error in it! */
     let content = [
-        '#include <stdio.h>',
-        '',
-        'struct complex {',
-        '    double real;',
-        '    double imag;',
-        '};',
+        'include <stdio.h>',
         '',
         'int main() {',
-        '    struct complex z = { .real  = 1, .imag = 1};',
-        '    struct complex z_squared = z * z;',
-        '    printf("%lf+%lfi", z_squared.real, z_squared.imag);',
-        '',
-        '    return 0;',
+        '   printf("Hello, World!\\n");',
+        '   return 0;',
         '}'
     ].join('\n');
 
