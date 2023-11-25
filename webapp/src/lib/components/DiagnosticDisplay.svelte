@@ -1,6 +1,8 @@
 <script lang="ts">
     import * as marked from 'marked';
 
+    import type { Diagnostics } from '$lib/types/diagnostics';
+
     /**
      * The diagnostics object returned by the RCE server.
      */

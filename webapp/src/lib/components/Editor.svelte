@@ -1,7 +1,8 @@
 <script lang="ts">
     import type * as Monaco from 'monaco-editor';
-
     import { onDestroy, onMount } from 'svelte';
+
+    import type { Diagnostics } from '$lib/types/diagnostics';
 
     // Props
     /** The text content of the editor. */

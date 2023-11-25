@@ -1,10 +1,11 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
+    import { assets } from '$app/paths';
 
     import DiagnosticDisplay from '$lib/components/DiagnosticDisplay.svelte';
     import Editor from '$lib/components/Editor.svelte';
-    import { assets } from '$app/paths';
+    import type { Diagnostics } from '$lib/types/diagnostics';
 
     export let data: import('./$types').PageData;
 

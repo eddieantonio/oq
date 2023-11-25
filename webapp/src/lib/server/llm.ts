@@ -1,3 +1,5 @@
+import type { Diagnostics } from '$lib/types/diagnostics';
+
 const complexMultllmResponse: RawLLMResponse = {
     id: '<redacted>',
     object: 'chat.completion',

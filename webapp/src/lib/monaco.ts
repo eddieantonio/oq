@@ -15,6 +15,8 @@ import * as monaco from 'monaco-editor';
 // See: https://v3.vitejs.dev/guide/features.html#import-with-query-suffixes
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
 
+import type { Diagnostics, GCCDiagnostic, GCCDiagnostics } from './types/diagnostics';
+
 /**
  * The owner is a string that lets us manage markers that we create in the document.
  *
