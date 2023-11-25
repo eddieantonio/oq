@@ -44,16 +44,11 @@ export function setMarkersFromDiagnostics(
     diagnostics: Diagnostics
 ) {
     clearAllMarkers();
-
     // TODO: ensure that the diagnostics are ACTUALLY for the current model
-    let markers: monaco.editor.IMarkerData[];
-    if (diagnostics.format === 'gcc-json') {
-        markers = setMarkersFromGCCDiagnostics(diagnostics);
-    } else {
-        // TODO: what to do with plain-text diagnostics?
-        markers = [];
-    }
-
+    // TODO: looks like this can be done using the `uri` field of the model
+    // and IMarkerData.code:
+    // See: https://github.com/microsoft/vscode/blob/578ad35313f41c4aeff777ab25bd3265c645ab34/src/vs/platform/markers/common/markers.ts#L86-L101
+    const markers = extractMarkersFromDiagnostics(diagnostics);
     monaco.editor.setModelMarkers(model, OQ_OWNER, markers);
 }
 
@@ -64,7 +59,25 @@ export function clearAllMarkers() {
     monaco.editor.removeAllMarkers(OQ_OWNER);
 }
 
-function setMarkersFromGCCDiagnostics(diagnostics: GCCDiagnostics): monaco.editor.IMarkerData[] {
+/**
+ * Extracts markers appropriate for the given diagnostics.
+ */
+function extractMarkersFromDiagnostics(diagnostics: Diagnostics): monaco.editor.IMarkerData[] {
+    switch (diagnostics.format) {
+        case 'gcc-json':
+            return extractMarkersFromGCCDiagnostics(diagnostics);
+        case 'llm-enhanced':
+            // Defer to the original diagnostics.
+            return extractMarkersFromDiagnostics(diagnostics.original);
+        case 'plain-text':
+            // TODO: what to do with plain-text diagnostics?
+            return [];
+    }
+}
+
+function extractMarkersFromGCCDiagnostics(
+    diagnostics: GCCDiagnostics
+): monaco.editor.IMarkerData[] {
     const markers = [];
 
     for (const diagnostic of diagnostics.diagnostics) {
