@@ -9,6 +9,7 @@ import { logCompileOutput, logCompileEvent } from '$lib/server/database';
 import { fakeEnhanceWithLLM } from '$lib/server/llm';
 import type { ParticipantId } from '$lib/server/newtypes';
 import type { Diagnostics, LLMEnhancedDiagnostics } from '$lib/types/diagnostics';
+import type { RawRunResult } from '$lib/server/run-code';
 
 /**
  * POST to this endpoint to compile and run the code.
