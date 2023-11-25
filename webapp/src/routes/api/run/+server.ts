@@ -26,7 +26,6 @@ export async function POST({ cookies, request }) {
 
     const data = await request.formData();
 
-    // TODO: change name to "condition"?
     const condition = toCondition(data.get('condition'));
 
     // TODO: Should I accept a file upload?
@@ -40,14 +39,29 @@ export async function POST({ cookies, request }) {
         runCode(sourceCode)
     ]);
 
-    // Enrich the raw run result, optionally enhancing it with the LLM.
-    const internalRunResult = await enrichRawRunResult(condition, sourceCode, rawRunResult);
+    // Enrich the raw run result.
+    const success = rawRunResult.compilation.exitCode === 0;
+    const result: RunResult = {
+        success,
+        runResult: rawRunResult
+    };
+
+    // Enhance the diagnostics with LLM, if appropriate.
+    if (!success && condition === 'llm-enhanced') {
+        const originalDiagnostics = rawRunResult.compilation.parsed;
+        if (!originalDiagnostics) {
+            throw error(500, "Can only enhance PEMs with LLM if they're parsed");
+        }
+
+        // TODO: this should make a (cached!) request to the LLM.
+        result.apiResponse = await fakeEnhanceWithLLM(originalDiagnostics, sourceCode);
+    }
 
     // Log the result of the run.
-    await logCompileOutput(compileEventId, internalRunResult);
+    await logCompileOutput(compileEventId, result);
 
     // Okay, good to go!
-    const response: ClientSideRunResult = toClientSideFormat(internalRunResult);
+    const response: ClientSideRunResult = toClientSideFormat(result);
     return json(response);
 }
 
@@ -82,34 +96,6 @@ function toCondition(input: FormDataEntryValue | null): Condition {
     }
 
     throw error(StatusCodes.BAD_REQUEST, `Invalid condition: ${input}`);
-}
-
-async function enrichRawRunResult(
-    condition: Condition,
-    sourceCode: string,
-    rawResult: RawRunResult
-): Promise<RunResult> {
-    // TODO: this depends on the programming language. Right now, this is hardcoded for C.
-    const success = rawResult.compilation.exitCode === 0;
-
-    const result: RunResult = {
-        success,
-        runResult: rawResult
-    };
-
-    if (!success) {
-        // Enhance the diagnostics with LLM
-        if (condition === 'llm-enhanced') {
-            if (rawResult.compilation.parsed === undefined) {
-                throw error(500, "Can only enhance PEMs with LLM if they're parsed");
-            }
-
-            // TODO: this should make a (cached!) request to the LLM.
-            result.apiResponse = await fakeEnhanceWithLLM(rawResult.compilation.parsed, sourceCode);
-        }
-    }
-
-    return result;
 }
 
 function toClientSideFormat(result: RunResult): ClientSideRunResult {
