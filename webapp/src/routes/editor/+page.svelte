@@ -9,7 +9,7 @@
     import type { Condition } from '$lib/types';
 
     export let data: import('./$types').PageData;
-    let condition: Condition = 'llm-enhanced';
+    let condition: Condition = 'control';
 
     /* A C program with an error in it! */
     let content = [
@@ -78,7 +78,7 @@
             programOutput = null;
         }
 
-        if (pem !== null) {
+        if (pem) {
             bottomTab = 'problems';
         } else {
             bottomTab = 'output';
@@ -175,9 +175,9 @@
                             <DiagnosticDisplay diagnostics={pem} />
                         {/if}
                     {:else if bottomTab == 'output'}
-                        {#if pem != null}
+                        {#if !programOutput && pem}
                             <p>Fix the errors, then run the program to see output.</p>
-                        {:else if programOutput == null}
+                        {:else if !programOutput}
                             <p>Run the program to see output</p>
                         {:else}
                             <pre class="output"><code>{programOutput}</code></pre>

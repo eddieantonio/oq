@@ -126,11 +126,4 @@
     }
 </script>
 
-<div bind:this={element} class="editor" />
-
-<style>
-    .editor {
-        width: 100%;
-        height: 100%;
-    }
-</style>
+<div bind:this={element} style="width: 100%; height: 100%" />
