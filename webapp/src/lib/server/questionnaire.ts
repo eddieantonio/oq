@@ -2,7 +2,7 @@ import { error, type Cookies } from '@sveltejs/kit';
 import { StatusCodes } from 'http-status-codes';
 
 import { saveAnswers } from '$lib/server/database';
-import type { ParticipantId } from '$lib/server/participants';
+import type { ParticipantId } from './newtypes';
 
 /**
  * Stores the answers to questionnaire in the database.

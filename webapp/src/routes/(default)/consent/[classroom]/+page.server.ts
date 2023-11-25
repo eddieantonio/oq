@@ -1,9 +1,10 @@
 import { error, redirect } from '@sveltejs/kit';
-import { makeNewParticipantId, type ClassroomId } from '$lib/server/participants';
-import { getParticipationCode, saveParticipant } from '$lib/server/database';
-
 import { StatusCodes } from 'http-status-codes';
+
+import { makeNewParticipantId } from '$lib/server/participants';
+import { getParticipationCode, saveParticipant } from '$lib/server/database';
 import { validateParticipationCode } from '$lib/server/validate-participation-codes';
+import type { ClassroomId } from '$lib/server/newtypes';
 
 export const actions: import('./$types').Actions = {
     /**

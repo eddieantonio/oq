@@ -1,8 +1,13 @@
 import knex from 'knex';
 
 import config from '../../../knexfile';
-import type { PasswordHash } from './validate-participation-codes';
-import type { ClassroomId, CompileEventId, ParticipantId, SHA256Hash } from './newtypes';
+import type {
+    ClassroomId,
+    CompileEventId,
+    ParticipantId,
+    PasswordHash,
+    SHA256Hash
+} from './newtypes';
 import { hashSourceCode } from './hash';
 
 ////////////////////////////////////////////// Config //////////////////////////////////////////////

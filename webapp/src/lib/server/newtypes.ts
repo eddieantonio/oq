@@ -15,6 +15,9 @@ export type CompileEventId = number & { __CompileEventId: never };
 /** A hexadecimal respresentation of a SHA256 hash of something. */
 export type SHA256Hash = string & { __SHA256Hash: never };
 
+/** A password hash, in the format stored in the database.  */
+export type PasswordHash = string & { __passwordHash: never };
+
 /**
  * Uniquely identifies a participant WITHIN A CLASSROOM.
  *
