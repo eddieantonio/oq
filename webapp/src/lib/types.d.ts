@@ -149,6 +149,7 @@ interface LLMUsage {
  * Running the code on the RCE server will return a JSON object with the
  * following structure:
  */
+// TODO: rename to RawRunResult
 interface RunResult {
     /**
      * Diagnostics from the compilation step.
@@ -158,6 +159,19 @@ interface RunResult {
      * Output from running the code.
      */
     execution: CommandResponse | null;
+}
+
+// TODO: rename this to RunResult
+interface Idk {
+    success: boolean;
+    runResult: RunResult; // raw run results
+    apiResponse?: RawLLMResponse;
+}
+
+interface ClientSideRunResult {
+    success: boolean;
+    diagnostics?: Diagnostics;
+    output?: string;
 }
 
 /**

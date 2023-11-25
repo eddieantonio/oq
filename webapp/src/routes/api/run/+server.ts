@@ -51,6 +51,7 @@ export async function POST({ cookies, request }) {
         throw fail(StatusCodes.BAD_REQUEST, { sourceCode, missing: true });
 
     // Simultaneously insert a new compile event while running the actual code.
+    // TODO: rename response to rawRunResult
     const [compileEventId, response] = await Promise.all([
         logCompileEvent(participantId, sourceCode),
         runCode(sourceCode)
@@ -58,23 +59,15 @@ export async function POST({ cookies, request }) {
 
     // HACK
     // TODO: do not mutate the original response
-    const scenario = data.get('scenario');
-    if (scenario === 'llm') {
-        if (response.compilation.parsed === undefined) {
-            throw error(500, "that's not right...");
-        }
-
-        response.compilation.parsed = rawLLMResponseToDiagnostic(
-            response.compilation.parsed,
-            llmResponse
-        );
-    }
+    const scenario = asScenario(data.get('scenario'));
+    const newResponse = await enrichRawRunResult(scenario, response);
 
     // Log the result of the run.
-    await logCompileOutput(compileEventId, response);
+    await logCompileOutput(compileEventId, newResponse);
 
     // Okay, good to go!
-    return json(response);
+    const trueResponse: ClientSideRunResult = toClientSideFormat(newResponse);
+    return json(trueResponse);
 }
 
 /**
@@ -95,6 +88,68 @@ async function runCode(sourceCode: string): Promise<RunResult> {
         body: formData
     });
     return res.json();
+}
+
+type Scenario = 'control' | 'enhanced' | 'llm-enhanced';
+
+function asScenario(scenario: FormDataEntryValue | null): Scenario {
+    if (scenario === null) {
+        console.warn("Received null scenario, defaulting to 'control'");
+        return 'control';
+    }
+
+    if (scenario === 'control' || scenario === 'enhanced' || scenario === 'llm-enhanced') {
+        return scenario;
+    }
+
+    throw error(StatusCodes.BAD_REQUEST, `Invalid scenario: ${scenario}`);
+}
+
+async function enrichRawRunResult(scenario: Scenario, rawResult: RunResult): Promise<Idk> {
+    // TODO: this depend on the programming language. Right now, this is hardcoded for C.
+    const success = rawResult.compilation.exitCode === 0;
+
+    const result: Idk = {
+        success,
+        runResult: rawResult
+    };
+
+    if (!success) {
+        // Enhance the diagnostics with LLM
+        if (scenario === 'llm-enhanced') {
+            if (rawResult.compilation.parsed === undefined) {
+                throw error(500, "Can only enhance PEMs with LLM if they're parsed");
+            }
+
+            // TODO: this would request to the LLM:
+            result.apiResponse = llmResponse;
+        }
+    }
+
+    return result;
+}
+
+function toClientSideFormat(result: Idk): ClientSideRunResult {
+    return {
+        success: result.success,
+        diagnostics: extractDiagnostics(result),
+        output: result.runResult.execution?.stdout
+    };
+}
+
+function extractDiagnostics(results: Idk): Diagnostics | undefined {
+    if (results.apiResponse) {
+        // There is only an API response if the scenario is LLM-enhanced.
+        if (results.runResult.compilation.parsed === undefined) {
+            throw new Error('Expecting all LLM-enhanced diagnostics to have parsed content');
+        }
+        return rawLLMResponseToDiagnostic(
+            results.runResult.compilation.parsed,
+            results.apiResponse
+        );
+    }
+
+    return;
 }
 
 /** Converts a raw response from the OpenAI API to a format usable by the UI. */

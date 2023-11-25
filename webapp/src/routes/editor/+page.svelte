@@ -35,9 +35,6 @@
     let okayToContinue = false;
     let editorHeightHint = 0;
 
-    // It's okay to continue if there are no errors.
-    $: okayToContinue = pem === null;
-
     // Compile the code when the page first loads.
     // This should initialize the diagnostics.
     onMount(() => void runCode());
@@ -54,7 +51,7 @@
         /* Prepare FormData for the post including the contents */
         const formData = new FormData();
         formData.append('sourceCode', content);
-        formData.append('scenario', 'llm');
+        formData.append('scenario', 'llm-enhanced');
 
         let data;
         enableRun = false;
@@ -72,14 +69,16 @@
             enableRun = true;
         }
 
-        if (data.compilation.exitCode != 0) {
-            pem = parseDiagnostics(data.compilation);
+        okayToContinue = data.success;
+
+        if (data.diagnostics) {
+            pem = parseDiagnostics(data.diagnostics);
         } else {
             pem = null;
         }
 
-        if (data.execution) {
-            programOutput = data.execution.stdout;
+        if (data.output) {
+            programOutput = data.output;
         } else {
             programOutput = null;
         }
@@ -98,16 +97,11 @@
      * This is a really awful function that "parses" whatever the web hook gave us.
      * @param compilation
      */
-    function parseDiagnostics(compilation: any): Diagnostics {
-        if (compilation?.parsed?.format == 'gcc-json') {
-            return compilation.parsed as GCCDiagnostics;
-        } else if (compilation?.parsed?.format === 'llm-enhanced') {
-            return compilation.parsed as LLMEnhancedDiagnostics;
+    function parseDiagnostics(compilation: unknown): Diagnostics {
+        if ((compilation as any).format) {
+            return compilation as any as Diagnostics;
         } else {
-            return {
-                format: 'plain-text',
-                diagnostics: [compilation.stderr]
-            };
+            throw new Error('Could not parse diagnostics from compilation.');
         }
     }
 </script>
