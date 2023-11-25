@@ -9,6 +9,7 @@ import type {
     SHA256Hash
 } from './newtypes';
 import { hashSourceCode } from './hash';
+import type { RunResult } from './run-code';
 
 ////////////////////////////////////////////// Config //////////////////////////////////////////////
 
