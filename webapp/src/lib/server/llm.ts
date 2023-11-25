@@ -1,5 +1,36 @@
 import type { Diagnostics } from '$lib/types/diagnostics';
 
+////////////////////////////////////////////// Types //////////////////////////////////////////////
+
+/**
+ * The raw response object from the LLM API.
+ */
+export interface RawLLMResponse {
+    id: string;
+    object: string;
+    created: number;
+    model: string;
+    choices: LLMChoice[];
+    usage: LLMUsage;
+}
+
+interface LLMChoice {
+    index: number;
+    message: LLMMessage;
+    finish_reason: string;
+}
+
+interface LLMMessage {
+    role: string;
+    content: string;
+}
+
+interface LLMUsage {
+    prompt_tokens: number;
+    completion_tokens: number;
+    total_tokens: number;
+}
+
 const complexMultllmResponse: RawLLMResponse = {
     id: '<redacted>',
     object: 'chat.completion',
@@ -45,6 +76,8 @@ const helloWorldLLMResponse: RawLLMResponse = {
         total_tokens: 271
     }
 };
+
+//////////////////////////////////////////// Public API ////////////////////////////////////////////
 
 export async function fakeEnhanceWithLLM(
     _diagnostics: Diagnostics,

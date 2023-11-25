@@ -1,4 +1,5 @@
 import type { Diagnostics } from '$lib/types/diagnostics';
+import type { RawLLMResponse } from './llm';
 
 /**
  * The result of compiling and running code on the server, optionally including

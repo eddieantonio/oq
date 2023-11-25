@@ -6,7 +6,7 @@ import { error, fail, json } from '@sveltejs/kit';
 import { StatusCodes } from 'http-status-codes';
 
 import { logCompileOutput, logCompileEvent } from '$lib/server/database';
-import { fakeEnhanceWithLLM } from '$lib/server/llm';
+import { fakeEnhanceWithLLM, type RawLLMResponse } from '$lib/server/llm';
 import type { ParticipantId } from '$lib/server/newtypes';
 import type { Diagnostics, LLMEnhancedDiagnostics } from '$lib/types/diagnostics';
 import type { RawRunResult, RunResult } from '$lib/server/run-code';
