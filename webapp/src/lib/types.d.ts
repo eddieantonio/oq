@@ -149,8 +149,7 @@ interface LLMUsage {
  * Running the code on the RCE server will return a JSON object with the
  * following structure:
  */
-// TODO: rename to RawRunResult
-interface RunResult {
+interface RawRunResult {
     /**
      * Diagnostics from the compilation step.
      */
@@ -161,16 +160,33 @@ interface RunResult {
     execution: CommandResponse | null;
 }
 
-// TODO: rename this to RunResult
-interface Idk {
+/**
+ * The result of compiling and running code on the server, optionally including
+ * enhanced diagnostics from querying the LLM.
+ */
+interface RunResult {
+    /**
+     * True when the submitted source code passes the success criteria.
+     *
+     * Note: the success criteria is dependent on the programming language, so
+     * it might not be the same as the exit code from the raw run result.
+     */
     success: boolean;
-    runResult: RunResult; // raw run results
+    /** Raw results from the RCE. */
+    runResult: RawRunResult;
+    /** (optional) The raw response from enhancing the diagnostics with an LLM. */
     apiResponse?: RawLLMResponse;
 }
 
+/**
+ * Results to be sent to the client.
+ */
 interface ClientSideRunResult {
+    /** True when the source code can be submitted. */
     success: boolean;
+    /** (optional) Diagnostics for this code run. */
     diagnostics?: Diagnostics;
+    /** (optional) Runtime output for this code run. */
     output?: string;
 }
 

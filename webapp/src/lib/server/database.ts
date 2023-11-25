@@ -79,7 +79,7 @@ export interface Snapshot {
 export interface CompileOutput {
     compile_event_id: number;
     success: boolean;
-    compile_errors: Idk;
+    compile_errors: RunResult;
 }
 
 ////////////////////////////////// Tables (for use in TypeScript) //////////////////////////////////
@@ -180,7 +180,7 @@ export async function logCompileEvent(
  */
 export async function logCompileOutput(
     compileEventId: CompileEventId,
-    results: Idk
+    results: RunResult
 ): Promise<void> {
     const { success } = results;
     await CompileOutputs().insert({

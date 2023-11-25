@@ -13,7 +13,7 @@ import { StatusCodes } from 'http-status-codes';
  */
 const REMOTE_CODE_EXECUTION_URL = 'http://rce:8000/run/gcc';
 
-// TODO: I really need to filter this...
+// TODO: remove this from this file:
 const llmResponse: RawLLMResponse = {
     id: '<redacted>',
     object: 'chat.completion',
@@ -44,30 +44,29 @@ export async function POST({ cookies, request }) {
 
     const data = await request.formData();
 
-    // TODO: Need to get what "scenario" the participant is completing this for
+    // TODO: change name to "condition"?
+    const scenario = asScenario(data.get('scenario'));
+
     // TODO: Should I accept a file upload?
     const sourceCode = data.get('sourceCode');
     if (!sourceCode || !(typeof sourceCode == 'string'))
         throw fail(StatusCodes.BAD_REQUEST, { sourceCode, missing: true });
 
     // Simultaneously insert a new compile event while running the actual code.
-    // TODO: rename response to rawRunResult
-    const [compileEventId, response] = await Promise.all([
+    const [compileEventId, rawRunResult] = await Promise.all([
         logCompileEvent(participantId, sourceCode),
         runCode(sourceCode)
     ]);
 
-    // HACK
-    // TODO: do not mutate the original response
-    const scenario = asScenario(data.get('scenario'));
-    const newResponse = await enrichRawRunResult(scenario, response);
+    // Enrich the raw run result, optionally enhancing it with the LLM.
+    const internalRunResult = await enrichRawRunResult(scenario, rawRunResult);
 
     // Log the result of the run.
-    await logCompileOutput(compileEventId, newResponse);
+    await logCompileOutput(compileEventId, internalRunResult);
 
     // Okay, good to go!
-    const trueResponse: ClientSideRunResult = toClientSideFormat(newResponse);
-    return json(trueResponse);
+    const response: ClientSideRunResult = toClientSideFormat(internalRunResult);
+    return json(response);
 }
 
 /**
@@ -76,7 +75,7 @@ export async function POST({ cookies, request }) {
  * @param sourceCode Source code to compile and run on the server.
  * @returns The result of compiling/running the code.
  */
-async function runCode(sourceCode: string): Promise<RunResult> {
+async function runCode(sourceCode: string): Promise<RawRunResult> {
     const formData = new FormData();
     // TODO: do not hardcode "main.c"
     formData.append('file', new Blob([sourceCode]), 'main.c');
@@ -90,6 +89,8 @@ async function runCode(sourceCode: string): Promise<RunResult> {
     return res.json();
 }
 
+// TODO: move this somewhere else?
+// TODO: rename to Condition?
 type Scenario = 'control' | 'enhanced' | 'llm-enhanced';
 
 function asScenario(scenario: FormDataEntryValue | null): Scenario {
@@ -105,11 +106,11 @@ function asScenario(scenario: FormDataEntryValue | null): Scenario {
     throw error(StatusCodes.BAD_REQUEST, `Invalid scenario: ${scenario}`);
 }
 
-async function enrichRawRunResult(scenario: Scenario, rawResult: RunResult): Promise<Idk> {
-    // TODO: this depend on the programming language. Right now, this is hardcoded for C.
+async function enrichRawRunResult(scenario: Scenario, rawResult: RawRunResult): Promise<RunResult> {
+    // TODO: this depends on the programming language. Right now, this is hardcoded for C.
     const success = rawResult.compilation.exitCode === 0;
 
-    const result: Idk = {
+    const result: RunResult = {
         success,
         runResult: rawResult
     };
@@ -121,7 +122,7 @@ async function enrichRawRunResult(scenario: Scenario, rawResult: RunResult): Pro
                 throw error(500, "Can only enhance PEMs with LLM if they're parsed");
             }
 
-            // TODO: this would request to the LLM:
+            // TODO: this should make a (cached!) request to the LLM.
             result.apiResponse = llmResponse;
         }
     }
@@ -129,7 +130,7 @@ async function enrichRawRunResult(scenario: Scenario, rawResult: RunResult): Pro
     return result;
 }
 
-function toClientSideFormat(result: Idk): ClientSideRunResult {
+function toClientSideFormat(result: RunResult): ClientSideRunResult {
     return {
         success: result.success,
         diagnostics: extractDiagnostics(result),
@@ -137,7 +138,7 @@ function toClientSideFormat(result: Idk): ClientSideRunResult {
     };
 }
 
-function extractDiagnostics(results: Idk): Diagnostics | undefined {
+function extractDiagnostics(results: RunResult): Diagnostics | undefined {
     if (results.apiResponse) {
         // There is only an API response if the scenario is LLM-enhanced.
         if (results.runResult.compilation.parsed === undefined) {
