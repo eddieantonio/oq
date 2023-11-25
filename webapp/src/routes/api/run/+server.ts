@@ -132,6 +132,17 @@ function extractDiagnostics(results: RunResult): Diagnostics | undefined {
         );
     }
 
+    // Did compilation fail?
+    if (results.runResult.compilation.exitCode !== 0) {
+        if (!results.runResult.compilation.parsed) {
+            throw new Error(
+                "Not implemented: No parsed error message, but compilation didn't succeed"
+            );
+        }
+
+        return results.runResult.compilation.parsed;
+    }
+
     return;
 }
 
