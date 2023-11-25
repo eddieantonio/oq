@@ -71,9 +71,6 @@ function extractMarkersFromDiagnostics(diagnostics: Diagnostics): monaco.editor.
         case 'llm-enhanced':
             // Defer to the original diagnostics.
             return extractMarkersFromDiagnostics(diagnostics.original);
-        case 'plain-text':
-            // TODO: what to do with plain-text diagnostics?
-            return [];
     }
 }
 
