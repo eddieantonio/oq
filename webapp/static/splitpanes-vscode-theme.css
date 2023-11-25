@@ -65,7 +65,7 @@
 }
 
 .splitpanes.no-splitter .splitpanes__splitter {
-    background-color: var(--splitter-default-color)
+    background-color: var(--splitter-default-color);
     position: relative;
 }
 
