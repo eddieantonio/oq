@@ -1,8 +1,6 @@
 # Node + Sveltekit stuff
 node_modules/
-build/
 .svelte-kit/
-package/
 .env
 .env.*
 !.env.example
@@ -16,7 +14,7 @@ docker-compose.override.yml
 *.sqlite3
 
 # Files modified during runtime
-run/
+/run
 
 # macOS junk
 .DS_Store

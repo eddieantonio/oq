@@ -1,2 +1,6 @@
+# Node + Sveltekit stuff
+/build/
+/package/
+
 # Created so that migrations can run in production
 knexfile.cjs
