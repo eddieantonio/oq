@@ -6,6 +6,8 @@
     import Editor from '$lib/components/Editor.svelte';
     import { assets } from '$app/paths';
 
+    export let data: import('./$types').PageData;
+
     /* A C hello world program with an error in it! */
     let content = [
         'include <stdio.h>',
@@ -15,6 +17,8 @@
         '}'
     ].join('\n');
 
+    /** Whether the user has a participant ID, and is allowed to run code. */
+    let loggedIn = !!data.participantId;
     let enableRun = true;
     let pem: Diagnostics | null = null;
     let programOutput: string | null = null;
@@ -33,6 +37,11 @@
      * Post content to the server to be compiled and run.
      */
     async function runCode() {
+        if (!loggedIn) {
+            console.warn('Tried to run code when not logged in.');
+            return;
+        }
+
         /* Prepare FormData for the post including the contents */
         const formData = new FormData();
         formData.append('sourceCode', content);
@@ -109,7 +118,7 @@
                                 <button
                                     class="btn btn--submit"
                                     type="submit"
-                                    disabled={!okayToContinue}>Submit</button
+                                    disabled={!(loggedIn && okayToContinue)}>Submit</button
                                 >
                             </form>
                         </li>
@@ -118,7 +127,7 @@
                                 class="btn btn--run"
                                 type="submit"
                                 on:click={runCode}
-                                disabled={!enableRun}>Run</button
+                                disabled={!(loggedIn && enableRun)}>Run</button
                             >
                         </li>
                     </ul>
