@@ -18,17 +18,21 @@ interface GCCDiagnostics {
 }
 
 /**
+ * Diagnostics that were "enhanced" by an LLM. These will always contain the
+ * original diagnostics.
+ */
+interface LLMEnhancedDiagnostics {
+    format: 'llm-enhanced';
+    markdown: string;
+    original: Diagnostics;
+}
+
+/**
  * Generic, plain-text diagnostics.
  */
 interface PlainTextDiagnostics {
     format: 'plain-text';
     diagnostics: string[];
-}
-
-interface LLMEnhancedDiagnostics {
-    format: 'llm-enhanced';
-    diagnostics: LLMResponse;
-    original: Diagnostics;
 }
 
 /**
@@ -115,7 +119,7 @@ interface GCCPosition {
     column: number;
 }
 
-interface LLMResponse {
+interface RawLLMResponse {
     id: string;
     object: string;
     created: number;

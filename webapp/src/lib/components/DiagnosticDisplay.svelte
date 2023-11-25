@@ -22,7 +22,7 @@
     <blockquote>
         <svelte:self diagnostics={diagnostics.original} />
     </blockquote>
-    {@html marked.parse(diagnostics.diagnostics.choices[0].message.content)}
+    {@html marked.parse(diagnostics.markdown)}
 {:else}
     <pre class="problem"><code>{JSON.stringify(diagnostics, null, 4)}</code></pre>
 {/if}

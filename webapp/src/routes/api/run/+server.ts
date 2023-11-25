@@ -14,7 +14,7 @@ import { StatusCodes } from 'http-status-codes';
 const REMOTE_CODE_EXECUTION_URL = 'http://rce:8000/run/gcc';
 
 // TODO: I really need to filter this...
-const llmResponse: LLMResponse = {
+const llmResponse: RawLLMResponse = {
     id: '<redacted>',
     object: 'chat.completion',
     created: 1700779908,
@@ -57,17 +57,17 @@ export async function POST({ cookies, request }) {
     ]);
 
     // HACK
+    // TODO: do not mutate the original response
     const scenario = data.get('scenario');
     if (scenario === 'llm') {
         if (response.compilation.parsed === undefined) {
             throw error(500, "that's not right...");
         }
 
-        response.compilation.parsed = {
-            format: 'llm-enhanced',
-            diagnostics: llmResponse,
-            original: response.compilation.parsed
-        };
+        response.compilation.parsed = rawLLMResponseToDiagnostic(
+            response.compilation.parsed,
+            llmResponse
+        );
     }
 
     // Log the result of the run.
@@ -95,4 +95,18 @@ async function runCode(sourceCode: string): Promise<RunResult> {
         body: formData
     });
     return res.json();
+}
+
+/** Converts a raw response from the OpenAI API to a format usable by the UI. */
+function rawLLMResponseToDiagnostic(
+    originaDiagnostics: Diagnostics,
+    raw: RawLLMResponse
+): LLMEnhancedDiagnostics {
+    if (raw.choices.length === 0) throw new Error('Empty LLM response');
+
+    return {
+        format: 'llm-enhanced',
+        markdown: raw.choices[0].message.content,
+        original: originaDiagnostics
+    };
 }
