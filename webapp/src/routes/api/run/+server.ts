@@ -11,6 +11,7 @@ import type { ParticipantId } from '$lib/server/newtypes';
 import type { Diagnostics, LLMEnhancedDiagnostics } from '$lib/types/diagnostics';
 import type { RawRunResult, RunResult } from '$lib/server/run-code';
 import type { ClientSideRunResult } from '$lib/types/client-side-run-results';
+import type { Condition } from '$lib/types';
 
 /**
  * POST to this endpoint to compile and run the code.
@@ -26,7 +27,7 @@ export async function POST({ cookies, request }) {
     const data = await request.formData();
 
     // TODO: change name to "condition"?
-    const scenario = asScenario(data.get('scenario'));
+    const condition = toCondition(data.get('condition'));
 
     // TODO: Should I accept a file upload?
     const sourceCode = data.get('sourceCode');
@@ -40,7 +41,7 @@ export async function POST({ cookies, request }) {
     ]);
 
     // Enrich the raw run result, optionally enhancing it with the LLM.
-    const internalRunResult = await enrichRawRunResult(scenario, sourceCode, rawRunResult);
+    const internalRunResult = await enrichRawRunResult(condition, sourceCode, rawRunResult);
 
     // Log the result of the run.
     await logCompileOutput(compileEventId, internalRunResult);
@@ -70,25 +71,21 @@ async function runCode(sourceCode: string): Promise<RawRunResult> {
     return res.json();
 }
 
-// TODO: move this somewhere else?
-// TODO: rename to Condition?
-type Scenario = 'control' | 'enhanced' | 'llm-enhanced';
-
-function asScenario(scenario: FormDataEntryValue | null): Scenario {
-    if (scenario === null) {
-        console.warn("Received null scenario, defaulting to 'control'");
+function toCondition(input: FormDataEntryValue | null): Condition {
+    if (input === null) {
+        console.warn("Received null condition, defaulting to 'control'");
         return 'control';
     }
 
-    if (scenario === 'control' || scenario === 'enhanced' || scenario === 'llm-enhanced') {
-        return scenario;
+    if (input === 'control' || input === 'enhanced' || input === 'llm-enhanced') {
+        return input;
     }
 
-    throw error(StatusCodes.BAD_REQUEST, `Invalid scenario: ${scenario}`);
+    throw error(StatusCodes.BAD_REQUEST, `Invalid condition: ${input}`);
 }
 
 async function enrichRawRunResult(
-    scenario: Scenario,
+    condition: Condition,
     sourceCode: string,
     rawResult: RawRunResult
 ): Promise<RunResult> {
@@ -102,7 +99,7 @@ async function enrichRawRunResult(
 
     if (!success) {
         // Enhance the diagnostics with LLM
-        if (scenario === 'llm-enhanced') {
+        if (condition === 'llm-enhanced') {
             if (rawResult.compilation.parsed === undefined) {
                 throw error(500, "Can only enhance PEMs with LLM if they're parsed");
             }
@@ -125,7 +122,7 @@ function toClientSideFormat(result: RunResult): ClientSideRunResult {
 
 function extractDiagnostics(results: RunResult): Diagnostics | undefined {
     if (results.apiResponse) {
-        // There is only an API response if the scenario is LLM-enhanced.
+        // There is only an API response if the condition is LLM-enhanced.
         if (results.runResult.compilation.parsed === undefined) {
             throw new Error('Expecting all LLM-enhanced diagnostics to have parsed content');
         }

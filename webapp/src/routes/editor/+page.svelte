@@ -6,8 +6,10 @@
     import DiagnosticDisplay from '$lib/components/DiagnosticDisplay.svelte';
     import Editor from '$lib/components/Editor.svelte';
     import type { Diagnostics } from '$lib/types/diagnostics';
+    import type { Condition } from '$lib/types';
 
     export let data: import('./$types').PageData;
+    let condition: Condition = 'llm-enhanced';
 
     /* A C program with an error in it! */
     let content = [
@@ -44,7 +46,7 @@
         /* Prepare FormData for the post including the contents */
         const formData = new FormData();
         formData.append('sourceCode', content);
-        formData.append('scenario', 'llm-enhanced');
+        formData.append('condition', condition);
 
         let data;
         enableRun = false;
