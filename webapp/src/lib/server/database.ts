@@ -158,15 +158,13 @@ export async function saveParticipant(participantId: ParticipantId, classroomId:
 /**
  * Retrieves the hashed participation code for the given classroom.
  */
-export async function getParticipationCode(classroomId: ClassroomId): Promise<PasswordHash> {
+export async function getParticipationCode(classroomId: ClassroomId): Promise<PasswordHash | null> {
     const result = await Classrooms()
         .select('hashed_participation_code')
         .where('classroom_id', classroomId)
         .first();
 
-    // TODO: better error handling. An unknown classroom ID should not crash the server.
-    if (!result) throw new Error(`No classroom with ID '${classroomId}' exists.`);
-
+    if (!result) return null;
     return result.hashed_participation_code;
 }
 

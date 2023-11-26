@@ -14,7 +14,13 @@ export const actions: import('./$types').Actions = {
      * Presently, the participation ID must be checked here, so that we don't
      * have to validate it anywhere else.
      */
-    default: async ({ request, cookies }) => {
+    default: async ({ params, request, cookies }) => {
+        const classroom = params.classroom as ClassroomId;
+
+        const storedParticipationCode = await getParticipationCode(classroom);
+        if (storedParticipationCode == null)
+            throw error(StatusCodes.NOT_FOUND, 'The classroom was not found.');
+
         const data = await request.formData();
 
         // Check that the participant has consented to all:
@@ -24,20 +30,13 @@ export const actions: import('./$types').Actions = {
                 'You must consent to all of the above to participate.'
             );
 
-        // Make sure the classroom and participation code were specified:
-        if (!data.has('classroom'))
-            throw error(StatusCodes.BAD_REQUEST, 'The classroom was not specified.');
+        // Make sure the participation code were specified:
         if (!data.has('participation_code'))
             throw error(StatusCodes.BAD_REQUEST, 'The participation code was not specified.');
-
-        const classroom = data.get('classroom') as ClassroomId;
         const participationCode = data.get('participation_code') as string;
 
         // Check that the participation code is correct before continuing:
-        const codeOk = await validateParticipationCode(
-            await getParticipationCode(classroom),
-            participationCode
-        );
+        const codeOk = await validateParticipationCode(storedParticipationCode, participationCode);
         if (!codeOk) throw error(StatusCodes.BAD_REQUEST, 'The participation code was incorrect.');
 
         const participantID = makeNewParticipantId();
