@@ -85,6 +85,9 @@ export interface CompileOutput {
     compile_errors: RunResult;
 }
 
+/**
+ * Inserted when a participant starts an exercise.
+ */
 export interface ExerciseAttempt {
     participant_id: ParticipantId;
     exercise_id: ExerciseId;
@@ -92,13 +95,21 @@ export interface ExerciseAttempt {
     started_at: Date;
 }
 
+/**
+ * Inserted when a participant completes an exercise, either by submitting a
+ * solution or from a timeout.
+ */
 export interface CompletedExerciseAttempt {
     participant_id: ParticipantId;
     exercise_id: ExerciseId;
     completed_at: Date;
+    // TODO: change 'completed' to 'solved'?
     reason: 'completed' | 'timeout';
 }
 
+/**
+ * Links a compile event with an exercise attempt.
+ */
 export interface ExerciseCompileEvent {
     compile_event_id: CompileEventId;
     participant_id: ParticipantId;
@@ -227,6 +238,9 @@ export async function logCompileOutput(
     });
 }
 
+/**
+ * Logs the start of an exercise attempt.
+ */
 export async function logExerciseAttemptStart(
     participantId: ParticipantId,
     exerciseId: ExerciseId,
@@ -250,6 +264,9 @@ export async function logExerciseAttemptStart(
     }
 }
 
+/**
+ * Logs a completed exercise attempt.
+ */
 export async function logExerciseAttemptCompleted(
     participantId: ParticipantId,
     exerciseId: ExerciseId,
