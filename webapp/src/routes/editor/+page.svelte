@@ -4,7 +4,7 @@
     import { assets } from '$app/paths';
 
     import DiagnosticDisplay from '$lib/components/DiagnosticDisplay.svelte';
-    import Editor from '$lib/components/Editor.svelte';
+    import Editor from '$lib/components/MonacoEditor.svelte';
     import type { Diagnostics } from '$lib/types/diagnostics';
     import type { Condition } from '$lib/types';
 
