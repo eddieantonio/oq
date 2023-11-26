@@ -134,17 +134,25 @@ const ExerciseCompileEvents = () => db<ExerciseCompileEvent>('exercise_compile_e
  * Saves a new participant to the database.
  */
 export async function saveParticipant(participantId: ParticipantId, classroomId: ClassroomId) {
-    await Participants()
-        .insert({
-            participant_id: participantId,
-            classroom_id: classroomId,
-            started_at: new Date(),
-            // If we've gotten here, they have consented to all questions.
-            consented_to_all: true
-        })
-        // TODO: there should NEVER be a duplicate ID, so this merging behavior has to go.
-        .onConflict('participant_id')
-        .merge();
+    const insert = Participants().insert({
+        participant_id: participantId,
+        classroom_id: classroomId,
+        started_at: new Date(),
+        // If we've gotten here, they have consented to all questions.
+        consented_to_all: true
+    });
+
+    // Replace an existing participant ONLY for testing:
+    if (process.env.NODE_ENV === 'development' || participantId === 'TEST01') {
+        console.log({
+            file: 'database.ts',
+            debug: 'Replacing existing participant',
+            participantId
+        });
+        await insert.onConflict('participant_id').merge();
+    } else {
+        await insert;
+    }
 }
 
 /**
