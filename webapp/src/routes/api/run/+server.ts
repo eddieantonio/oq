@@ -11,8 +11,7 @@ import type { ParticipantId } from '$lib/server/newtypes';
 import type { Diagnostics, LLMEnhancedDiagnostics } from '$lib/types/diagnostics';
 import type { RawRunResult, RunResult } from '$lib/server/run-code';
 import type { ClientSideRunResult } from '$lib/types/client-side-run-results';
-import type { Condition } from '$lib/types';
-import { toExerciseId } from '$lib/server/util';
+import { toCondition, toExerciseId } from '$lib/server/util';
 
 /**
  * POST to this endpoint to compile and run the code.
@@ -28,6 +27,9 @@ export async function POST({ cookies, request }) {
     const data = await request.formData();
 
     const condition = toCondition(data.get('condition'));
+    if (condition === null) {
+        throw fail(StatusCodes.BAD_REQUEST, { condition, missing: true });
+    }
 
     // TODO: Should I accept a file upload?
     const sourceCode = data.get('sourceCode');
@@ -89,19 +91,6 @@ async function runCode(sourceCode: string): Promise<RawRunResult> {
         body: formData
     });
     return res.json();
-}
-
-function toCondition(input: FormDataEntryValue | null): Condition {
-    if (input === null) {
-        console.warn("Received null condition, defaulting to 'control'");
-        return 'control';
-    }
-
-    if (input === 'control' || input === 'enhanced' || input === 'llm-enhanced') {
-        return input;
-    }
-
-    throw error(StatusCodes.BAD_REQUEST, `Invalid condition: ${input}`);
 }
 
 function toClientSideFormat(result: RunResult): ClientSideRunResult {

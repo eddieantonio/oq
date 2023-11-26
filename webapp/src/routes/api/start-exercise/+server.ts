@@ -3,8 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 
 import { logExerciseAttemptStart } from '$lib/server/database';
 import type { ParticipantId } from '$lib/server/newtypes';
-import type { Condition } from '$lib/types';
-import { toExerciseId } from '$lib/server/util';
+import { toCondition, toExerciseId } from '$lib/server/util';
 
 /**
  * Starts an exercise.
@@ -18,25 +17,15 @@ export async function POST({ cookies, request }) {
     const data = await request.formData();
     const exerciseId = toExerciseId(data.get('exerciseId'));
     if (exerciseId === null) throw error(StatusCodes.BAD_REQUEST, 'No exerciseId provided');
-    const condition = toCondition(data.get('condition'));
+    let condition = toCondition(data.get('condition'));
+    if (condition === null) {
+        console.warn("Received null condition, defaulting to 'control'");
+        condition = 'control';
+    }
 
     // Insert into the database.
     await logExerciseAttemptStart(participantId, exerciseId, condition);
 
     // I don't know what should be returned here.
     return json({ success: true, exerciseId });
-}
-
-// TODO: place in a shared library
-function toCondition(input: FormDataEntryValue | null): Condition {
-    if (input === null) {
-        console.warn("Received null condition, defaulting to 'control'");
-        return 'control';
-    }
-
-    if (input === 'control' || input === 'enhanced' || input === 'llm-enhanced') {
-        return input;
-    }
-
-    throw error(StatusCodes.BAD_REQUEST, `Invalid condition: ${input}`);
 }
