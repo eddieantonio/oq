@@ -7,6 +7,7 @@
     import Editor from '$lib/components/MonacoEditor.svelte';
     import type { Diagnostics } from '$lib/types/diagnostics';
     import type { Condition } from '$lib/types';
+    import type { ClientSideRunResult } from '$lib/types/client-side-run-results';
 
     export let data: import('./$types').PageData;
     let condition: Condition = 'control';
@@ -44,18 +45,10 @@
         }
 
         /* Prepare FormData for the post including the contents */
-        const formData = new FormData();
-        formData.append('sourceCode', content);
-        formData.append('condition', condition);
-
-        let data;
+        let response;
         enableRun = false;
         try {
-            const res = await fetch('/api/run', {
-                method: 'POST',
-                body: formData
-            });
-            data = await res.json();
+            response = await runCodeOnServer(content, condition);
         } catch (error) {
             // TODO: show some sort of application error message
             console.error(error);
@@ -64,40 +57,30 @@
             enableRun = true;
         }
 
-        okayToContinue = data.success;
-
-        if (data.diagnostics) {
-            pem = parseDiagnostics(data.diagnostics);
-        } else {
-            pem = null;
-        }
-
-        if (data.output) {
-            programOutput = data.output;
-        } else {
-            programOutput = null;
-        }
+        okayToContinue = response.success;
+        pem = response.diagnostics || null;
+        programOutput = response.output || null;
 
         if (pem) {
             bottomTab = 'problems';
         } else {
             bottomTab = 'output';
         }
-
-        enableRun = true;
     }
 
-    // TODO: make this way better!
-    /**
-     * This is a really awful function that "parses" whatever the web hook gave us.
-     * @param compilation
-     */
-    function parseDiagnostics(compilation: unknown): Diagnostics {
-        if ((compilation as any).format) {
-            return compilation as any as Diagnostics;
-        } else {
-            throw new Error('Could not parse diagnostics from compilation.');
-        }
+    async function runCodeOnServer(
+        sourceCode: string,
+        condition: Condition
+    ): Promise<ClientSideRunResult> {
+        const formData = new FormData();
+        formData.append('sourceCode', sourceCode);
+        formData.append('condition', condition);
+
+        const res = await fetch('/api/run', {
+            method: 'POST',
+            body: formData
+        });
+        return await res.json();
     }
 </script>
 
