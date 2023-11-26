@@ -2,6 +2,7 @@
     import * as marked from 'marked';
 
     import type { Diagnostics } from '$lib/types/diagnostics';
+    import GCCDiagnosticsDisplay from './diagnostics/GCCDiagnosticsDisplay.svelte';
 
     /**
      * The diagnostics object returned by the RCE server.
@@ -13,13 +14,7 @@
 </script>
 
 {#if diagnostics.format === 'gcc-json'}
-    <pre><code
-            >{#each diagnostics.diagnostics as d}{@const location = d.locations[0].caret}<b
-                    >{location.file}</b
-                >:<b>{location.line}</b>:{#if location.column > 0}<b>{location.column}</b>:{/if} <b
-                    style="color: {d.kind == 'error' ? 'red' : 'orange'}">{d.kind}:</b
-                > {d.message}{'\n'}{/each}</code
-        ></pre>
+    <GCCDiagnosticsDisplay {diagnostics} />
 {:else if diagnostics.format === 'llm-enhanced'}
     <blockquote>
         <svelte:self diagnostics={diagnostics.original} />
