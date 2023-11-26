@@ -61,6 +61,7 @@ def compile_c_program(app, filename, executable_name):
 
     compile_args = [
         "gcc",
+        "-Werror",
         "-fdiagnostics-format=json",
         "-o",
         executable_name,
