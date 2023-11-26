@@ -2,8 +2,9 @@ import { error, json } from '@sveltejs/kit';
 import { StatusCodes } from 'http-status-codes';
 
 import { logExerciseAttemptStart } from '$lib/server/database';
-import type { ExerciseId, ParticipantId } from '$lib/server/newtypes';
+import type { ParticipantId } from '$lib/server/newtypes';
 import type { Condition } from '$lib/types';
+import { toExerciseId } from '$lib/server/util';
 
 /**
  * Starts an exercise.
@@ -16,6 +17,7 @@ export async function POST({ cookies, request }) {
 
     const data = await request.formData();
     const exerciseId = toExerciseId(data.get('exerciseId'));
+    if (exerciseId === null) throw error(StatusCodes.BAD_REQUEST, 'No exerciseId provided');
     const condition = toCondition(data.get('condition'));
 
     // Insert into the database.
@@ -23,13 +25,6 @@ export async function POST({ cookies, request }) {
 
     // I don't know what should be returned here.
     return json({ success: true, exerciseId });
-}
-
-function toExerciseId(exerciseId: FormDataEntryValue | null): ExerciseId {
-    if (!exerciseId || typeof exerciseId != 'string')
-        throw error(StatusCodes.BAD_REQUEST, 'No exerciseId provided');
-
-    return exerciseId as ExerciseId;
 }
 
 // TODO: place in a shared library
