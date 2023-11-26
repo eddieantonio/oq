@@ -1,9 +1,9 @@
 <script lang="ts">
     import { dev } from '$app/environment';
 
-    import ActionBar from '$lib/components/ActionBar.svelte';
+    import ActionBar from '$lib/components/forms/ActionBar.svelte';
     import DiagnosticDisplay from '$lib/components/DiagnosticDisplay.svelte';
-    import LikertScale from '$lib/components/LikertScale.svelte';
+    import LikertScale from '$lib/components/forms/LikertScale.svelte';
     import type { Diagnostics } from '$lib/types/diagnostics';
 
     const pem: Diagnostics = {

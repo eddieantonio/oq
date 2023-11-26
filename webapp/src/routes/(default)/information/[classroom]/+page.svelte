@@ -1,5 +1,5 @@
 <script lang="ts">
-    import ActionBar from '$lib/components/ActionBar.svelte';
+    import ActionBar from '$lib/components/forms/ActionBar.svelte';
     export let data: import('./$types').PageData;
 </script>
 

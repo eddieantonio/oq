@@ -1,6 +1,6 @@
 <script lang="ts">
-    import ConsentCheckbox from '$lib/components/ConsentCheckbox.svelte';
-    import ActionBar from '$lib/components/ActionBar.svelte';
+    import ConsentCheckbox from '$lib/components/forms/ConsentCheckbox.svelte';
+    import ActionBar from '$lib/components/forms/ActionBar.svelte';
 
     export let data: import('./$types').PageData;
 

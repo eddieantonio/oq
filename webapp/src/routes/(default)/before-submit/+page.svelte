@@ -1,5 +1,5 @@
 <script>
-    import ActionBar from '$lib/components/ActionBar.svelte';
+    import ActionBar from '$lib/components/forms/ActionBar.svelte';
 </script>
 
 <header>

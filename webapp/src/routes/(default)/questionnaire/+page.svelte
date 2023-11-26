@@ -1,9 +1,9 @@
 <script lang="ts">
     import { dev } from '$app/environment';
-    import ActionBar from '$lib/components/ActionBar.svelte';
+    import ActionBar from '$lib/components/forms/ActionBar.svelte';
 
-    import LikertScale from '$lib/components/LikertScale.svelte';
-    import ShortAnswer from '$lib/components/ShortAnswer.svelte';
+    import LikertScale from '$lib/components/forms/LikertScale.svelte';
+    import ShortAnswer from '$lib/components/forms/ShortAnswer.svelte';
 
     const studyLanguage = 'C';
 
