@@ -10,10 +10,13 @@
  */
 
 /** Uniquely identifies a particular compile event. */
-export type CompileEventId = number & { __CompileEventId: never };
+export type ExerciseId = string & { __exerciseId: never };
+
+/** Uniquely identifies a particular compile event. */
+export type CompileEventId = number & { __compileEventId: never };
 
 /** A hexadecimal respresentation of a SHA256 hash of something. */
-export type SHA256Hash = string & { __SHA256Hash: never };
+export type SHA256Hash = string & { __sha256Hash: never };
 
 /** A password hash, in the format stored in the database.  */
 export type PasswordHash = string & { __passwordHash: never };

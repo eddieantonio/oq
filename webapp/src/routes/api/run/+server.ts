@@ -7,7 +7,7 @@ import { StatusCodes } from 'http-status-codes';
 
 import { logCompileOutput, logCompileEvent } from '$lib/server/database';
 import { fakeEnhanceWithLLM, type RawLLMResponse } from '$lib/server/llm';
-import type { ParticipantId } from '$lib/server/newtypes';
+import type { ExerciseId, ParticipantId } from '$lib/server/newtypes';
 import type { Diagnostics, LLMEnhancedDiagnostics } from '$lib/types/diagnostics';
 import type { RawRunResult, RunResult } from '$lib/server/run-code';
 import type { ClientSideRunResult } from '$lib/types/client-side-run-results';
@@ -33,9 +33,14 @@ export async function POST({ cookies, request }) {
     if (!sourceCode || !(typeof sourceCode == 'string'))
         throw fail(StatusCodes.BAD_REQUEST, { sourceCode, missing: true });
 
+    const exercise = (data.get('exerciseId') as ExerciseId) || null;
+    if (!exercise) {
+        console.warn({ route: 'api/run', warning: 'No exerciseId provided' });
+    }
+
     // Simultaneously insert a new compile event while running the actual code.
     const [compileEventId, rawRunResult] = await Promise.all([
-        logCompileEvent(participantId, sourceCode),
+        logCompileEvent(participantId, sourceCode, exercise),
         runCode(sourceCode)
     ]);
 

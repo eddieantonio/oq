@@ -4,12 +4,14 @@ import config from '../../../knexfile';
 import type {
     ClassroomId,
     CompileEventId,
+    ExerciseId,
     ParticipantId,
     PasswordHash,
     SHA256Hash
 } from './newtypes';
 import { hashSourceCode } from './hash';
 import type { RunResult } from './run-code';
+import type { Condition } from '$lib/types';
 
 ////////////////////////////////////////////// Config //////////////////////////////////////////////
 
@@ -83,6 +85,26 @@ export interface CompileOutput {
     compile_errors: RunResult;
 }
 
+export interface ExerciseAttempt {
+    participant_id: ParticipantId;
+    exercise_id: ExerciseId;
+    condition: Condition;
+    started_at: Date;
+}
+
+export interface CompletedExerciseAttempt {
+    participant_id: ParticipantId;
+    exercise_id: ExerciseId;
+    completed_at: Date;
+    reason: 'completed' | 'timeout';
+}
+
+export interface ExerciseCompileEvent {
+    compile_event_id: CompileEventId;
+    participant_id: ParticipantId;
+    exercise_id: ExerciseId;
+}
+
 ////////////////////////////////// Tables (for use in TypeScript) //////////////////////////////////
 
 const Participants = () => db<Participant>('participants');
@@ -91,6 +113,9 @@ const Classrooms = () => db<Classroom>('classrooms');
 const CompileEvent = () => db<CompileEvent>('compile_events');
 const Snapshot = () => db<Snapshot>('snapshots');
 const CompileOutputs = () => db<CompileOutput>('compile_outputs');
+const ExerciseAttempts = () => db<ExerciseAttempt>('exercise_attempts');
+const CompletedExerciseAttempts = () => db<CompletedExerciseAttempt>('completed_exercise_attempts');
+const ExerciseCompileEvents = () => db<ExerciseCompileEvent>('exercise_compile_events');
 
 //////////////////////////////////////////// Public API ////////////////////////////////////////////
 
@@ -148,7 +173,8 @@ export async function getAllAnswers(): Promise<Answer[]> {
  */
 export async function logCompileEvent(
     participantId: ParticipantId,
-    sourceCode: string
+    sourceCode: string,
+    exerciseId: ExerciseId | null
 ): Promise<CompileEventId> {
     const snapshotId = hashSourceCode(sourceCode);
 
@@ -169,7 +195,17 @@ export async function logCompileEvent(
         })
         .returning('compile_event_id');
 
-    return result.compile_event_id as CompileEventId;
+    const compileEventId = result.compile_event_id as CompileEventId;
+
+    if (exerciseId != null) {
+        await ExerciseCompileEvents().insert({
+            participant_id: participantId,
+            exercise_id: exerciseId,
+            compile_event_id: compileEventId
+        });
+    }
+
+    return compileEventId;
 }
 
 /**
@@ -189,4 +225,50 @@ export async function logCompileOutput(
         success,
         compile_errors: results
     });
+}
+
+export async function logExerciseAttemptStart(
+    participantId: ParticipantId,
+    exerciseId: ExerciseId,
+    condition: Condition
+) {
+    const insert = ExerciseAttempts().insert({
+        participant_id: participantId,
+        exercise_id: exerciseId,
+        started_at: new Date(),
+        condition
+    });
+
+    if (process.env.NODE_ENV === 'development') {
+        console.log({
+            file: 'database.ts',
+            debug: 'Merging exercise attempt start'
+        });
+        await insert.onConflict(['participant_id', 'exercise_id']).merge();
+    } else {
+        await insert;
+    }
+}
+
+export async function logExerciseAttemptCompleted(
+    participantId: ParticipantId,
+    exerciseId: ExerciseId,
+    reason: 'completed' | 'timeout'
+) {
+    const insert = CompletedExerciseAttempts().insert({
+        participant_id: participantId,
+        exercise_id: exerciseId,
+        completed_at: new Date(),
+        reason
+    });
+
+    if (process.env.NODE_ENV === 'development') {
+        console.log({
+            file: 'database.ts',
+            debug: 'Merging exercise attempt completion'
+        });
+        await insert.onConflict(['participant_id', 'exercise_id']).merge();
+    } else {
+        await insert;
+    }
 }

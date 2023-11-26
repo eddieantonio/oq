@@ -8,6 +8,7 @@
     import type { Diagnostics } from '$lib/types/diagnostics';
     import type { Condition } from '$lib/types';
     import type { ClientSideRunResult } from '$lib/types/client-side-run-results';
+    import type { ExerciseId } from '$lib/server/newtypes';
 
     /** The source code content in the editor. */
     export let content: string;
@@ -15,6 +16,8 @@
     export let language: string;
     /** The experimental condition. */
     export let condition: Condition;
+    /** The exercise that the participant is attempting. */
+    export let exercise: ExerciseId;
     /** Whether the editor is enabled at all. */
     export let enabled: boolean = true;
 
@@ -27,7 +30,28 @@
 
     // Compile the code when the page first loads.
     // This should initialize the diagnostics.
-    onMount(() => void runCode());
+    onMount(() => void startExercise());
+
+    async function startExercise() {
+        if (!enabled) {
+            console.warn('Tried to start exercise attempt when not logged in.');
+            return;
+        }
+
+        const formData = new URLSearchParams();
+        formData.append('exerciseId', exercise);
+        formData.append('condition', condition);
+        const res = await fetch('/api/start-exercise', {
+            method: 'POST',
+            body: formData
+        });
+        const json = await res.json();
+        if (!json.success) {
+            console.error(json);
+            return;
+        }
+        return await runCode();
+    }
 
     /**
      * Post content to the server to be compiled and run.
@@ -42,7 +66,7 @@
         let response;
         enableRun = false;
         try {
-            response = await runCodeOnServer(content, condition);
+            response = await runCodeOnServer(content, condition, exercise);
         } catch (error) {
             // TODO: show some sort of application error message
             console.error(error);
@@ -64,11 +88,13 @@
 
     async function runCodeOnServer(
         sourceCode: string,
-        condition: Condition
+        condition: Condition,
+        exerciseId: ExerciseId
     ): Promise<ClientSideRunResult> {
         const formData = new FormData();
         formData.append('sourceCode', sourceCode);
         formData.append('condition', condition);
+        formData.append('exerciseId', exerciseId);
 
         const res = await fetch('/api/run', {
             method: 'POST',
@@ -94,6 +120,7 @@
                         <li><button class="btn btn--pass" type="submit" disabled>Pass</button></li>
                         <li>
                             <form method="POST" action="?/submit">
+                                <input type="hidden" name="exerciseId" value={exercise} />
                                 <button
                                     class="btn btn--submit"
                                     type="submit"
