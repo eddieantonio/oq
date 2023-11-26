@@ -34,9 +34,11 @@ export const actions: import('./$types').Actions = {
         const participationCode = data.get('participation_code') as string;
 
         // Check that the participation code is correct before continuing:
-        const hashedParticipationCode = await getParticipationCode(classroom);
-        if (!validateParticipationCode(hashedParticipationCode, participationCode))
-            throw error(StatusCodes.BAD_REQUEST, 'The participation code was incorrect.');
+        const codeOk = await validateParticipationCode(
+            await getParticipationCode(classroom),
+            participationCode
+        );
+        if (!codeOk) throw error(StatusCodes.BAD_REQUEST, 'The participation code was incorrect.');
 
         const participantID = makeNewParticipantId();
 
