@@ -22,8 +22,8 @@
         '}'
     ].join('\n');
 
-    /** Whether the user has a participant ID, and is allowed to run code. */
-    let loggedIn = !!data.participantId;
+    /** Whether the editor is enabled at all. */
+    let enabled = !!data.participantId;
     let enableRun = true;
     let pem: Diagnostics | null = null;
     let programOutput: string | null = null;
@@ -39,7 +39,7 @@
      * Post content to the server to be compiled and run.
      */
     async function runCode() {
-        if (!loggedIn) {
+        if (!enabled) {
             console.warn('Tried to run code when not logged in.');
             return;
         }
@@ -103,7 +103,7 @@
                                 <button
                                     class="btn btn--submit"
                                     type="submit"
-                                    disabled={!(loggedIn && okayToContinue)}>Submit</button
+                                    disabled={!(enabled && okayToContinue)}>Submit</button
                                 >
                             </form>
                         </li>
@@ -112,7 +112,7 @@
                                 class="btn btn--run"
                                 type="submit"
                                 on:click={runCode}
-                                disabled={!(loggedIn && enableRun)}>Run</button
+                                disabled={!(enabled && enableRun)}>Run</button
                             >
                         </li>
                     </ul>
