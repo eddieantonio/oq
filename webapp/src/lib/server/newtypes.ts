@@ -9,7 +9,32 @@
  * See: https://kubyshkin.name/posts/newtype-in-typescript/
  */
 
-/** Uniquely identifies a particular compile event. */
+/**
+ * A label for the exercise that the participant is attempting.
+ *
+ * A note on terminology:
+ *
+ *      Exercise: an instance of a participant attempting a task/scenario.
+ *      Task: erroneous source code that the participant must fix.
+ *         Maybe a better name would be Scenario?
+ *      Presentation:
+ *         What type of error message will be presented to the user for a
+ *         particular exercise.
+ *           - default
+ *           - manually-enhanced
+ *           - llm-enhanced
+ *      Condition:
+ *          Sort of synonymous with "presentation", but uses more generic
+ *          scientific terminology.
+ *           - control
+ *           - treatment A
+ *           - treatment B
+ *      Assignment:
+ *          A participant will do a number of exercises, and each exercise will
+ *          have an assigned task (scenario) and presentation (condition).
+ *          The assignment is the pairing of a task and a presentation for a
+ *          particular exercise.
+ */
 export type ExerciseId = string & { __exerciseId: never };
 
 /** Uniquely identifies a particular compile event. */
