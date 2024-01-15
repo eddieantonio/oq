@@ -45,3 +45,5 @@ services:
     environment:
       # We don't need nearly as many workers as in prod.
       GUNICORN_WORKERS: 2
+    ports:
+      - '8000:8000'

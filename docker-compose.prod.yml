@@ -9,6 +9,7 @@ services:
         # My user/group IDs on the machine. Not sure why they're off by one.
         GROUP_ID: 1093
         USER_ID: 1092
+    restart: always
     environment:
       NODE_ENV: production
       DATABASE_PATH: /app/run/answers.sqlite3
@@ -21,6 +22,7 @@ services:
       - /home/eddie/oq/run/:/app/run/
 
   rce:
+    restart: always
     environment:
       # We still don't need that many workers
       GUNICORN_WORKERS: 4
