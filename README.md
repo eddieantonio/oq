@@ -19,7 +19,7 @@ In the future, I might add the following:
 
 [SvelteKit]: https://kit.svelte.dev
 
-## How user compliation works
+## How user compilation works
 
 Here is the flow of a users' code can be compiled and run:
 
@@ -58,7 +58,7 @@ You will need:
 
 This is my development setup:
 
- - I setup all of my nodejs stuff on my **host** machine (for me, that's my Mac).
+ - I setup all of my Node.js stuff on my **host** machine (for me, that's my Mac).
     - go into `./webapp` and run `npm install`
  - I use Visual Studio Code with the Prettier extension to edit files.
  - I use [Docker Compose][] to run the development server.
@@ -179,7 +179,6 @@ To deploy, you **must** run:
 ln -s docker-composer.{prod,override}.yml
 ```
 
-
 The following directory is bind-mounted to the webapp container:
 
     /home/eddie/oq/run
@@ -195,5 +194,5 @@ What this means is that the database can be found in there!
 Make sure all containers are running, then use the following command:
 
 ```sh
-docker compose exec webapp node_modules/.bin/knex migrate:latest
+docker compose exec webapp node_modules/.bin/knex --knexfile /app/knexfile.cjs migrate:latest
 ```

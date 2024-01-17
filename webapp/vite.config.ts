@@ -15,8 +15,8 @@ export default defineConfig({
         // from what is used in production)
         port: 3000,
         // on macOS, sometimes multiple apps will bind to the same port. This
-        // prevents that from happening, however, it will not prevent it the
-        // port is being accessed via Docker:
+        // option prevents that from happening, however, it will not prevent
+        // the port from being accessed via Docker:
         strictPort: true
     }
 });
