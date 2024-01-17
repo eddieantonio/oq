@@ -23,21 +23,6 @@ export interface RunResult {
 }
 
 /**
- * Running the code on the RCE server will return a JSON object with the
- * following structure:
- */
-export interface RceRawRunResult {
-    /**
-     * Diagnostics from the compilation step.
-     */
-    compilation: CommandResponse;
-    /**
-     * Output from running the code.
-     */
-    execution: CommandResponse | null;
-}
-
-/**
  * Represents the run of either a compiler or a program.
  */
 export interface CommandResponse {
