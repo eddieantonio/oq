@@ -28,3 +28,10 @@ services:
   rce:
     build: ./rce
     init: true
+
+  piston:
+    image: ghcr.io/eddieantonio/piston:20231101-gcc10
+    restart: always
+    tmpfs:
+        - /piston/jobs:exec,uid=1000,gid=1000,mode=711
+        - /tmp:exec

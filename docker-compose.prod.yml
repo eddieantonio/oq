@@ -26,3 +26,6 @@ services:
     environment:
       # We still don't need that many workers
       GUNICORN_WORKERS: 4
+
+  piston:
+    restart: always

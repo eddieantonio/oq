@@ -47,3 +47,8 @@ services:
       GUNICORN_WORKERS: 2
     ports:
       - '8000:8000'
+
+  piston:
+    build: ./piston
+    ports:
+        - 2000:2000
