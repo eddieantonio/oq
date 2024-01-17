@@ -86,7 +86,11 @@ function extractMarkersFromGCCDiagnostics(
             continue;
         }
 
-        console.assert(diagnostic['column-origin'] === 1, 'assuming 1-based indexing');
+        // GCC might tell us whether column numbering starts at 0 or 1:
+        if (diagnostic['column-origin']) {
+            console.assert(diagnostic['column-origin'] === 1, 'assuming 1-based indexing');
+        }
+        // ...either way, assume 1-based indexing.
 
         const start = diagnostic.locations[0].caret;
         const end = diagnostic.locations[0].finish || start;

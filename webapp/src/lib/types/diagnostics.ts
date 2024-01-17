@@ -62,8 +62,10 @@ export interface RootGCCDiagnostic extends GCCDiagnostic {
     /**
      * What kind of indexing to use for the column numbers in the locations.
      * GCC defaults to 1-based indexing, but can be configured to use 0-based indexing.
+     *
+     * @since gcc 11.1.0
      */
-    'column-origin': number;
+    'column-origin'?: number;
 }
 
 interface GCCLocation {
