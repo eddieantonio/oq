@@ -31,14 +31,16 @@ export interface PistonResponse {
         stdout: string;
         stderr: string;
         output: string;
-        code: number;
+        /* Code is null when the compilation is exceeds time or memory limits. */
+        code: number | null;
         signal: string | null;
     };
     run: {
         stdout: string;
         stderr: string;
         output: string;
-        code: number;
+        /* Code is null when the program is terminated by a signal. */
+        code: number | null;
         signal: string | null;
     };
 }
