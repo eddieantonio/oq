@@ -50,8 +50,14 @@ You will need:
  - Docker (I am using v4.25.0)
  - Node (I am using Node v20.4.0)
 
-# Development
+# Piston
 
+To get Piston setup, I had to do a bunch of stuff manually (automating
+the steps is quite annoying and not worth it right now). See
+`piston/README.md` for details, but make sure to have this setup before
+continuing.
+
+# Development
 
 > [!IMPORTANT]
 > See [Installing new npm packages](#installing-new-npm-packages) as things are not straightforward.
@@ -194,5 +200,5 @@ What this means is that the database can be found in there!
 Make sure all containers are running, then use the following command:
 
 ```sh
-docker compose exec webapp node_modules/.bin/knex --knexfile /app/knexfile.cjs migrate:latest
+docker compose exec webapp knex --knexfile /app/knexfile.cjs migrate:latest
 ```
