@@ -1,4 +1,5 @@
 import type { Diagnostics } from '$lib/types/diagnostics';
+import type { PistonResponse } from '$lib/types/piston';
 import type { RawLLMResponse } from './llm';
 
 /**
@@ -13,17 +14,19 @@ export interface RunResult {
      * it might not be the same as the exit code from the raw run result.
      */
     success: boolean;
-    /** Raw results from the RCE. */
-    runResult: RawRunResult;
+    /** Raw results from Piston. */
+    pistonResponse: PistonResponse;
     /** (optional) The raw response from enhancing the diagnostics with an LLM. */
     apiResponse?: RawLLMResponse;
+    /** (optional) A data structure representing the diagnostics. This might be added later. */
+    parsedDiagnostics?: Diagnostics;
 }
 
 /**
  * Running the code on the RCE server will return a JSON object with the
  * following structure:
  */
-export interface RawRunResult {
+export interface RceRawRunResult {
     /**
      * Diagnostics from the compilation step.
      */
