@@ -4,7 +4,7 @@
     import LLMDiagnosticsDisplay from './diagnostics/LLMDiagnosticsDisplay.svelte';
 
     /**
-     * The diagnostics object returned by the RCE server.
+     * The diagnostics object returned by the code execution server.
      */
     export let diagnostics: Diagnostics;
 

@@ -39,7 +39,7 @@ self.MonacoEnvironment = {
  * Places markers (red squiggly lines) in the editor based on the diagnostics provided.
  *
  * @param model The current editor model
- * @param diagnostics the main diagnostics object from the RCE
+ * @param diagnostics the main diagnostics object
  */
 export function setMarkersFromDiagnostics(
     model: monaco.editor.ITextModel,

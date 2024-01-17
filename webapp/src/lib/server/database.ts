@@ -76,7 +76,7 @@ export interface Snapshot {
 
 /**
  * The result of compiling or running code. At present, this includes the
- * entire, unedited output from the RCE server, and a redundant field that
+ * entire, unedited output from the code execution server, and a redundant field that
  * indicates whether the file was successfully run/compiled.
  */
 export interface CompileOutput {

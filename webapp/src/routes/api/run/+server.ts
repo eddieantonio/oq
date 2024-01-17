@@ -1,5 +1,5 @@
 /**
- * Sends code to be run on the RCE server, and logs all necessary study data.
+ * Sends code to be run on Piston and logs all necessary study data.
  */
 
 import { error, fail, json } from '@sveltejs/kit';

@@ -9,8 +9,7 @@ The oq platform currently has the following parts:
  - **webapp** — a [SvelteKit][] full-stack application that is what users see when they
    interact with the application. The webapp is also responsible for maintaining
    the database schema.
- - **rce** — the remote code execution engine. At the current writing (2023-11-14),
-   an demo application is in place that is **not suitable for production**. See issue #4
+ - **piston** — a customized version of [Piston][] — code execution engine.
 
 In the future, I might add the following:
 
@@ -18,6 +17,7 @@ In the future, I might add the following:
    using SQLite3, but if I need more concurrency, I plan to switch to PostgreSQL.
 
 [SvelteKit]: https://kit.svelte.dev
+[Piston]: https://github.com/engineer-man/piston
 
 ## How user compilation works
 
@@ -28,15 +28,15 @@ Here is the flow of a users' code can be compiled and run:
 sequenceDiagram
   actor User
   participant webapp
-  participant rce
+  participant piston
 
   User ->> webapp: press "Run code" button
   activate webapp
-  webapp ->>+ rce: HTTP POST /run/{lang}
+  webapp ->>+ piston: HTTP POST /api/v2/execute
   deactivate webapp
-  rce ->> rce: Compile code
-  rce ->> rce: Run code
-  rce -->>- webapp: Run results
+  piston ->> piston: Compile code
+  piston ->> piston: Run code
+  piston -->>- webapp: Run results
   
   activate webapp
   webapp -->> User: Output or error message
