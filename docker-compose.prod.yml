@@ -21,11 +21,5 @@ services:
     volumes:
       - /home/eddie/oq/run/:/app/run/
 
-  rce:
-    restart: always
-    environment:
-      # We still don't need that many workers
-      GUNICORN_WORKERS: 4
-
   piston:
     restart: always

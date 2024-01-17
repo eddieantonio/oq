@@ -41,13 +41,6 @@ services:
       # See: https://stackoverflow.com/a/37898591/6626414
       - /app/node_modules
 
-  rce:
-    environment:
-      # We don't need nearly as many workers as in prod.
-      GUNICORN_WORKERS: 2
-    ports:
-      - '8000:8000'
-
   piston:
     build: ./piston
     ports:

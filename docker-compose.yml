@@ -19,15 +19,9 @@ services:
   webapp:
     build: ./webapp
     depends_on:
-      - rce
+      - piston
     ports:
       - '3000:3000'
-
-  # The remote code execution engine. For now, this is a quick and dirty engine.
-  # It MUST be replaced with something like Jobe or Piston in production.
-  rce:
-    build: ./rce
-    init: true
 
   piston:
     image: ghcr.io/eddieantonio/piston:20231101-gcc10
