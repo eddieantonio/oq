@@ -195,10 +195,19 @@ What this means is that the database can be found in there!
  1. how to build
  2. how to migrate
 
-### Migration
+## Creating the database
 
 Make sure all containers are running, then use the following command:
 
 ```sh
-docker compose exec webapp knex --knexfile /app/knexfile.cjs migrate:latest
+docker compose exec webapp knex-wrapper migrate:latest
 ```
+
+The very first time you deploy, you also need to insert initial data (seed data):
+
+```sh
+docker compose exec webapp knex-wrapper seed:run
+```
+
+It will ask you to create a password which will be the "participantion code" for
+the classroom.
