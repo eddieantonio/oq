@@ -1,0 +1,34 @@
+#!/bin/sh
+
+# Invokes Knex correctly, depending on the environment.
+#
+# The problem that I created for myself is that Knex is configured through a file that is a:
+#
+#  - a) ESM module
+#  - b) TypeScript file
+#
+# The correct invocation of Knex when you have a TypeScript compiler around is:
+#
+# $ env NODE_OPTIONS=--loader ts-node/esm ./node_modules/.bin/knex --knexfile Knexfile.ts
+#
+# However, in production, the TypeScript compiler is not available, so the
+# Dockerfile helpfully compiles this into a CommonJS module (note: **no longer**
+# ESM!) Since the webapp's package.json has "type": "module", the Knexfile MUST
+# be a file with a .cjs extension.  Knex does not automatically pick up on the
+# .cjs extension, annoyingly.
+#
+# So this is how you have to invoke Knex in production:
+#
+# $ ./node_modules/.bin/knex --knexfile Knexfile.cjs
+#
+# This script attempts to solve this problem by detecting whether ts-node is installed,
+# and using Knexfile.ts with the ts-node/esm loader. Otherwise, we assume we are production
+# and using Knexfile.cjs.
+
+if [ -d ./node_modules/ts-node ]; then
+    exec env NODE_OPTIONS='--loader ts-node/esm' ./node_modules/.bin/knex "$@"
+else
+    # Ensure that Knexfile.cjs exists
+    test -f Knexfile.cjs || (echo "Knexfile.cjs does not exist and neither does ts-node. What gives?" && exit 1)
+    exec ./node_modules/.bin/knex --knexfile Knexfile.cjs "$@"
+fi

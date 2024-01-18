@@ -6,9 +6,10 @@
     "scripts": {
         "dev": "vite dev",
         "build": "vite build",
-        "seed": "NODE_OPTIONS='--loader ts-node/esm' knex seed:run",
-        "unmigrate": "NODE_OPTIONS='--loader ts-node/esm' knex migrate:down",
-        "migrate": "NODE_OPTIONS='--loader ts-node/esm' knex migrate:latest",
+        "seed": "knex-wrapper seed:run",
+        "unmigrate": "knex-wrapper migrate:down",
+        "migrate": "knex-wrapper migrate:latest",
+        "postinstall": "cp bin/* node_modules/.bin/ && chmod +x node_modules/.bin/*",
         "preview": "vite preview",
         "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
         "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
