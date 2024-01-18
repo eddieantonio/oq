@@ -24,6 +24,7 @@ FROM node:20-alpine${ALPINE_VERSION} as base
 
 WORKDIR /app
 # Install dependencies first...
+COPY bin ./bin
 COPY package.json package-lock.json ./
 RUN npm ci
 

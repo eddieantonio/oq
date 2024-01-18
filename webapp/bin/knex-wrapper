@@ -9,7 +9,7 @@
 #
 # The correct invocation of Knex when you have a TypeScript compiler around is:
 #
-# $ env NODE_OPTIONS=--loader ts-node/esm ./node_modules/.bin/knex --knexfile Knexfile.ts
+# $ env NODE_OPTIONS=--loader ts-node/esm ./node_modules/.bin/knex --knexfile knexfile.ts
 #
 # However, in production, the TypeScript compiler is not available, so the
 # Dockerfile helpfully compiles this into a CommonJS module (note: **no longer**
@@ -19,16 +19,20 @@
 #
 # So this is how you have to invoke Knex in production:
 #
-# $ ./node_modules/.bin/knex --knexfile Knexfile.cjs
+# $ ./node_modules/.bin/knex --knexfile knexfile.cjs
 #
 # This script attempts to solve this problem by detecting whether ts-node is installed,
-# and using Knexfile.ts with the ts-node/esm loader. Otherwise, we assume we are production
-# and using Knexfile.cjs.
+# and using knexfile.ts with the ts-node/esm loader. Otherwise, we assume we are production
+# and using knexfile.cjs.
 
 if [ -d ./node_modules/ts-node ]; then
     exec env NODE_OPTIONS='--loader ts-node/esm' ./node_modules/.bin/knex "$@"
 else
-    # Ensure that Knexfile.cjs exists
-    test -f Knexfile.cjs || (echo "Knexfile.cjs does not exist and neither does ts-node. What gives?" && exit 1)
-    exec ./node_modules/.bin/knex --knexfile Knexfile.cjs "$@"
+    # Ensure that knexfile.cjs exists
+    if [ ! -f knexfile.cjs ]; then
+        echo "error: knexfile.cjs does not exist and neither does ts-node. What gives?" >&2
+        exit 1
+    fi
+
+    exec ./node_modules/.bin/knex --knexfile knexfile.cjs "$@"
 fi
