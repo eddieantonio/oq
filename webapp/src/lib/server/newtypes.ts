@@ -56,3 +56,6 @@ export type ParticipantId = string & { __participantId: never };
 
 /** Uniquely identifies a classroom, or cohort of participants.  */
 export type ClassroomId = string & { __classroomId: never };
+
+/** A string containing valid Markdown. */
+export type MarkdownString = string & { __markdownString: never };

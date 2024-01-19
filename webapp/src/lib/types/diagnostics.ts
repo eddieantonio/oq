@@ -1,3 +1,5 @@
+import type { MarkdownString } from '$lib/server/newtypes';
+
 /**
  * The different types of diagnostics that can be associated with code that is
  * compiled and run by oq.
@@ -21,7 +23,7 @@ export interface GCCDiagnostics {
  */
 export interface LLMEnhancedDiagnostics {
     format: 'llm-enhanced';
-    markdown: string;
+    markdown: MarkdownString;
     original: Diagnostics;
 }
 
@@ -100,11 +102,11 @@ interface GCCPosition {
     /**
      * display-column counts display columns, accounting for tabs and multibyte characters.
      */
-    'display-column': number;
+    'display-column'?: number;
     /**
      * byte-column counts raw bytes.
      */
-    'byte-column': number;
+    'byte-column'?: number;
     /**
      * column is equal to one of the previous two, as dictated by the -fdiagnostics-column-unit option.
      */

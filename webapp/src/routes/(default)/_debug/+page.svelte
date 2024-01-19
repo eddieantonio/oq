@@ -28,6 +28,8 @@
     </ul>
 </nav>
 
+<pre><code>{JSON.stringify(data, null, 2)}</code></pre>
+
 <form method="POST" action="?/debugResetParticipantId">
     <button type="submit" disabled={!data.participantId}> Clear participant_id cookie </button>
 </form>
