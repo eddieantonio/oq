@@ -35,6 +35,7 @@ export interface Participant {
     participant_id: ParticipantId;
     classroom_id: ClassroomId;
     started_at: Date;
+    submitted_at?: Date;
     consented_to_all: boolean;
 }
 
@@ -153,6 +154,17 @@ export async function saveParticipant(participantId: ParticipantId, classroomId:
     } else {
         await insert;
     }
+}
+
+/**
+ * Sets that the participant has submitted the questionnaire.
+ * @param participantId
+ */
+export async function setParticipantSubmitted(participantId: ParticipantId): Promise<void> {
+    // TODO: check if already submitted?
+    await Participants()
+        .update({ submitted_at: new Date() })
+        .where('participant_id', participantId);
 }
 
 /**
