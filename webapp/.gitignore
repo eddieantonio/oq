@@ -4,3 +4,7 @@
 
 # Created so that migrations can run in production
 knexfile.cjs
+
+# I occassionally compile the .c programs in tasks/ and forget to clean up
+# after myself:
+a.out

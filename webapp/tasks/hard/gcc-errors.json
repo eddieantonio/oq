@@ -1,0 +1,20 @@
+[
+  {
+    "kind": "error",
+    "message": "assignment of read-only parameter 'n'",
+    "children": [],
+    "column-origin": 1,
+    "locations": [
+      {
+        "caret": {
+          "file": "main.c",
+          "line": 10,
+          "display-column": 11,
+          "byte-column": 11,
+          "column": 11
+        }
+      }
+    ],
+    "escape-source": false
+  }
+]
