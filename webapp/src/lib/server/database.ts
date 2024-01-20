@@ -19,6 +19,27 @@ const db = knex(config);
 
 ////////////////////////////////////////////// Tables //////////////////////////////////////////////
 
+/** Stage of the participant during the study. */
+export type Stage =
+    | 'pre-questionnaire'
+    | 'exercise-1'
+    | 'post-exercise-1'
+    | 'exercise-2'
+    | 'post-exercise-2'
+    | 'exercise-3'
+    | 'post-exercise-3'
+    | 'post-questionnaire'
+    | 'completed';
+
+/**
+ * Participants are assigned tasks and conditions for each exercise.
+ * This should be done before the participant starts exercise-1.
+ */
+export interface Assignment {
+    task: string;
+    condition: Condition;
+}
+
 /**
  * A participant's answer to a question.
  */
@@ -34,6 +55,7 @@ export interface Answer {
 export interface Participant {
     participant_id: ParticipantId;
     classroom_id: ClassroomId;
+    stage: Stage;
     started_at: Date;
     submitted_at?: Date;
     consented_to_all: boolean;
@@ -97,6 +119,16 @@ export interface ExerciseAttempt {
 }
 
 /**
+ * Assigns a task (scenario) and presentation (condition) for each exercise.
+ */
+export interface ParticipantAssignment {
+    participant_id: ParticipantId;
+    exercise_id: ExerciseId;
+    condition: Condition;
+    task: string;
+}
+
+/**
  * Inserted when a participant completes an exercise, either by submitting a
  * solution or from a timeout.
  */
@@ -128,6 +160,7 @@ const CompileOutputs = () => db<CompileOutput>('compile_outputs');
 const ExerciseAttempts = () => db<ExerciseAttempt>('exercise_attempts');
 const CompletedExerciseAttempts = () => db<CompletedExerciseAttempt>('completed_exercise_attempts');
 const ExerciseCompileEvents = () => db<ExerciseCompileEvent>('exercise_compile_events');
+const ParticipantAssignment = () => db<ParticipantAssignment>('participant_assignments');
 
 //////////////////////////////////////////// Public API ////////////////////////////////////////////
 
@@ -151,6 +184,30 @@ export async function saveParticipant(participantId: ParticipantId, classroomId:
             participantId
         });
         await insert.onConflict('participant_id').merge();
+    } else {
+        await insert;
+    }
+}
+
+export async function setParticipantAssignments(
+    participantId: ParticipantId,
+    assignments: Assignment[]
+) {
+    const insert = ParticipantAssignment().insert(
+        assignments.map((assignment, index) => ({
+            participant_id: participantId,
+            exercise_id: `exercise-${index + 1}` as ExerciseId,
+            condition: assignment.condition,
+            task: assignment.task
+        }))
+    );
+
+    if (process.env.NODE_ENV === 'development') {
+        console.log({
+            file: 'database.ts',
+            debug: 'Giving participant new assignments'
+        });
+        await insert.onConflict(['participant_id', 'exercise_id']).merge();
     } else {
         await insert;
     }
