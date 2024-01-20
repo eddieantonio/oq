@@ -30,7 +30,7 @@
     let editorHeightHint = 0;
 
     // Compile the code when the page first loads.
-    // This should initialize the diagnostics.
+    // This should initialize the diagnostics, if not already provided.
     onMount(() => void startExercise());
 
     async function startExercise() {

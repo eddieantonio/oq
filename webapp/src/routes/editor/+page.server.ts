@@ -15,8 +15,8 @@ import type { Condition } from '$lib/types';
 export function load() {
     // TODO: load the participant's progress from the database.
     // Just hardcoded for now.
-    const taskName: Task['name'] = 'medium';
-    const condition: Condition = 'control';
+    const taskName: Task['name'] = 'hard';
+    const condition: Condition = 'enhanced';
     const exercise = 'a' as ExerciseId;
     const language = 'c';
 
@@ -24,10 +24,26 @@ export function load() {
     if (!task)
         throw error(StatusCodes.INTERNAL_SERVER_ERROR, `No task found with name ${taskName}`);
 
-    const diagnostics: Diagnostics = {
-        format: 'gcc-json',
-        diagnostics: task.rawGccDiagnostics
-    };
+    const diagnostics: Diagnostics = (() => {
+        switch (condition as Condition) {
+            case 'control':
+                return {
+                    format: 'gcc-json',
+                    diagnostics: task.rawGccDiagnostics
+                };
+            case 'enhanced':
+                return {
+                    format: 'manually-enhanced',
+                    markdown: task.manuallyEnhancedMessage,
+                    original: {
+                        format: 'gcc-json',
+                        diagnostics: task.rawGccDiagnostics
+                    }
+                };
+            case 'llm-enhanced':
+                throw new Error('Not implemented');
+        }
+    })();
 
     return {
         exercise,

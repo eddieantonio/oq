@@ -71,6 +71,9 @@ function extractMarkersFromDiagnostics(diagnostics: Diagnostics): monaco.editor.
         case 'llm-enhanced':
             // Defer to the original diagnostics.
             return extractMarkersFromDiagnostics(diagnostics.original);
+        case 'manually-enhanced':
+            // Currently no markers for manually enhanced diagnostics.
+            return [];
     }
 }
 

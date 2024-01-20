@@ -2,6 +2,7 @@
     import type { Diagnostics } from '$lib/types/diagnostics';
     import GCCDiagnosticsDisplay from './diagnostics/GCCDiagnosticsDisplay.svelte';
     import LLMDiagnosticsDisplay from './diagnostics/LLMDiagnosticsDisplay.svelte';
+    import ManuallyEnhancedDiagnosticsDisplay from './diagnostics/ManuallyEnhancedDiagnosticsDisplay.svelte';
 
     /**
      * The diagnostics object returned by the code execution server.
@@ -16,6 +17,8 @@
     <GCCDiagnosticsDisplay {diagnostics} />
 {:else if diagnostics.format === 'llm-enhanced'}
     <LLMDiagnosticsDisplay {diagnostics} />
+{:else if diagnostics.format === 'manually-enhanced'}
+    <ManuallyEnhancedDiagnosticsDisplay {diagnostics} />
 {:else}
     <pre class="problem"><code>{JSON.stringify(diagnostics, null, 4)}</code></pre>
 {/if}

@@ -7,7 +7,7 @@ import { StatusCodes } from 'http-status-codes';
 
 import { logCompileOutput, logCompileEvent } from '$lib/server/database';
 import { fakeEnhanceWithLLM, type RawLLMResponse } from '$lib/server/llm';
-import type { ParticipantId } from '$lib/server/newtypes';
+import type { MarkdownString, ParticipantId } from '$lib/server/newtypes';
 import type {
     Diagnostics,
     LLMEnhancedDiagnostics,
@@ -167,7 +167,7 @@ function rawLLMResponseToDiagnostic(
 
     return {
         format: 'llm-enhanced',
-        markdown: raw.choices[0].message.content,
+        markdown: raw.choices[0].message.content as MarkdownString,
         original: originaDiagnostics
     };
 }
