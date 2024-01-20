@@ -11,34 +11,13 @@ import type {
 } from './newtypes';
 import { hashSourceCode } from './hash';
 import type { RunResult } from './run-code';
-import type { Condition } from '$lib/types';
+import type { Assignment, Condition, Stage } from '$lib/types';
 
 ////////////////////////////////////////////// Config //////////////////////////////////////////////
 
 const db = knex(config);
 
 ////////////////////////////////////////////// Tables //////////////////////////////////////////////
-
-/** Stage of the participant during the study. */
-export type Stage =
-    | 'pre-questionnaire'
-    | 'exercise-1'
-    | 'post-exercise-1'
-    | 'exercise-2'
-    | 'post-exercise-2'
-    | 'exercise-3'
-    | 'post-exercise-3'
-    | 'post-questionnaire'
-    | 'completed';
-
-/**
- * Participants are assigned tasks and conditions for each exercise.
- * This should be done before the participant starts exercise-1.
- */
-export interface Assignment {
-    task: string;
-    condition: Condition;
-}
 
 /**
  * A participant's answer to a question.
