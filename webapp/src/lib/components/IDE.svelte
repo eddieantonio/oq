@@ -190,6 +190,9 @@
                             <p>Run the program to see output</p>
                         {:else}
                             <pre class="output"><code>{programOutput}</code></pre>
+                            <p class="report-success">
+                                Code ran successfully. Press submit to continue.
+                            </p>
                         {/if}
                     {/if}
                 </div>
@@ -402,5 +405,10 @@
     .btn--submit:hover:not([disabled]) {
         background-color: #0069d9;
         border-color: #0062cc;
+    }
+
+    .report-success {
+        color: #28a745;
+        font-style: italic;
     }
 </style>
