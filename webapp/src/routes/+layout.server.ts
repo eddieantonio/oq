@@ -8,6 +8,7 @@ export function load({ cookies }) {
     const tasks = TASKS;
     return {
         participantId,
+        // DEBUG:
         tasks
     };
 }

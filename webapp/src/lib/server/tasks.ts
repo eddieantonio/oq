@@ -9,7 +9,8 @@ import { hashSourceCode } from './hash';
 export const TASKS: Task[] = [];
 
 export interface Task {
-    name: string;
+    /** Name of the task. */
+    name: 'easy' | 'medium' | 'hard';
 
     /** Full source code to show the user. */
     sourceCode: string;
@@ -24,18 +25,20 @@ export interface Task {
 }
 
 export async function loadTasks() {
-    // load tasks from webapp/tasks/*/
+    // Sorry about this :/
     const TASK_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)) + '/../../../tasks');
-    console.log({ TASK_DIR });
 
     // First, figure out what the task names are from the folder names
     const taskDirectories = (await fs.promises.readdir(TASK_DIR, { withFileTypes: true })).filter(
-        (dir) => dir.isDirectory()
+        (entry) => entry.isDirectory()
     );
 
     // Each directory is a task:
     for (const taskDir of taskDirectories) {
-        const name = taskDir.name;
+        const name = taskDir.name as Task['name'];
+        // The rest of the codebase is hardcoded to these names, so make sure we're using them:
+        console.assert(['easy', 'medium', 'hard'].includes(name));
+
         const sourceCode = await fs.promises.readFile(`${TASK_DIR}/${name}/main.c`, 'utf-8');
         const hash = hashSourceCode(sourceCode);
         const rawGccDiagnostics = JSON.parse(

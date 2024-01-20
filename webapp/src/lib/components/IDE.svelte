@@ -20,9 +20,10 @@
     export let exercise: ExerciseId;
     /** Whether the editor is enabled at all. */
     export let enabled: boolean = true;
+    export let initialDiagnostics: Diagnostics | null = null;
 
     let enableRun = true;
-    let pem: Diagnostics | null = null;
+    let pem: Diagnostics | null = initialDiagnostics;
     let programOutput: string | null = null;
     let bottomTab: 'problems' | 'output' = 'problems';
     let okayToContinue = false;
@@ -40,6 +41,7 @@
 
         const formData = new URLSearchParams();
         formData.append('exerciseId', exercise);
+        // TODO: this should no longer be needed:
         formData.append('condition', condition);
         const res = await fetch('/api/start-exercise', {
             method: 'POST',
@@ -50,7 +52,10 @@
             console.error(json);
             return;
         }
-        return await runCode();
+
+        if (!initialDiagnostics) {
+            return await runCode();
+        }
     }
 
     /**
