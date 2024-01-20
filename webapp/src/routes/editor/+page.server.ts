@@ -5,7 +5,7 @@ import { logExerciseAttemptCompleted } from '$lib/server/database';
 import type { ExerciseId, ParticipantId } from '$lib/server/newtypes';
 import { TASKS, type Task } from '$lib/server/tasks';
 import { toExerciseId } from '$lib/server/util';
-import type { Diagnostics } from '$lib/types/diagnostics';
+import type { Diagnostics, GCCDiagnostics } from '$lib/types/diagnostics';
 import type { Condition } from '$lib/types';
 import { getMarkdownResponse } from '$lib/server/llm';
 
@@ -16,8 +16,8 @@ import { getMarkdownResponse } from '$lib/server/llm';
 export function load() {
     // TODO: load the participant's progress from the database.
     // Just hardcoded for now.
-    const taskName: Task['name'] = 'hard';
-    const condition: Condition = 'llm-enhanced';
+    const taskName: Task['name'] = 'medium';
+    const condition: Condition = 'enhanced';
     const exercise = 'a' as ExerciseId;
     const language = 'c';
 
@@ -25,33 +25,7 @@ export function load() {
     if (!task)
         throw error(StatusCodes.INTERNAL_SERVER_ERROR, `No task found with name ${taskName}`);
 
-    const diagnostics: Diagnostics = (() => {
-        switch (condition as Condition) {
-            case 'control':
-                return {
-                    format: 'gcc-json',
-                    diagnostics: task.rawGccDiagnostics
-                };
-            case 'enhanced':
-                return {
-                    format: 'manually-enhanced',
-                    markdown: task.manuallyEnhancedMessage,
-                    original: {
-                        format: 'gcc-json',
-                        diagnostics: task.rawGccDiagnostics
-                    }
-                };
-            case 'llm-enhanced':
-                return {
-                    format: 'llm-enhanced',
-                    markdown: getMarkdownResponse(task.rawLlmResponse),
-                    original: {
-                        format: 'gcc-json',
-                        diagnostics: task.rawGccDiagnostics
-                    }
-                };
-        }
-    })();
+    const diagnostics = makeDiagnosticsFromTask(task, condition);
 
     return {
         exercise,
@@ -79,3 +53,31 @@ export const actions: import('./$types').Actions = {
         throw redirect(StatusCodes.SEE_OTHER, '/post-questionnaire');
     }
 };
+
+// Internal functions
+
+/**
+ * @returns The diagnostics for the given task and condition.
+ */
+function makeDiagnosticsFromTask(task: Task, condition: Condition): Diagnostics {
+    const original: GCCDiagnostics = {
+        format: 'gcc-json',
+        diagnostics: task.rawGccDiagnostics
+    };
+
+    switch (condition) {
+        case 'control':
+            return original;
+        case 'enhanced':
+            return {
+                format: 'manually-enhanced',
+                markdown: task.manuallyEnhancedMessage
+            };
+        case 'llm-enhanced':
+            return {
+                format: 'llm-enhanced',
+                markdown: getMarkdownResponse(task.rawLlmResponse),
+                original
+            };
+    }
+}
