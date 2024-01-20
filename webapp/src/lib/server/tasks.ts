@@ -25,14 +25,19 @@ export interface Task {
     rawLlmResponse: RawLLMResponse;
 }
 
-export async function loadTasks() {
+/**
+ * Loading the tasks synchronously on server startup is okay because it only
+ * happens once, and the data never changes.  That said... if the tasks DO
+ * change, you need to restart the server. Yes, even in dev mode!
+ */
+export function loadTasksSync() {
     // Sorry about this :/
     const TASK_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)) + '/../../../tasks');
 
     // First, figure out what the task names are from the folder names
-    const taskDirectories = (await fs.promises.readdir(TASK_DIR, { withFileTypes: true })).filter(
-        (entry) => entry.isDirectory()
-    );
+    const taskDirectories = fs
+        .readdirSync(TASK_DIR, { withFileTypes: true })
+        .filter((entry) => entry.isDirectory());
 
     // Each directory is a task:
     for (const taskDir of taskDirectories) {
@@ -40,17 +45,17 @@ export async function loadTasks() {
         // The rest of the codebase is hardcoded to these names, so make sure we're using them:
         console.assert(['easy', 'medium', 'hard'].includes(name));
 
-        const sourceCode = await fs.promises.readFile(`${TASK_DIR}/${name}/main.c`, 'utf-8');
+        const sourceCode = fs.readFileSync(`${TASK_DIR}/${name}/main.c`, 'utf-8');
         const hash = hashSourceCode(sourceCode);
         const rawGccDiagnostics = JSON.parse(
-            await fs.promises.readFile(`${TASK_DIR}/${name}/gcc-diagnostics.json`, 'utf-8')
+            fs.readFileSync(`${TASK_DIR}/${name}/gcc-diagnostics.json`, 'utf-8')
         );
-        const manuallyEnhancedMessage = (await fs.promises.readFile(
+        const manuallyEnhancedMessage = fs.readFileSync(
             `${TASK_DIR}/${name}/manual-explanation.md`,
             'utf-8'
-        )) as MarkdownString;
+        ) as MarkdownString;
         const rawLlmResponse = JSON.parse(
-            await fs.promises.readFile(`${TASK_DIR}/${name}/gpt4-response.json`, 'utf-8')
+            fs.readFileSync(`${TASK_DIR}/${name}/gpt4-response.json`, 'utf-8')
         ) as RawLLMResponse;
 
         TASKS.push({
