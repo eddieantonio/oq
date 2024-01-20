@@ -7,6 +7,7 @@ import { TASKS, type Task } from '$lib/server/tasks';
 import { toExerciseId } from '$lib/server/util';
 import type { Diagnostics } from '$lib/types/diagnostics';
 import type { Condition } from '$lib/types';
+import { getMarkdownResponse } from '$lib/server/llm';
 
 /**
  * Determine the participant's task for the participant's current exercise,
@@ -16,7 +17,7 @@ export function load() {
     // TODO: load the participant's progress from the database.
     // Just hardcoded for now.
     const taskName: Task['name'] = 'hard';
-    const condition: Condition = 'enhanced';
+    const condition: Condition = 'llm-enhanced';
     const exercise = 'a' as ExerciseId;
     const language = 'c';
 
@@ -41,7 +42,14 @@ export function load() {
                     }
                 };
             case 'llm-enhanced':
-                throw new Error('Not implemented');
+                return {
+                    format: 'llm-enhanced',
+                    markdown: getMarkdownResponse(task.rawLlmResponse),
+                    original: {
+                        format: 'gcc-json',
+                        diagnostics: task.rawGccDiagnostics
+                    }
+                };
         }
     })();
 

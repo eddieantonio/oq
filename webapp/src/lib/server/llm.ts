@@ -1,4 +1,5 @@
 import type { Diagnostics } from '$lib/types/diagnostics';
+import type { MarkdownString } from './newtypes';
 
 ////////////////////////////////////////////// Types //////////////////////////////////////////////
 
@@ -88,4 +89,13 @@ export async function fakeEnhanceWithLLM(
     } else {
         return helloWorldLLMResponse;
     }
+}
+
+/**
+ * Returns the Markdown-formatted response from the LLM.
+ */
+export function getMarkdownResponse(llmResponse: RawLLMResponse): MarkdownString {
+    console.assert(llmResponse.choices.length > 0);
+    console.assert(llmResponse.choices[0].message.role === 'assistant');
+    return llmResponse.choices[0].message.content as MarkdownString;
 }

@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url';
 import type { RootGCCDiagnostic } from '$lib/types/diagnostics';
 import type { MarkdownString, SHA256Hash } from './newtypes';
 import { hashSourceCode } from './hash';
+import type { RawLLMResponse } from './llm';
 
 export const TASKS: Task[] = [];
 
@@ -20,8 +21,8 @@ export interface Task {
     rawGccDiagnostics: RootGCCDiagnostic[];
     /** Manually-written enhanced error message. */
     manuallyEnhancedMessage: MarkdownString;
-
-    // TODO: Add LLM-enhanced message.
+    /** Response directly from OpenAI API. */
+    rawLlmResponse: RawLLMResponse;
 }
 
 export async function loadTasks() {
@@ -48,13 +49,17 @@ export async function loadTasks() {
             `${TASK_DIR}/${name}/manual-explanation.md`,
             'utf-8'
         )) as MarkdownString;
+        const rawLlmResponse = JSON.parse(
+            await fs.promises.readFile(`${TASK_DIR}/${name}/gpt4-response.json`, 'utf-8')
+        ) as RawLLMResponse;
 
         TASKS.push({
             name,
             sourceCode,
             hash,
             rawGccDiagnostics,
-            manuallyEnhancedMessage
+            manuallyEnhancedMessage,
+            rawLlmResponse
         });
     }
 }
