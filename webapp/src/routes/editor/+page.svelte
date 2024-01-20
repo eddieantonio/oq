@@ -2,8 +2,15 @@
     import Ide from '$lib/components/IDE.svelte';
 
     export let data: import('./$types').PageData;
-    const { language, condition, exercise } = data;
+    const { language, condition, exercise, initialDiagnostics } = data;
     let content = data.initialSourceCode;
 </script>
 
-<Ide enabled={!!data.participantId} {language} {content} {condition} {exercise} />
+<Ide
+    enabled={!!data.participantId}
+    {language}
+    {content}
+    {condition}
+    {exercise}
+    {initialDiagnostics}
+/>

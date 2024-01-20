@@ -23,54 +23,5 @@
       }
     ],
     "escape-source": false
-  },
-  {
-    "kind": "error",
-    "message": "'pi' undeclared (first use in this function)",
-    "children": [
-      {
-        "kind": "note",
-        "message": "each undeclared identifier is reported only once for each function it appears in",
-        "locations": [
-          {
-            "caret": {
-              "file": "main.c",
-              "line": 6,
-              "display-column": 12,
-              "byte-column": 12,
-              "column": 12
-            },
-            "finish": {
-              "file": "main.c",
-              "line": 6,
-              "display-column": 13,
-              "byte-column": 13,
-              "column": 13
-            }
-          }
-        ],
-        "escape-source": false
-      }
-    ],
-    "column-origin": 1,
-    "locations": [
-      {
-        "caret": {
-          "file": "main.c",
-          "line": 6,
-          "display-column": 12,
-          "byte-column": 12,
-          "column": 12
-        },
-        "finish": {
-          "file": "main.c",
-          "line": 6,
-          "display-column": 13,
-          "byte-column": 13,
-          "column": 13
-        }
-      }
-    ],
-    "escape-source": false
   }
 ]

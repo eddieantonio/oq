@@ -15,7 +15,7 @@ import type { Condition } from '$lib/types';
 export function load() {
     // TODO: load the participant's progress from the database.
     // Just hardcoded for now.
-    const taskName: Task['name'] = 'easy';
+    const taskName: Task['name'] = 'medium';
     const condition: Condition = 'control';
     const exercise = 'a' as ExerciseId;
     const language = 'c';
