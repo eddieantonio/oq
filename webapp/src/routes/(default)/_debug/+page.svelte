@@ -19,7 +19,7 @@
         <li><a href="/briefing">Briefing</a></li>
         <li><a href="/editor">Editor experiment</a></li>
         <li><a href="/post-exercise-questionnaire">Post-task questionnaire</a></li>
-        <li><a href="/post-questionnaire">Reflection questionnaire</a></li>
+        <li><a href="/final-questionnaire">Reflection questionnaire</a></li>
         <li><a href="/before-submit">Before submission page</a></li>
         <li><a href="/thanks">Study completion page</a></li>
     </ol>

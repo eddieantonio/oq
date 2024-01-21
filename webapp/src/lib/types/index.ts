@@ -27,7 +27,7 @@ export const STAGES = [
     'post-exercise-2',
     'exercise-3',
     'post-exercise-3',
-    'post-questionnaire',
+    'final-questionnaire',
     'completed'
 ] as const;
 /** Stage of the participant during the study. */

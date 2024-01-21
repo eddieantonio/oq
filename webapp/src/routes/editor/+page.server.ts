@@ -6,7 +6,7 @@ import type { ExerciseId } from '$lib/server/newtypes';
 import { TASKS, type Task } from '$lib/server/tasks';
 import { toExerciseId } from '$lib/server/util';
 import type { Diagnostics, GCCDiagnostics } from '$lib/types/diagnostics';
-import type { Condition } from '$lib/types';
+import { nextStage, type Condition } from '$lib/types';
 import { getMarkdownResponse } from '$lib/server/llm';
 import { getParticipantIdFromCookies } from '$lib/server/participants';
 
@@ -42,7 +42,7 @@ export const actions: import('./$types').Actions = {
     /**
      * Stores code submission in the database.
      */
-    submit: async ({ cookies, request }) => {
+    submit: async ({ cookies, request, locals }) => {
         const participant = getParticipantIdFromCookies(cookies);
 
         const form = await request.formData();
@@ -51,7 +51,10 @@ export const actions: import('./$types').Actions = {
 
         await logExerciseAttemptCompleted(participant, exercise, 'completed');
         // TODO: figure out which experiment we're in, then increment.
-        await setParticipantStage(participant, 'post-exercise-1');
+        await setParticipantStage(
+            participant,
+            nextStage(locals.participant?.stage || /* DEBUG */ 'exercise-1')
+        );
 
         throw redirect(StatusCodes.SEE_OTHER, '/post-exercise-questionnaire');
     }

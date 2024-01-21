@@ -22,8 +22,8 @@ export const actions: import('./$types').Actions = {
         await setParticipantStage(participantId, nextStage(locals.participant.stage));
 
         if (isLastExercise(locals.participant.stage)) {
-            // Last post-exercise. Go to the final questionnaire.
-            throw redirect(StatusCodes.SEE_OTHER, '/post-exercise-questionnaire');
+            // This is the last exercise. Go to the final questionnaire!
+            throw redirect(StatusCodes.SEE_OTHER, '/final-questionnaire');
         } else {
             // Any other exercise. Go to the editor to try another exercise!
             throw redirect(StatusCodes.SEE_OTHER, '/editor');
