@@ -154,7 +154,7 @@ export async function getParticipant(participantId: ParticipantId): Promise<Part
     return participant;
 }
 
-async function getParticipantPossiblyUndefined(
+export async function getParticipantPossiblyUndefined(
     participantId: ParticipantId
 ): Promise<Participant | undefined> {
     return await Participants().where('participant_id', participantId).first();
