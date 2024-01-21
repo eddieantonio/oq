@@ -45,3 +45,14 @@ export interface Assignment {
     task: TaskName;
     condition: Condition;
 }
+
+/**
+ * @returns the next stage after the given stage.
+ * @throws if the given stage is invalid or if passed 'completed'
+ */
+export function nextStage(stage: Stage) {
+    const index = STAGES.indexOf(stage);
+    if (index === -1) throw new Error(`Invalid stage: ${stage}`);
+    if (index === STAGES.length - 1) throw new Error(`No next stage after ${stage}`);
+    return STAGES[index + 1];
+}

@@ -7,7 +7,7 @@ import { StatusCodes } from 'http-status-codes';
 
 import { logCompileOutput, logCompileEvent } from '$lib/server/database';
 import { fakeEnhanceWithLLM, type RawLLMResponse } from '$lib/server/llm';
-import type { MarkdownString, ParticipantId } from '$lib/server/newtypes';
+import type { MarkdownString } from '$lib/server/newtypes';
 import type {
     Diagnostics,
     LLMEnhancedDiagnostics,
@@ -17,6 +17,7 @@ import type { RunResult } from '$lib/server/run-code';
 import type { ClientSideRunResult } from '$lib/types/client-side-run-results';
 import { toCondition, toExerciseId } from '$lib/server/util';
 import type { PistonRequest, PistonResponse } from '$lib/types/piston.js';
+import { getParticipantIdFromCookies } from '$lib/server/participants.js';
 
 /**
  * POST to this endpoint to compile and run the code.
@@ -26,8 +27,7 @@ const PISTON_EXECUTE_URL = 'http://piston:2000/api/v2/execute';
 
 /** @type {import('@sveltejs/kit').RequestHandler} */
 export async function POST({ cookies, request }) {
-    const participantId = cookies.get('participant_id') as ParticipantId;
-    if (!participantId) throw error(StatusCodes.BAD_REQUEST, 'No participantId cookie found');
+    const participantId = getParticipantIdFromCookies(cookies);
 
     const data = await request.formData();
 

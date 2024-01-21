@@ -2,8 +2,8 @@ import { error, json } from '@sveltejs/kit';
 import { StatusCodes } from 'http-status-codes';
 
 import { logExerciseAttemptStart } from '$lib/server/database';
-import type { ParticipantId } from '$lib/server/newtypes';
 import { toCondition, toExerciseId } from '$lib/server/util';
+import { getParticipantIdFromCookies } from '$lib/server/participants.js';
 
 /**
  * Starts an exercise.
@@ -11,8 +11,7 @@ import { toCondition, toExerciseId } from '$lib/server/util';
  * @type {import('@sveltejs/kit').RequestHandler}
  */
 export async function POST({ cookies, request }) {
-    const participantId = cookies.get('participant_id') as ParticipantId;
-    if (!participantId) throw error(StatusCodes.BAD_REQUEST, 'No participantId cookie found');
+    const participantId = getParticipantIdFromCookies(cookies);
 
     const data = await request.formData();
     const exerciseId = toExerciseId(data.get('exerciseId'));

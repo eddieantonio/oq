@@ -193,13 +193,21 @@ export async function setParticipantAssignments(
 }
 
 /**
+ * Updates the participant's progress. This function does not do any validation,
+ * so make sure the stage is valid!
+ */
+export async function setParticipantStage(participantId: ParticipantId, stage: Stage) {
+    await Participants().update({ stage }).where('participant_id', participantId);
+}
+
+/**
  * Sets that the participant has submitted the questionnaire.
  * @param participantId
  */
 export async function setParticipantSubmitted(participantId: ParticipantId): Promise<void> {
     // TODO: check if already submitted?
     await Participants()
-        .update({ submitted_at: new Date() })
+        .update({ stage: 'completed', submitted_at: new Date() })
         .where('participant_id', participantId);
 }
 
