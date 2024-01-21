@@ -92,6 +92,10 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/migrations ./migrations
 COPY --from=builder /app/seeds ./seeds
 COPY --from=builder /app/build ./build
+
+# SvelteKit does not put files in a nice place.
+# It might be okay to plop the tasks folder in the build directory... but nah
+ENV TASK_DIR=/app/tasks
 COPY --from=builder /app/tasks ./tasks
 
 # Add all npm's binaries to the PATH so that we can use knex a little more

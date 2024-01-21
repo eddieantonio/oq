@@ -33,7 +33,7 @@ export const actions: import('./$types').Actions = {
     default: async ({ request, locals }) => {
         if (!locals.participant) throw error(StatusCodes.UNAUTHORIZED, 'Not logged in');
 
-        if (!dev && locals.participant.stage == 'final-questionnaire')
+        if (locals.participant.stage != 'final-questionnaire')
             throw error(StatusCodes.BAD_REQUEST, 'Not at the correct stage');
 
         const participantId = locals.participant.participant_id;
