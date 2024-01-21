@@ -1,7 +1,9 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
-    import { assets } from '$app/paths';
+
+    // <SplitPanes> requires this CSS to be loaded.
+    import './splitpanes-vscode-theme.css';
 
     import DiagnosticDisplay from '$lib/components/DiagnosticDisplay.svelte';
     import Editor from '$lib/components/MonacoEditor.svelte';
@@ -200,11 +202,6 @@
         </Pane>
     </Splitpanes>
 </div>
-
-<!-- It was easier to style the <Splitpane> in a separate CSS file. -->
-<svelte:head>
-    <link rel="stylesheet" href="{assets}/splitpanes-vscode-theme.css" />
-</svelte:head>
 
 <style>
     /* Full IDE styles */
