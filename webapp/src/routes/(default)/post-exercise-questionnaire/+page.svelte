@@ -4,9 +4,31 @@
     import ActionBar from '$lib/components/forms/ActionBar.svelte';
     import DiagnosticDisplay from '$lib/components/DiagnosticDisplay.svelte';
     import LikertScale from '$lib/components/forms/LikertScale.svelte';
+    import type { Diagnostics } from '$lib/types/diagnostics';
 
-    // TODO: load ALL diagnostics!
-    export let data;
+    const pem: Diagnostics = {
+        format: 'gcc-json',
+        diagnostics: [
+            {
+                children: [],
+                'column-origin': 1,
+                'escape-source': false,
+                kind: 'error',
+                locations: [
+                    {
+                        caret: {
+                            'byte-column': 9,
+                            column: 9,
+                            'display-column': 9,
+                            file: 'main.c',
+                            line: 1
+                        }
+                    }
+                ],
+                message: 'expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token'
+            }
+        ]
+    };
 
     const helpfullnessLabels = [
         'Not at all helpful',
@@ -20,13 +42,11 @@
 </script>
 
 <!-- This is the questionnaire for now. Eventually I will refactor this to have its own page. -->
-<h1>After all tasks</h1>
+<h1>Post-questionnaire</h1>
 
-<p>You just saw three error messages:</p>
-
-<h2>Message A</h2>
+<p>You just saw this error message:</p>
 <blockquote>
-    <DiagnosticDisplay diagnostics={data.pem} />
+    <DiagnosticDisplay diagnostics={pem} />
 </blockquote>
 
 <form method="post">

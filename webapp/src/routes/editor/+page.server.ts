@@ -53,7 +53,7 @@ export const actions: import('./$types').Actions = {
         // TODO: figure out which experiment we're in, then increment.
         await setParticipantStage(participant, 'post-exercise-1');
 
-        throw redirect(StatusCodes.SEE_OTHER, '/post-questionnaire');
+        throw redirect(StatusCodes.SEE_OTHER, '/post-exercise-questionnaire');
     }
 };
 
