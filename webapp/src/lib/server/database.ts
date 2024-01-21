@@ -139,7 +139,7 @@ const CompileOutputs = () => db<CompileOutput>('compile_outputs');
 const ExerciseAttempts = () => db<ExerciseAttempt>('exercise_attempts');
 const CompletedExerciseAttempts = () => db<CompletedExerciseAttempt>('completed_exercise_attempts');
 const ExerciseCompileEvents = () => db<ExerciseCompileEvent>('exercise_compile_events');
-const ParticipantAssignment = () => db<ParticipantAssignment>('participant_assignments');
+const ParticipantAssignments = () => db<ParticipantAssignment>('participant_assignments');
 
 //////////////////////////////////////////// Public API ////////////////////////////////////////////
 
@@ -154,6 +154,9 @@ export async function getParticipant(participantId: ParticipantId): Promise<Part
     return participant;
 }
 
+/**
+ * Fetches the participant with the given ID, or undefined if no participant exists.
+ */
 export async function getParticipantPossiblyUndefined(
     participantId: ParticipantId
 ): Promise<Participant | undefined> {
@@ -185,11 +188,36 @@ export async function saveParticipant(participantId: ParticipantId, classroomId:
     }
 }
 
+/**
+ * Fetches all of the task/condition assignments for the given participant.
+ */
+export async function getAllParticipantAssignments(
+    participantId: ParticipantId
+): Promise<ParticipantAssignment[]> {
+    return await ParticipantAssignments().where('participant_id', participantId);
+}
+
+/**
+ * Fetches the task/condition assignment for the given participant and exercise.
+ */
+export async function getParticipantAssignment(
+    participantId: ParticipantId,
+    exerciseId: ExerciseId
+): Promise<ParticipantAssignment | undefined> {
+    return await ParticipantAssignments()
+        .where('participant_id', participantId)
+        .andWhere('exercise_id', exerciseId)
+        .first();
+}
+
+/**
+ * Sets all of the task/condition assignments for the given participant.
+ */
 export async function setParticipantAssignments(
     participantId: ParticipantId,
     assignments: Assignment[]
 ) {
-    const insert = ParticipantAssignment().insert(
+    const insert = ParticipantAssignments().insert(
         assignments.map((assignment, index) => ({
             participant_id: participantId,
             exercise_id: `exercise-${index + 1}` as ExerciseId,

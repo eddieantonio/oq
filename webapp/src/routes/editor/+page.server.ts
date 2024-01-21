@@ -1,7 +1,11 @@
 import { error, redirect } from '@sveltejs/kit';
 import { StatusCodes } from 'http-status-codes';
 
-import { logExerciseAttemptCompleted, setParticipantStage } from '$lib/server/database';
+import {
+    getParticipantAssignment,
+    logExerciseAttemptCompleted,
+    setParticipantStage
+} from '$lib/server/database';
 import type { ExerciseId } from '$lib/server/newtypes';
 import { TASKS, type Task } from '$lib/server/tasks';
 import { toExerciseId } from '$lib/server/util';
@@ -14,15 +18,23 @@ import { getParticipantIdFromCookies } from '$lib/server/participants';
  * Determine the participant's task for the participant's current exercise,
  * then return the task and initial error message.
  */
-export function load() {
-    // TODO: load the participant's progress from the database.
-    // Just hardcoded for now.
-    const taskName: Task['name'] = 'medium';
-    const condition: Condition = 'enhanced';
-    // TODO: figure this out from participant data structure.
-    const exercise = 'exercise-1' as ExerciseId;
+export async function load({ locals }) {
+    if (!locals.participant) throw error(StatusCodes.UNAUTHORIZED, 'No participant found');
+    const participant = locals.participant;
+    if (!participant.stage.startsWith('exercise-'))
+        throw error(StatusCodes.BAD_REQUEST, "Participant's stage is not an exercise");
+
+    const exercise = participant.stage as ExerciseId;
+    const currentAssignment = await getParticipantAssignment(participant.participant_id, exercise);
+    if (!currentAssignment)
+        throw error(StatusCodes.INTERNAL_SERVER_ERROR, 'No assignment found for participant');
+
+    const taskName = currentAssignment.task as Task['name'];
+    const condition = currentAssignment.condition;
+    // The programming language is hardcoded for now:
     const language = 'c';
 
+    console.log({ taskName, condition });
     const task = TASKS.find((t) => t.name === taskName);
     if (!task)
         throw error(StatusCodes.INTERNAL_SERVER_ERROR, `No task found with name ${taskName}`);
