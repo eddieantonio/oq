@@ -1,3 +1,7 @@
+/**
+ * Load and submit handlers for the exercise page (code editor).
+ */
+
 import { error, redirect } from '@sveltejs/kit';
 import { StatusCodes } from 'http-status-codes';
 
@@ -7,12 +11,11 @@ import {
     setParticipantStage
 } from '$lib/server/database';
 import type { ExerciseId } from '$lib/server/newtypes';
-import { TASKS, type Task } from '$lib/server/tasks';
+import { getTaskByName, type Task } from '$lib/server/tasks';
 import { toExerciseId } from '$lib/server/util';
-import type { Diagnostics, GCCDiagnostics } from '$lib/types/diagnostics';
-import { nextStage, type Condition } from '$lib/types';
-import { getMarkdownResponse } from '$lib/server/llm';
+import { nextStage } from '$lib/types';
 import { getParticipantIdFromCookies } from '$lib/server/participants';
+import { makeDiagnosticsFromTask } from '$lib/server/diagnostics-util';
 
 /**
  * Determine the participant's task for the participant's current exercise,
@@ -34,11 +37,7 @@ export async function load({ locals }) {
     // The programming language is hardcoded for now:
     const language = 'c';
 
-    console.log({ taskName, condition });
-    const task = TASKS.find((t) => t.name === taskName);
-    if (!task)
-        throw error(StatusCodes.INTERNAL_SERVER_ERROR, `No task found with name ${taskName}`);
-
+    const task = getTaskByName(taskName);
     const diagnostics = makeDiagnosticsFromTask(task, condition);
 
     return {
@@ -71,31 +70,3 @@ export const actions: import('./$types').Actions = {
         throw redirect(StatusCodes.SEE_OTHER, '/post-exercise-questionnaire');
     }
 };
-
-// Internal functions
-
-/**
- * @returns The diagnostics for the given task and condition.
- */
-function makeDiagnosticsFromTask(task: Task, condition: Condition): Diagnostics {
-    const original: GCCDiagnostics = {
-        format: 'gcc-json',
-        diagnostics: task.rawGccDiagnostics
-    };
-
-    switch (condition) {
-        case 'control':
-            return original;
-        case 'enhanced':
-            return {
-                format: 'manually-enhanced',
-                markdown: task.manuallyEnhancedMessage
-            };
-        case 'llm-enhanced':
-            return {
-                format: 'llm-enhanced',
-                markdown: getMarkdownResponse(task.rawLlmResponse),
-                original
-            };
-    }
-}

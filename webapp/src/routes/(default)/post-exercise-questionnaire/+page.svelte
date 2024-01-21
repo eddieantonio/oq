@@ -4,31 +4,9 @@
     import ActionBar from '$lib/components/forms/ActionBar.svelte';
     import DiagnosticDisplay from '$lib/components/DiagnosticDisplay.svelte';
     import LikertScale from '$lib/components/forms/LikertScale.svelte';
-    import type { Diagnostics } from '$lib/types/diagnostics';
 
-    const pem: Diagnostics = {
-        format: 'gcc-json',
-        diagnostics: [
-            {
-                children: [],
-                'column-origin': 1,
-                'escape-source': false,
-                kind: 'error',
-                locations: [
-                    {
-                        caret: {
-                            'byte-column': 9,
-                            column: 9,
-                            'display-column': 9,
-                            file: 'main.c',
-                            line: 1
-                        }
-                    }
-                ],
-                message: 'expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token'
-            }
-        ]
-    };
+    export let data;
+    const pem = data.pem;
 
     const helpfullnessLabels = [
         'Not at all helpful',

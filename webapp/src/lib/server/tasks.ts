@@ -69,3 +69,12 @@ export function loadTasksSync() {
         });
     }
 }
+
+/**
+ * Returns the task with the given name. If the task doesn't exist, throws an error.
+ */
+export function getTaskByName(name: string): Task {
+    const task = TASKS.find((t) => t.name === name);
+    if (!task) throw new Error(`No task found with name ${name}`);
+    return task;
+}
