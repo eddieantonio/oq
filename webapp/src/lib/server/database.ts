@@ -144,6 +144,23 @@ const ParticipantAssignment = () => db<ParticipantAssignment>('participant_assig
 //////////////////////////////////////////// Public API ////////////////////////////////////////////
 
 /**
+ * Fetches the participant with the given ID. Throws an error if no participant exists.
+ */
+export async function getParticipant(participantId: ParticipantId): Promise<Participant> {
+    const participant = await getParticipantPossiblyUndefined(participantId);
+    if (!participant) {
+        throw new Error(`No participant with ID ${participantId}`);
+    }
+    return participant;
+}
+
+async function getParticipantPossiblyUndefined(
+    participantId: ParticipantId
+): Promise<Participant | undefined> {
+    return await Participants().where('participant_id', participantId).first();
+}
+
+/**
  * Saves a new participant to the database.
  */
 export async function saveParticipant(participantId: ParticipantId, classroomId: ClassroomId) {

@@ -10,7 +10,11 @@
     <footer class="debug-footer">
         <nav>
             <a href="/_debug">Go to debug page</a>
-            <span>Logged in as {data.participantId ? data.participantId : 'guest'}</span>
+            {#if data.participant}
+                <span>Logged in as {data.participantId} ({data.participant.stage})</span>
+            {:else}
+                <span>Logged in as guest</span>
+            {/if}
         </nav>
     </footer>
 {/if}
