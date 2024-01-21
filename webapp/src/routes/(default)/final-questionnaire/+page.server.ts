@@ -7,36 +7,22 @@ import { dev } from '$app/environment';
 import { error, redirect } from '@sveltejs/kit';
 
 import { saveQuestionnaireResponses } from '$lib/server/questionnaire';
+import { getAllParticipantAssignments } from '$lib/server/database.js';
+import { makeDiagnosticsForAssignment } from '$lib/server/diagnostics-util';
 import type { Diagnostics } from '$lib/types/diagnostics';
 
-export function load() {
-    // TODO: Load all three PEMs, respectively.
-    const pem: Diagnostics = {
-        format: 'gcc-json',
-        diagnostics: [
-            {
-                children: [],
-                'column-origin': 1,
-                'escape-source': false,
-                kind: 'error',
-                locations: [
-                    {
-                        caret: {
-                            'byte-column': 9,
-                            column: 9,
-                            'display-column': 9,
-                            file: 'main.c',
-                            line: 1
-                        }
-                    }
-                ],
-                message: 'expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token'
-            }
-        ]
-    };
+/**
+ * Load all of the current participant's assignments.
+ */
+export async function load({ locals }) {
+    if (!locals.participant) throw error(StatusCodes.UNAUTHORIZED, 'Not logged in');
+    const participant = locals.participant;
+
+    const allAssignments = await getAllParticipantAssignments(participant.participant_id);
+    const pems: Diagnostics[] = allAssignments.map(makeDiagnosticsForAssignment);
 
     return {
-        pem
+        pems
     };
 }
 

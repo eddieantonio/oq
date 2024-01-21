@@ -5,8 +5,13 @@
     import DiagnosticDisplay from '$lib/components/DiagnosticDisplay.svelte';
     import LikertScale from '$lib/components/forms/LikertScale.svelte';
 
-    // TODO: load ALL diagnostics!
     export let data;
+    const pems = data.pems;
+
+    /** Turns 0, 1, 2, ... to A, B, C, ... */
+    function indexToLetter(index: number): string {
+        return String.fromCharCode('A'.charCodeAt(0) + index);
+    }
 
     const helpfullnessLabels = [
         'Not at all helpful',
@@ -24,10 +29,12 @@
 
 <p>You just saw three error messages:</p>
 
-<h2>Message A</h2>
-<blockquote>
-    <DiagnosticDisplay diagnostics={data.pem} />
-</blockquote>
+{#each pems as pem, index}
+    <h2>Message {indexToLetter(index)}</h2>
+    <blockquote>
+        <DiagnosticDisplay diagnostics={pem} />
+    </blockquote>
+{/each}
 
 <form method="post">
     <LikertScale questionId="control-error-helpfulness" labels={helpfullnessLabels}>
