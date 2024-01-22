@@ -373,22 +373,27 @@ export async function logCompileOutput(
 export async function logExerciseAttemptStart(
     participantId: ParticipantId,
     exerciseId: ExerciseId
-) {
-    const insert = ExerciseAttempts().insert({
-        participant_id: participantId,
-        exercise_id: exerciseId,
-        started_at: new Date()
-    });
+): Promise<number> {
+    await ExerciseAttempts()
+        .insert({
+            participant_id: participantId,
+            exercise_id: exerciseId,
+            started_at: new Date()
+        })
+        .onConflict(['participant_id', 'exercise_id'])
+        .ignore();
 
-    if (process.env.NODE_ENV === 'development') {
-        console.log({
-            file: 'database.ts',
-            debug: 'Merging exercise attempt start'
-        });
-        await insert.onConflict(['participant_id', 'exercise_id']).merge();
-    } else {
-        await insert;
-    }
+    const ret = await ExerciseAttempts()
+        .select('started_at')
+        .where('participant_id', participantId)
+        .andWhere('exercise_id', exerciseId)
+        .first();
+    if (ret == null) throw new Error('Should never happen');
+
+    const { started_at } = ret;
+    // So... Knex is lying to us. When we fetch a Date from the database... it actually comes back as a number.
+    // Using `valueOf` converts it back to a number, which... more useful that nonsense.
+    return started_at.valueOf();
 }
 
 /**

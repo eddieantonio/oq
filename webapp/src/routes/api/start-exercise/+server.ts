@@ -17,8 +17,9 @@ export async function POST({ locals }) {
     const exerciseId = participant.stage as ExerciseId;
 
     // Insert into the database.
-    await logExerciseAttemptStart(participantId, exerciseId);
+    const whenStarted = await logExerciseAttemptStart(participantId, exerciseId);
+    // TODO: figure out timeout remaining.
 
     // I don't know what should be returned here.
-    return json({ success: true, exerciseId });
+    return json({ success: true, exerciseId, whenStarted });
 }
