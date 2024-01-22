@@ -57,8 +57,8 @@
     </LikertScale>
 
     <div class="input-group">
-        <label for="control-explanation">Could you explain your answers above? (optional)</label>
-        <textarea id="control-explanation" name="control-explanation" rows="4" cols="50" />
+        <label for="elaboration">Could you explain your answers above? (optional)</label>
+        <textarea id="elaboration" name="elaboration" rows="4" cols="50" />
     </div>
 
     <ActionBar>

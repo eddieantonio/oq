@@ -104,6 +104,11 @@
         {/each}
     </div>
 
+    <div class="input-group">
+        <label for="comparison-elaboration">Could you explain your answers above? (optional)</label>
+        <textarea id="comparison-elaboration" name="comparison-elaboration" rows="4" cols="50" />
+    </div>
+
     <ActionBar>
         <button type="submit">Submit</button>
     </ActionBar>
