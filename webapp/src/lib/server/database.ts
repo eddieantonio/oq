@@ -94,7 +94,6 @@ export interface CompileOutput {
 export interface ExerciseAttempt {
     participant_id: ParticipantId;
     exercise_id: ExerciseId;
-    condition: Condition;
     started_at: Date;
 }
 
@@ -373,14 +372,12 @@ export async function logCompileOutput(
  */
 export async function logExerciseAttemptStart(
     participantId: ParticipantId,
-    exerciseId: ExerciseId,
-    condition: Condition
+    exerciseId: ExerciseId
 ) {
     const insert = ExerciseAttempts().insert({
         participant_id: participantId,
         exercise_id: exerciseId,
-        started_at: new Date(),
-        condition
+        started_at: new Date()
     });
 
     if (process.env.NODE_ENV === 'development') {

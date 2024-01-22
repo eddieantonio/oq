@@ -2,28 +2,22 @@ import { error, json } from '@sveltejs/kit';
 import { StatusCodes } from 'http-status-codes';
 
 import { logExerciseAttemptStart } from '$lib/server/database';
-import { toCondition, toExerciseId } from '$lib/server/util';
-import { getParticipantIdFromCookies } from '$lib/server/participants.js';
+import type { ExerciseId } from '$lib/server/newtypes';
 
 /**
  * Starts an exercise.
  *
  * @type {import('@sveltejs/kit').RequestHandler}
  */
-export async function POST({ cookies, request }) {
-    const participantId = getParticipantIdFromCookies(cookies);
+export async function POST({ locals }) {
+    const participant = locals.participant;
+    if (!participant) throw error(StatusCodes.UNAUTHORIZED, 'Not logged in');
 
-    const data = await request.formData();
-    const exerciseId = toExerciseId(data.get('exerciseId'));
-    if (exerciseId === null) throw error(StatusCodes.BAD_REQUEST, 'No exerciseId provided');
-    let condition = toCondition(data.get('condition'));
-    if (condition === null) {
-        console.warn("Received null condition, defaulting to 'control'");
-        condition = 'control';
-    }
+    const participantId = participant.participant_id;
+    const exerciseId = participant.stage as ExerciseId;
 
     // Insert into the database.
-    await logExerciseAttemptStart(participantId, exerciseId, condition);
+    await logExerciseAttemptStart(participantId, exerciseId);
 
     // I don't know what should be returned here.
     return json({ success: true, exerciseId });

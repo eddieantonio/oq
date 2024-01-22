@@ -60,14 +60,7 @@
 
     /** Tell the backend that we're ready to go! */
     async function indicateExerciseStarted() {
-        const formData = new URLSearchParams();
-        formData.append('exerciseId', exercise);
-        // TODO: this should no longer be needed:
-        formData.append('condition', condition);
-        const res = await fetch('/api/start-exercise', {
-            method: 'POST',
-            body: formData
-        });
+        const res = await fetch('/api/start-exercise', { method: 'POST' });
         const json = await res.json();
         if (!json.success) {
             console.error(json);
