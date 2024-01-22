@@ -75,6 +75,11 @@
         return setTimeout(onTimeout, timeout);
 
         function onTimeout() {
+            if (okayToContinue) {
+                // No need to timeout if the participant has already fixed the code.
+                return;
+            }
+
             fetch('?/submit', {
                 method: 'POST',
                 keepalive: true,
