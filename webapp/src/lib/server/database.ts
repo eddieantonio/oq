@@ -166,25 +166,13 @@ export async function getParticipantPossiblyUndefined(
  * Saves a new participant to the database.
  */
 export async function saveParticipant(participantId: ParticipantId, classroomId: ClassroomId) {
-    const insert = Participants().insert({
+    await Participants().insert({
         participant_id: participantId,
         classroom_id: classroomId,
         started_at: new Date(),
         // If we've gotten here, they have consented to all questions.
         consented_to_all: true
     });
-
-    // Replace an existing participant ONLY for testing:
-    if (process.env.NODE_ENV === 'development' || participantId === 'TEST01') {
-        console.log({
-            file: 'database.ts',
-            debug: 'Replacing existing participant',
-            participantId
-        });
-        await insert.onConflict('participant_id').merge();
-    } else {
-        await insert;
-    }
 }
 
 /**
@@ -216,7 +204,7 @@ export async function setParticipantAssignments(
     participantId: ParticipantId,
     assignments: Assignment[]
 ) {
-    const insert = ParticipantAssignments().insert(
+    await ParticipantAssignments().insert(
         assignments.map((assignment, index) => ({
             participant_id: participantId,
             exercise_id: `exercise-${index + 1}` as ExerciseId,
@@ -224,16 +212,6 @@ export async function setParticipantAssignments(
             task: assignment.task
         }))
     );
-
-    if (process.env.NODE_ENV === 'development') {
-        console.log({
-            file: 'database.ts',
-            debug: 'Giving participant new assignments'
-        });
-        await insert.onConflict(['participant_id', 'exercise_id']).merge();
-    } else {
-        await insert;
-    }
 }
 
 /**
@@ -404,20 +382,10 @@ export async function logExerciseAttemptCompleted(
     exerciseId: ExerciseId,
     reason: CompletedExerciseAttempt['reason']
 ) {
-    const insert = CompletedExerciseAttempts().insert({
+    await CompletedExerciseAttempts().insert({
         participant_id: participantId,
         exercise_id: exerciseId,
         completed_at: new Date(),
         reason
     });
-
-    if (process.env.NODE_ENV === 'development') {
-        console.log({
-            file: 'database.ts',
-            debug: 'Merging exercise attempt completion'
-        });
-        await insert.onConflict(['participant_id', 'exercise_id']).merge();
-    } else {
-        await insert;
-    }
 }
