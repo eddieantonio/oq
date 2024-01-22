@@ -12,9 +12,7 @@ import {
 } from '$lib/server/database';
 import type { ExerciseId } from '$lib/server/newtypes';
 import { getTaskByName, type Task } from '$lib/server/tasks';
-import { toExerciseId } from '$lib/server/util';
 import { nextStage } from '$lib/types';
-import { getParticipantIdFromCookies } from '$lib/server/participants';
 import { makeDiagnosticsFromTask } from '$lib/server/diagnostics-util';
 
 /**
@@ -53,19 +51,23 @@ export const actions: import('./$types').Actions = {
     /**
      * Stores code submission in the database.
      */
-    submit: async ({ cookies, request, locals }) => {
-        const participant = getParticipantIdFromCookies(cookies);
+    submit: async ({ request, locals }) => {
+        const participant = locals.participant;
+        if (!participant) throw error(StatusCodes.UNAUTHORIZED, 'No participant found');
+
+        if (!participant.stage.startsWith('exercise-'))
+            throw error(
+                StatusCodes.BAD_REQUEST,
+                'Participant is not currently supposed to be doing an exercise'
+            );
 
         const form = await request.formData();
-        const exercise = toExerciseId(form.get('exerciseId'));
-        if (exercise == null) throw error(StatusCodes.BAD_REQUEST, 'No ExerciseId found');
-
-        await logExerciseAttemptCompleted(participant, exercise, 'completed');
-        // TODO: figure out which experiment we're in, then increment.
-        await setParticipantStage(
-            participant,
-            nextStage(locals.participant?.stage || /* DEBUG */ 'exercise-1')
-        );
+        const reason = form.get('reason');
+        if (!(reason === 'completed' || reason === 'timeout' || reason === 'skip'))
+            throw error(StatusCodes.BAD_REQUEST, 'not a good reason');
+        const exercise = participant.stage as ExerciseId;
+        await logExerciseAttemptCompleted(participant.participant_id, exercise, reason);
+        await setParticipantStage(participant.participant_id, nextStage(participant.stage));
 
         throw redirect(StatusCodes.SEE_OTHER, '/post-exercise-questionnaire');
     }

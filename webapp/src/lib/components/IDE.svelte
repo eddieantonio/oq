@@ -124,13 +124,21 @@
                         <li class="tab tab-active">main.c</li>
                     </ul>
                     <ul class="actions-container unstyle">
-                        <li><button class="btn btn--pass" type="submit" disabled>Pass</button></li>
                         <li>
                             <form method="POST" action="?/submit">
-                                <input type="hidden" name="exerciseId" value={exercise} />
+                                <button
+                                    class="btn btn--skip"
+                                    type="submit"
+                                    name="reason"
+                                    value="skip"
+                                    disabled>Skip</button></li>
+                        <li>
+                            <form method="POST" action="?/submit">
                                 <button
                                     class="btn btn--submit"
                                     type="submit"
+                                    name="reason"
+                                    value="completed"
                                     disabled={!(enabled && okayToContinue)}>Submit</button
                                 >
                             </form>

@@ -116,8 +116,7 @@ export interface CompletedExerciseAttempt {
     participant_id: ParticipantId;
     exercise_id: ExerciseId;
     completed_at: Date;
-    // TODO: change 'completed' to 'solved'?
-    reason: 'completed' | 'timeout';
+    reason: 'completed' | 'timeout' | 'skip';
 }
 
 /**
@@ -401,7 +400,7 @@ export async function logExerciseAttemptStart(
 export async function logExerciseAttemptCompleted(
     participantId: ParticipantId,
     exerciseId: ExerciseId,
-    reason: 'completed' | 'timeout'
+    reason: CompletedExerciseAttempt['reason']
 ) {
     const insert = CompletedExerciseAttempts().insert({
         participant_id: participantId,
