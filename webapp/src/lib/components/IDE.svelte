@@ -12,16 +12,23 @@
     import type { ClientSideRunResult } from '$lib/types/client-side-run-results';
     import type { ExerciseId } from '$lib/server/newtypes';
 
+    /** Whether the editor is enabled at all. */
+    export let enabled: boolean = true;
+
     /** The source code content in the editor. */
     export let content: string;
     /** The programming language of the content. */
     export let language: string;
+
     /** The experimental condition. */
-    export let condition: Condition;
+    export let condition: Condition; // TODO: no longer needed
     /** The exercise that the participant is attempting. */
     export let exercise: ExerciseId;
-    /** Whether the editor is enabled at all. */
-    export let enabled: boolean = true;
+
+    /** When to timeout the attempt (in milliseconds). */
+    export let timeout: number;
+
+    /** The initial diagnostics that are displayed. */
     export let initialDiagnostics: Diagnostics | null = null;
 
     let enableRun = true;
@@ -41,6 +48,18 @@
             return;
         }
 
+        indicateExerciseStarted();
+        startTimeout();
+
+        // Compile the code when the page first loads
+        // BUT only if there are no initial diagnostics!
+        if (!initialDiagnostics) {
+            return await runCode();
+        }
+    }
+
+    /** Tell the backend that we're ready to go! */
+    async function indicateExerciseStarted() {
         const formData = new URLSearchParams();
         formData.append('exerciseId', exercise);
         // TODO: this should no longer be needed:
@@ -52,12 +71,22 @@
         const json = await res.json();
         if (!json.success) {
             console.error(json);
-            return;
         }
+    }
 
-        if (!initialDiagnostics) {
-            return await runCode();
-        }
+    /** Start a timeout to automatically submit the attempt. */
+    async function startTimeout() {
+        await new Promise((resolve) => setTimeout(resolve, timeout));
+        fetch('?/submit', {
+            method: 'POST',
+            keepalive: true,
+            body: new URLSearchParams({
+                reason: 'timeout'
+            })
+        });
+        // Ew, an old-school alert!
+        alert("Time's up! Going to the questionnaire now.");
+        window.location.href = '/post-exercise-questionnaire';
     }
 
     /**
@@ -131,7 +160,10 @@
                                     type="submit"
                                     name="reason"
                                     value="skip"
-                                    disabled>Skip</button></li>
+                                    disabled>Skip</button
+                                >
+                            </form>
+                        </li>
                         <li>
                             <form method="POST" action="?/submit">
                                 <button

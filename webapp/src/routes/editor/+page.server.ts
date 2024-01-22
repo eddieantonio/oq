@@ -11,39 +11,43 @@ import {
     setParticipantStage
 } from '$lib/server/database';
 import type { ExerciseId } from '$lib/server/newtypes';
-import { getTaskByName, type Task } from '$lib/server/tasks';
+import { getTaskByName } from '$lib/server/tasks';
 import { nextStage } from '$lib/types';
 import { makeDiagnosticsFromTask } from '$lib/server/diagnostics-util';
+
+const TIMEOUT = 10 * 60 * 1000; // milliseconds
 
 /**
  * Determine the participant's task for the participant's current exercise,
  * then return the task and initial error message.
  */
 export async function load({ locals }) {
-    if (!locals.participant) throw error(StatusCodes.UNAUTHORIZED, 'No participant found');
     const participant = locals.participant;
+    if (!participant) throw error(StatusCodes.UNAUTHORIZED, 'No participant found');
     if (!participant.stage.startsWith('exercise-'))
-        throw error(StatusCodes.BAD_REQUEST, "Participant's stage is not an exercise");
+        throw error(StatusCodes.BAD_REQUEST, 'Participant is not currently doing an exercise');
 
     const exercise = participant.stage as ExerciseId;
     const currentAssignment = await getParticipantAssignment(participant.participant_id, exercise);
     if (!currentAssignment)
         throw error(StatusCodes.INTERNAL_SERVER_ERROR, 'No assignment found for participant');
 
-    const taskName = currentAssignment.task as Task['name'];
     const condition = currentAssignment.condition;
     // The programming language is hardcoded for now:
     const language = 'c';
 
-    const task = getTaskByName(taskName);
+    const task = getTaskByName(currentAssignment.task);
     const diagnostics = makeDiagnosticsFromTask(task, condition);
+
+    // TODO: load how long the timeout is dynamically if the participant has already started the exercise
 
     return {
         exercise,
         condition,
         language,
         initialSourceCode: task.sourceCode,
-        initialDiagnostics: diagnostics
+        initialDiagnostics: diagnostics,
+        timeout: TIMEOUT
     };
 }
 
