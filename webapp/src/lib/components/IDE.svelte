@@ -38,25 +38,28 @@
     let okayToContinue = false;
     let editorHeightHint = 0;
 
-    // Compile the code when the page first loads.
-    // This should initialize the diagnostics, if not already provided.
-    onMount(() => void startExercise());
-
-    async function startExercise() {
+    // Setup timers, compiles the code for the first time (if the initial
+    // diagnostics are not provided)
+    onMount(() => {
         if (!enabled) {
             console.warn('Tried to start exercise attempt when not logged in.');
             return;
         }
 
         indicateExerciseStarted();
-        startTimeout();
+        const timer = startTimeout();
 
         // Compile the code when the page first loads
         // BUT only if there are no initial diagnostics!
         if (!initialDiagnostics) {
-            return await runCode();
+            runCode();
         }
-    }
+
+        // When the IDE is no longer in mounted, clear the timeout.
+        return () => {
+            clearTimeout(timer);
+        };
+    });
 
     /** Tell the backend that we're ready to go! */
     async function indicateExerciseStarted() {
@@ -68,18 +71,21 @@
     }
 
     /** Start a timeout to automatically submit the attempt. */
-    async function startTimeout() {
-        await new Promise((resolve) => setTimeout(resolve, timeout));
-        fetch('?/submit', {
-            method: 'POST',
-            keepalive: true,
-            body: new URLSearchParams({
-                reason: 'timeout'
-            })
-        });
-        // Ew, an old-school alert!
-        alert("Time's up! Going to the questionnaire now.");
-        window.location.href = '/post-exercise-questionnaire';
+    function startTimeout(): ReturnType<typeof setTimeout> {
+        return setTimeout(onTimeout, timeout);
+
+        function onTimeout() {
+            fetch('?/submit', {
+                method: 'POST',
+                keepalive: true,
+                body: new URLSearchParams({
+                    reason: 'timeout'
+                })
+            });
+            // Ew, an old-school alert!
+            alert("Time's up! Continuing to the survey now...");
+            window.location.href = '/post-exercise-questionnaire';
+        }
     }
 
     /**
