@@ -4,66 +4,151 @@
 
     import LikertScale from '$lib/components/forms/LikertScale.svelte';
     import ShortAnswer from '$lib/components/forms/ShortAnswer.svelte';
-
-    const studyLanguage = 'C';
-
-    // Use this to put an upper-bound on the study language experience.
-    let totalExperience = 0;
 </script>
 
-<!-- This is the questionnaire for now. Eventually I will refactor this to have its own page. -->
-<h1>Questionnaire</h1>
+<h1>Error Message and you</h1>
 
 <form method="post">
-    <h2>Part 1: Programming experience</h2>
+    <!-- These questions (mostly) mirror the student survey here: -->
+    <!-- https://forms.office.com/r/bHbGP9WRN7 -->
 
-    <div class="input-group">
-        <label for="experience">How many years have you been programming?</label>
-        <input
-            type="number"
-            id="experience"
-            name="experience"
-            min="0"
-            max="100"
-            step="1"
-            bind:value={totalExperience}
-        />
-    </div>
+    <!-- Question 1 on the student survey asks which course/module -- but we know that already :) -->
 
-    <div class="input-group">
-        <label for="study-lang-experience"
-            >How many years have you been programming in {studyLanguage}?</label
-        >
-        <input
-            type="number"
-            id="study-lang-experience"
-            name="study-lang-experience"
-            min="0"
-            max={totalExperience}
-            step="1"
-            value="0"
-        />
-    </div>
-
-    <LikertScale
-        questionId="experience-likert"
-        labels={['Complete Beginner', '', '', 'Intermediate', '', '', 'Expert']}
-    >
-        How would you rate your overall experience with programming?
-    </LikertScale>
-
-    <LikertScale
-        questionId="study-lang-familiarity-likert"
-        labels={['Complete Beginner', '', '', 'Intermediate', '', '', 'Expert']}
-    >
-        How would you rate your overall familiarity with {studyLanguage}?
-    </LikertScale>
-
-    <ShortAnswer questionId="best-language">
-        What programming language are you most experienced in?
+    <ShortAnswer questionId="ide">
+        What IDE / compiler / environment are you personally using for this module? (PyCharm,
+        Jupyter Notebooks, BlueJ, Eclipse, Netbeans, VS Code, etc.)
     </ShortAnswer>
 
-    <ShortAnswer questionId="favourite-ide">What is your favourite code editor or IDE?</ShortAnswer>
+    <div class="input-group">
+        <h2>Before this module, how much prior programming experience did you have?</h2>
+        <label> <input type="radio" name="programming-experience" value="None" /> None </label>
+        <label>
+            <input type="radio" name="programming-experience" value="Very little" />Very little (0–3
+            months)
+        </label>
+        <label>
+            <input type="radio" name="programming-experience" value="Some" /> Some (3–6 months)
+        </label>
+        <label>
+            <input type="radio" name="programming-experience" value="A good deal" /> A good deal (6–12
+            months)
+        </label>
+        <label>
+            <input type="radio" name="programming-experience" value="A lot" /> A lot (1–2 years)
+        </label>
+        <label>
+            <input type="radio" name="programming-experience" value="Extensive" /> Extensive (2+ years)
+        </label>
+    </div>
+
+    <div class="input-group">
+        <h2>What do you feel is your level of proficiency with programming</h2>
+        <label>
+            <input type="radio" name="programming-proficiency" value="Complete novice" /> Complete novice
+            - just learning programming now for the first time
+        </label>
+        <label>
+            <input type="radio" name="programming-proficiency" value="Advanced beginner" /> Advanced
+            beginner - some prior experience with programming, but not too much
+        </label>
+        <label>
+            <input type="radio" name="programming-proficiency" value="Competent" /> Competent - I can
+            write simple programs
+        </label>
+        <label>
+            <input type="radio" name="programming-proficiency" value="Proficient" /> Proficient - I can
+            write more complex programs
+        </label>
+        <label>
+            <input type="radio" name="programming-proficiency" value="Expert" /> Expert - I can write
+            any program
+        </label>
+    </div>
+
+    <div class="input-group">
+        <h2>
+            When you are working on code and you see an error message, what is your usual reaction?
+            (select all that apply)
+        </h2>
+        <label
+            ><input type="checkbox" name="reaction" value="panic" /> Panic, I don’t know what to do with
+            this and I don’t understand it</label
+        >
+        <label
+            ><input type="checkbox" name="reaction" value="completely-ignore" />
+            I completely ignore it and continue writing code hoping for the best</label
+        >
+        <label
+            ><input type="checkbox" name="reaction" value="ignore" /> I ignore the actual message but
+            look for the line it tells me I have a problem</label
+        >
+        <label
+            ><input type="checkbox" name="reaction" value="read-1" /> I read the message but I don’t
+            always understand what it means</label
+        >
+        <label
+            ><input type="checkbox" name="reaction" value="read-2" /> I read the message and try to understand
+            what it’s telling me</label
+        >
+        <label
+            ><input type="checkbox" name="reaction" value="read-3" /> I read the message and try to understand
+            what the problem is and on what line</label
+        >
+        <label
+            ><input type="checkbox" name="reaction" value="read-4" /> I read the message and follow the
+            suggested fix</label
+        >
+    </div>
+
+    <div class="input-group">
+        <h2>
+            When you are dealing with an error message, where are you most likely to seek help?
+            (select all that apply)
+        </h2>
+        <label
+            ><input type="checkbox" name="seeking-help" value="nowhere-1" /> Nowhere, I just keep trying
+            things and see what works</label
+        >
+        <label
+            ><input type="checkbox" name="seeking-help" value="nowhere-2" /> Nowhere, the programming
+            environment tells me exactly what I need to do to fix it</label
+        >
+        <label
+            ><input type="checkbox" name="seeking-help" value="textbook" /> I look in the textbook</label
+        >
+        <label
+            ><input type="checkbox" name="seeking-help" value="web-search" /> I search on the web (e.g.
+            Google, Bing, Yahoo, etc.) and look for an explanation of what the error message means</label
+        >
+        <label
+            ><input type="checkbox" name="seeking-help" value="web-forums" /> I search on the web and
+            follow the links to forums like StackOverflow or CSDN looking for fixes that worked for others</label
+        >
+        <label
+            ><input type="checkbox" name="seeking-help" value="instructor" /> I ask my Instructor / Professor</label
+        >
+        <label
+            ><input type="checkbox" name="seeking-help" value="ta" /> I ask my Teaching Assistant / Tutor</label
+        >
+        <label
+            ><input type="checkbox" name="seeking-help" value="classmates" /> I ask my classmates</label
+        >
+        <label
+            ><input type="checkbox" name="seeking-help" value="experienced-friends" /> I ask my more
+            experienced friends</label
+        >
+        <label
+            ><input type="checkbox" name="seeking-help" value="ai" /> I ask A.I. like ChatGPT, GitHub
+            Copilot etc.</label
+        >
+    </div>
+
+    <div class="input-group">
+        <label for="control-explanation"
+            >How do you feel about programming error messages in general?</label
+        >
+        <textarea id="control-explanation" name="general-feeling" rows="4" cols="50" />
+    </div>
 
     <ActionBar>
         <button type="submit">Submit</button>
@@ -77,3 +162,9 @@
         </small>
     </p>
 {/if}
+
+<style>
+    .input-group > label {
+        display: block;
+    }
+</style>

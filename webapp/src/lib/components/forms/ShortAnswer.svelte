@@ -10,10 +10,12 @@
 <style>
     .input-group {
         display: flex;
-        margin-block-end: 0.5rem;
+        flex-direction: column;
+        margin-block-end: 1rem;
     }
     .input-group > label {
         flex: 2;
+        margin-block-end: 0.5rem;
     }
     .input-group > input {
         flex: 1;
