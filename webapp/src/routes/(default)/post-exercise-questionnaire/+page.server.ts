@@ -5,7 +5,7 @@
 import { getParticipantAssignment, setParticipantStage } from '$lib/server/database';
 import { makeDiagnosticsForAssignment } from '$lib/server/diagnostics-util';
 import type { ExerciseId } from '$lib/server/newtypes';
-import { saveQuestionnaireResponses } from '$lib/server/questionnaire';
+import { savePostExerciseQuestionnaireResponses } from '$lib/server/questionnaire';
 import { nextStage, type Stage } from '$lib/types';
 import { error, redirect } from '@sveltejs/kit';
 import { StatusCodes } from 'http-status-codes';
@@ -44,7 +44,8 @@ export const actions: import('./$types').Actions = {
             throw error(StatusCodes.BAD_REQUEST, 'Not at the correct stage');
 
         const participantId = locals.participant.participant_id;
-        await saveQuestionnaireResponses(participantId, request);
+        const exercise = locals.participant.stage.slice('post-'.length) as ExerciseId;
+        await savePostExerciseQuestionnaireResponses(participantId, exercise, request);
         await setParticipantStage(participantId, nextStage(locals.participant.stage));
 
         if (isLastExercise(locals.participant.stage)) {

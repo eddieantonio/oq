@@ -26,6 +26,7 @@ export interface Answer {
     participant_id: ParticipantId;
     question_id: string;
     answer: string;
+    exercise_id?: ExerciseId | null;
 }
 
 /**
@@ -276,6 +277,20 @@ export async function getParticipationCode(classroomId: ClassroomId): Promise<Pa
  */
 export async function saveAnswers(answers: Answer[]) {
     await Answers().insert(answers).onConflict(['question_id', 'participant_id']).merge();
+}
+
+/**
+ * Save all answers to the database, associated with a particular exercise.
+ *
+ * @param exercise The ID of the exercise to associate these answers with.
+ * @param answers a list of answers from the questionnaire
+ */
+export async function saveAnswersForExercise(exercise: ExerciseId, answers: Answer[]) {
+    const answersWithExerciseId = answers.map((answer) => ({ ...answer, exercise_id: exercise }));
+    await Answers()
+        .insert(answersWithExerciseId)
+        .onConflict(['question_id', 'participant_id'])
+        .merge();
 }
 
 export async function getAllAnswers(): Promise<Answer[]> {

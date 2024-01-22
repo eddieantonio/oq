@@ -1,8 +1,8 @@
 import { error } from '@sveltejs/kit';
 import { StatusCodes } from 'http-status-codes';
 
-import { saveAnswers } from '$lib/server/database';
-import type { ParticipantId } from './newtypes';
+import { saveAnswers, type Answer, saveAnswersForExercise } from '$lib/server/database';
+import type { ExerciseId, ParticipantId } from './newtypes';
 
 /**
  * Stores the answers to questionnaire in the database.
@@ -10,10 +10,28 @@ import type { ParticipantId } from './newtypes';
  * At present, this will store ALL entries in the form data as answers.
  */
 export async function saveQuestionnaireResponses(participant: ParticipantId, request: Request) {
-    // Parse the form data
     const data = await request.formData();
+    const answers = convertFormDataToAnswers(participant, data);
+    await saveAnswers(answers);
+}
 
-    // Create an Answer record for each field in form data
+/**
+ * Stores the answers to questionnaire in the database.
+ */
+export async function savePostExerciseQuestionnaireResponses(
+    participant: ParticipantId,
+    exercise: ExerciseId,
+    request: Request
+) {
+    const data = await request.formData();
+    const answers = convertFormDataToAnswers(participant, data);
+    await saveAnswersForExercise(exercise, answers);
+}
+
+/**
+ * Create an Answer record for each and every field in form data.
+ */
+export function convertFormDataToAnswers(participant: ParticipantId, data: FormData): Answer[] {
     const answers = [];
     for (const [key, value] of data.entries()) {
         if (typeof value !== 'string') {
@@ -27,5 +45,5 @@ export async function saveQuestionnaireResponses(participant: ParticipantId, req
         });
     }
 
-    await saveAnswers(answers);
+    return answers;
 }
