@@ -8,28 +8,52 @@
     export let data;
     const pem = data.pem;
 
-    const helpfullnessLabels = [
-        'Not at all helpful',
-        'Not very helpful',
-        'Somehwat unhelpful',
+    // I changed my mind: 5-point Likert
+    const labels = [
+        'Strongly disagree',
+        'Somewhat disagree',
         'Neutral',
-        'Somewhat helpful',
-        'Very helpful',
-        'Extremely helpful'
+        'Somewhat agree',
+        'Strongly agree'
     ];
 </script>
 
 <!-- This is the questionnaire for now. Eventually I will refactor this to have its own page. -->
-<h1>Post-questionnaire</h1>
-
-<p>You just saw this error message:</p>
+<h1>You just saw this error message:</h1>
 <blockquote>
     <DiagnosticDisplay diagnostics={pem} />
 </blockquote>
 
+<h2>Please rate your agreement with the following statements:</h2>
 <form method="post">
-    <LikertScale questionId="control-error-helpfulness" labels={helpfullnessLabels}>
-        How helpful did you find this error messages?
+    <LikertScale questionId="understand-positive" {labels}>
+        This error message helped me understand what was wrong with the code
+    </LikertScale>
+
+    <LikertScale questionId="understand-negative" {labels}>
+        This error message was hard to understand
+    </LikertScale>
+
+    <LikertScale questionId="read-positive" {labels}>
+        I read the error message in its entirety
+    </LikertScale>
+
+    <LikertScale questionId="read-negative" {labels}>I skimmed the error message</LikertScale>
+
+    <LikertScale questionId="quality-negative" {labels}>
+        This error message was poorly written
+    </LikertScale>
+
+    <LikertScale questionId="quality-postive" {labels}>
+        It was worth reading this error message
+    </LikertScale>
+
+    <LikertScale questionId="future-postive" {labels}>
+        I would find this error message useful in the future
+    </LikertScale>
+
+    <LikertScale questionId="future-negative" {labels}>
+        I do not want to see this kind of error message in the future
     </LikertScale>
 
     <div class="input-group">
