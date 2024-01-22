@@ -286,7 +286,16 @@ export async function saveAnswers(answers: Answer[]) {
  * @param answers a list of answers from the questionnaire
  */
 export async function saveAnswersForExercise(exercise: ExerciseId, answers: Answer[]) {
-    const answersWithExerciseId = answers.map((answer) => ({ ...answer, exercise_id: exercise }));
+    const answersWithExerciseId = answers.map((answer) => ({
+        ...answer,
+        // HACK! Since question ID is part of the primary key, we need to make
+        // it unique for each exercise.  Originally, I wanted to add exercise Id
+        // to the primary key, but that would make exercise ID null in some
+        // cases, which gave me weird integrity constraint errors.
+        // There are probably better ways to model this...
+        question_id: `${exercise}:${answer.question_id}` as string,
+        exercise_id: exercise
+    }));
     await Answers()
         .insert(answersWithExerciseId)
         .onConflict(['question_id', 'participant_id'])
