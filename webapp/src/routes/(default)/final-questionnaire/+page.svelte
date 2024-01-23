@@ -5,6 +5,7 @@
     import DiagnosticDisplay from '$lib/components/DiagnosticDisplay.svelte';
     import type { Diagnostics } from '$lib/types/diagnostics.js';
     import type { Condition } from '$lib/types';
+    import LongAnswer from '$lib/components/forms/LongAnswer.svelte';
 
     export let data;
     const pems = data.pems;
@@ -104,10 +105,9 @@
         {/each}
     </div>
 
-    <div class="input-group">
-        <label for="comparison-elaboration">Could you explain your answers above? (optional)</label>
-        <textarea id="comparison-elaboration" name="comparison-elaboration" rows="4" cols="50" />
-    </div>
+    <LongAnswer questionId="comparison-elaboration">
+        Could you explain your answers above? (optional)
+    </LongAnswer>
 
     <ActionBar>
         <button type="submit">Submit</button>

@@ -4,6 +4,7 @@
     import ActionBar from '$lib/components/forms/ActionBar.svelte';
     import DiagnosticDisplay from '$lib/components/DiagnosticDisplay.svelte';
     import LikertScale from '$lib/components/forms/LikertScale.svelte';
+    import LongAnswer from '$lib/components/forms/LongAnswer.svelte';
 
     export let data;
     const pem = data.pem;
@@ -56,10 +57,9 @@
         I do not want to see this kind of error message in the future
     </LikertScale>
 
-    <div class="input-group">
-        <label for="elaboration">Could you explain your answers above? (optional)</label>
-        <textarea id="elaboration" name="elaboration" rows="4" cols="50" />
-    </div>
+    <LongAnswer questionId="elaboration">
+        Could you explain your answers above? (optional)
+    </LongAnswer>
 
     <ActionBar>
         <button type="submit">Submit</button>
