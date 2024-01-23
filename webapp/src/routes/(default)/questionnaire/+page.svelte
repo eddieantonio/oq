@@ -2,10 +2,15 @@
     import { dev } from '$app/environment';
     import ActionBar from '$lib/components/forms/ActionBar.svelte';
     import Checkboxes from '$lib/components/forms/Checkboxes.svelte';
+    import FormGroup from '$lib/components/forms/FormGroup.svelte';
 
     import LongAnswer from '$lib/components/forms/LongAnswer.svelte';
     import MultipleChoice from '$lib/components/forms/MultipleChoice.svelte';
     import ShortAnswer from '$lib/components/forms/ShortAnswer.svelte';
+
+    let gender: string;
+    let preferToSelfDescribe: string = '';
+    $: submittedGender = gender == 'self-describe' ? preferToSelfDescribe : gender;
 </script>
 
 <h1>Error Message and you</h1>
@@ -86,6 +91,44 @@
     <LongAnswer questionId="general-feeling">
         How do you feel about programming error messages in general?
     </LongAnswer>
+
+    <h3>Demographics</h3>
+    <FormGroup>
+        <label for="gender" class="label">Gender: how do you identify?</label>
+        <div>
+            <label class="choice"
+                ><input type="radio" bind:group={gender} value="man" class="choice__control" /> Man
+            </label>
+            <label class="choice"
+                ><input type="radio" bind:group={gender} value="woman" class="choice__control" /> Woman
+            </label>
+            <label class="choice"
+                ><input type="radio" bind:group={gender} value="nb" class="choice__control" /> Non-binary
+            </label>
+            <label class="choice"
+                ><input
+                    type="radio"
+                    bind:group={gender}
+                    value="prefer-not-to-disclose"
+                    class="choice__control"
+                /> Prefer not to disclose
+            </label>
+            <label class="choice"
+                ><input
+                    type="radio"
+                    bind:group={gender}
+                    value="self-describe"
+                    class="choice__control"
+                />
+                Prefer to self-describe{#if gender == 'self-describe'}: <input
+                        type="text"
+                        bind:value={preferToSelfDescribe}
+                        required
+                    />{/if}
+            </label>
+            <input type="hidden" name="gender" value={submittedGender} />
+        </div>
+    </FormGroup>
 
     <ActionBar>
         <button type="submit">Submit</button>
