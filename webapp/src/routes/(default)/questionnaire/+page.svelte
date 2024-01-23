@@ -3,6 +3,7 @@
     import ActionBar from '$lib/components/forms/ActionBar.svelte';
 
     import LikertScale from '$lib/components/forms/LikertScale.svelte';
+    import LongAnswer from '$lib/components/forms/LongAnswer.svelte';
     import ShortAnswer from '$lib/components/forms/ShortAnswer.svelte';
 </script>
 
@@ -143,12 +144,9 @@
         >
     </div>
 
-    <div class="input-group">
-        <label for="control-explanation"
-            >How do you feel about programming error messages in general?</label
-        >
-        <textarea id="control-explanation" name="general-feeling" rows="4" cols="50" />
-    </div>
+    <LongAnswer questionId="general-feeling">
+        How do you feel about programming error messages in general?
+    </LongAnswer>
 
     <ActionBar>
         <button type="submit">Submit</button>

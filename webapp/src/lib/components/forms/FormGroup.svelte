@@ -14,6 +14,7 @@
         outline: 1px solid lime;
         flex: 2;
         margin-block-end: 0.5rem;
+        font-weight: bold;
     }
 
     .form-group :global(.input) {
