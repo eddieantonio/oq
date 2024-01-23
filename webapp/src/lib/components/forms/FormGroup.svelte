@@ -4,21 +4,18 @@
 
 <style>
     .form-group {
-        outline: 1px solid magenta;
         display: flex;
         flex-direction: column;
         margin-block-end: 1.5rem;
     }
 
     .form-group :global(.label) {
-        outline: 1px solid lime;
         flex: 2;
         margin-block-end: 0.5rem;
         font-weight: bold;
     }
 
     .form-group :global(.input) {
-        outline: 1px solid cyan;
         flex: 1;
         display: block;
         width: 100%;

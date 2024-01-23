@@ -55,7 +55,6 @@
     }
 
     .checkbox {
-        outline: 1px solid lime;
         display: inline-block;
         width: 100%;
         height: 100%;

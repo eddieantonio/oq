@@ -16,9 +16,3 @@
         {/each}
     </div>
 </FormGroup>
-
-<style>
-    .choice {
-        outline: 1px solid rosybrown;
-    }
-</style>
