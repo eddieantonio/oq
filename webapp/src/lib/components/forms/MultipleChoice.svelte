@@ -3,15 +3,22 @@
 
     export let questionId: string;
     export let choices: string[];
+
+    $: normalizedChoices = choices.map((choice) => {
+        return {
+            label: choice,
+            value: choice
+        };
+    });
 </script>
 
 <FormGroup>
     <p class="label"><slot /></p>
     <div>
-        {#each choices as choice}
+        {#each normalizedChoices as { label, value }}
             <label class="choice">
-                <input type="radio" name={questionId} value={choice} class="choice__control" />
-                {choice}
+                <input type="radio" name={questionId} {value} class="choice__control" />
+                {label}
             </label>
         {/each}
     </div>
