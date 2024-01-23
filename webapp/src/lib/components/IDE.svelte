@@ -10,7 +10,7 @@
     import type { Diagnostics } from '$lib/types/diagnostics';
     import type { Condition } from '$lib/types';
     import type { ClientSideRunResult } from '$lib/types/client-side-run-results';
-    import type { ExerciseId } from '$lib/server/newtypes';
+    import { createTimer, type CancelableTimer } from '$lib/cancelable-timer';
 
     /** Whether the editor is enabled at all. */
     export let enabled: boolean = true;
@@ -55,7 +55,7 @@
 
         // When the IDE is no longer in mounted, clear the timeout.
         return () => {
-            clearTimeout(timer);
+            timer.cancel();
         };
     });
 
@@ -69,10 +69,8 @@
     }
 
     /** Start a timeout to automatically submit the attempt. */
-    function startTimeout(): ReturnType<typeof setTimeout> {
-        return setTimeout(onTimeout, timeout);
-
-        function onTimeout() {
+    function startTimeout(): CancelableTimer {
+        return createTimer(timeout, function onTimeout() {
             if (okayToContinue) {
                 // No need to timeout if the participant has already fixed the code.
                 return;
@@ -88,7 +86,7 @@
             // Ew, an old-school alert!
             alert("Time's up! Continuing to the survey now...");
             window.location.href = '/post-exercise-questionnaire';
-        }
+        });
     }
 
     /**
