@@ -2,7 +2,7 @@
     import Ide from '$lib/components/IDE.svelte';
 
     export let data: import('./$types').PageData;
-    const { language, condition, initialDiagnostics, timeout } = data;
+    const { language, condition, initialDiagnostics, timeout, skipTimeout } = data;
     let content = data.initialSourceCode;
 </script>
 
@@ -13,4 +13,5 @@
     {condition}
     {initialDiagnostics}
     {timeout}
+    {skipTimeout}
 />

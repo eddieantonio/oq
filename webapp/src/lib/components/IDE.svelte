@@ -26,6 +26,9 @@
     /** When to timeout the attempt (in milliseconds). */
     export let timeout: number;
 
+    /** When to allow skipping the attempt (in milliseconds). */
+    export let skipTimeout: number;
+
     /** The initial diagnostics that are displayed. */
     export let initialDiagnostics: Diagnostics | null = null;
 
@@ -34,6 +37,7 @@
     let programOutput: string | null = null;
     let bottomTab: 'problems' | 'output' = 'problems';
     let okayToContinue = false;
+    let enableSkip = false;
     let editorHeightHint = 0;
 
     // Setup timers, compiles the code for the first time (if the initial
@@ -45,7 +49,8 @@
         }
 
         indicateExerciseStarted();
-        const timer = startTimeout();
+        const timeoutTimer = startTimeout();
+        const skipTimer = startSkipTimer();
 
         // Compile the code when the page first loads
         // BUT only if there are no initial diagnostics!
@@ -53,9 +58,11 @@
             runCode();
         }
 
-        // When the IDE is no longer in mounted, clear the timeout.
+        // When the IDE is no longer in mounted, cancel the timers.
+        // Otherwise, they WILL run in the background :/
         return () => {
-            timer.cancel();
+            timeoutTimer.cancel();
+            skipTimer.cancel();
         };
     });
 
@@ -86,6 +93,12 @@
             // Ew, an old-school alert!
             alert("Time's up! Continuing to the survey now...");
             window.location.href = '/post-exercise-questionnaire';
+        });
+    }
+
+    function startSkipTimer(): CancelableTimer {
+        return createTimer(skipTimeout, function onTimeout() {
+            enableSkip = true;
         });
     }
 
@@ -158,7 +171,7 @@
                                     type="submit"
                                     name="reason"
                                     value="skip"
-                                    disabled>Skip</button
+                                    disabled={!(enabled && enableSkip)}>Skip</button
                                 >
                             </form>
                         </li>
@@ -222,6 +235,11 @@
                             <p>No problems have been detected in the code.</p>
                         {:else}
                             <DiagnosticDisplay diagnostics={pem} />
+                            {#if enableSkip}
+                                <p class="report-skip">
+                                    If you're stuck, you can press “Skip” to continue.
+                                </p>
+                            {/if}
                         {/if}
                     {:else if bottomTab == 'output'}
                         {#if !programOutput && pem}
@@ -445,5 +463,15 @@
     .report-success {
         color: #28a745;
         font-style: italic;
+    }
+
+    .report-skip {
+        color: #444;
+        font-style: italic;
+    }
+    @media (prefers-color-scheme: dark) {
+        .report-skip {
+            color: #ccc;
+        }
     }
 </style>

@@ -16,6 +16,7 @@ import { nextStage } from '$lib/types';
 import { makeDiagnosticsFromTask } from '$lib/server/diagnostics-util';
 
 const TIMEOUT = 10 * 60 * 1000; // milliseconds
+const SKIP_TIMEOUT = 1 * 60 * 1000; // milliseconds
 
 /**
  * Determine the participant's task for the participant's current exercise,
@@ -47,7 +48,8 @@ export async function load({ locals }) {
         language,
         initialSourceCode: task.sourceCode,
         initialDiagnostics: diagnostics,
-        timeout: TIMEOUT
+        timeout: TIMEOUT,
+        skipTimeout: SKIP_TIMEOUT
     };
 }
 
