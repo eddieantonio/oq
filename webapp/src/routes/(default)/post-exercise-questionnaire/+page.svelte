@@ -3,20 +3,11 @@
 
     import ActionBar from '$lib/components/forms/ActionBar.svelte';
     import DiagnosticDisplay from '$lib/components/DiagnosticDisplay.svelte';
-    import LikertScale from '$lib/components/forms/LikertScale.svelte';
     import LongAnswer from '$lib/components/forms/LongAnswer.svelte';
+    import LikertGroup from '$lib/components/forms/LikertGroup.svelte';
 
     export let data;
     const pem = data.pem;
-
-    // I changed my mind: 5-point Likert
-    const labels = [
-        'Strongly disagree',
-        'Somewhat disagree',
-        'Neutral',
-        'Somewhat agree',
-        'Strongly agree'
-    ];
 </script>
 
 <!-- This is the questionnaire for now. Eventually I will refactor this to have its own page. -->
@@ -25,37 +16,45 @@
     <DiagnosticDisplay diagnostics={pem} />
 </blockquote>
 
-<h2>Please rate your agreement with the following statements:</h2>
 <form method="post">
-    <LikertScale questionId="understand-positive" {labels}>
-        This error message helped me understand what was wrong with the code
-    </LikertScale>
-
-    <LikertScale questionId="understand-negative" {labels}>
-        This error message was hard to understand
-    </LikertScale>
-
-    <LikertScale questionId="read-positive" {labels}>
-        I read the error message in its entirety
-    </LikertScale>
-
-    <LikertScale questionId="read-negative" {labels}>I skimmed the error message</LikertScale>
-
-    <LikertScale questionId="quality-negative" {labels}>
-        This error message was poorly written
-    </LikertScale>
-
-    <LikertScale questionId="quality-postive" {labels}>
-        It was worth reading this error message
-    </LikertScale>
-
-    <LikertScale questionId="future-postive" {labels}>
-        I would find this error message useful in the future
-    </LikertScale>
-
-    <LikertScale questionId="future-negative" {labels}>
-        I do not want to see this kind of error message in the future
-    </LikertScale>
+    <LikertGroup
+        questions={[
+            {
+                questionId: 'understand-positive',
+                label: 'This error message helped me understand what was wrong with the code'
+            },
+            {
+                questionId: 'understand-negative',
+                label: 'This error message was hard to understand'
+            },
+            {
+                questionId: 'read-negative',
+                label: 'I skimmed the error message'
+            },
+            {
+                questionId: 'read-positive',
+                label: 'I read the error message in its entirety'
+            },
+            {
+                questionId: 'quality-postive',
+                label: 'It was worth reading this error message'
+            },
+            {
+                questionId: 'quality-negative',
+                label: 'This error message was poorly written'
+            },
+            {
+                questionId: 'future-negative',
+                label: 'I do not want to see this kind of error message in the future'
+            },
+            {
+                questionId: 'future-postive',
+                label: 'I would find this error message useful in the future'
+            }
+        ]}
+    >
+        Please rate your agreement with the following statements:
+    </LikertGroup>
 
     <LongAnswer questionId="elaboration">
         Could you explain your answers above? (optional)
