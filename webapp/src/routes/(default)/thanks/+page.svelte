@@ -24,3 +24,5 @@
         href="mailto:eddie.santos@ucdconnect.ie">eddie.santos@ucdconnect.ie</a
     >.
 </p>
+
+<p>You may now close this tab.</p>

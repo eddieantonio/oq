@@ -23,7 +23,14 @@
 
     <MultipleChoice
         questionId="programming-experience"
-        choices={['None', 'Very little', 'Some', 'A good deal', 'A lot', 'Extensive']}
+        choices={[
+            'None',
+            'Very little (0-3 months)',
+            'Some (3-6 months)',
+            'A good deal (6-12 months)',
+            'A lot (1-2 years)',
+            'Extensive (2+ years)'
+        ]}
     >
         Before this module, how much prior programming experience did you have?
     </MultipleChoice>

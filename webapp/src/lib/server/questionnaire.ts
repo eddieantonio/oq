@@ -5,6 +5,13 @@ import { saveAnswers, type Answer, saveAnswersForExercise } from '$lib/server/da
 import type { ExerciseId, ParticipantId } from './newtypes';
 
 /**
+ * Separates responses to <Checkboxes> answers. Slightly better than using a
+ * comma, semicolon, etc.  This is actually defined in ASCII! But nobody uses
+ * it, perhaps because it's not easy to type (that's the point!)
+ */
+const UNIT_SEPARATOR = '\u001f';
+
+/**
  * Stores the answers to questionnaire in the database.
  *
  * At present, this will store ALL entries in the form data as answers.
@@ -32,16 +39,31 @@ export async function savePostExerciseQuestionnaireResponses(
  * Create an Answer record for each and every field in form data.
  */
 export function convertFormDataToAnswers(participant: ParticipantId, data: FormData): Answer[] {
-    const answers = [];
+    const map = new Map<string, string[]>();
+
+    // First, get all the answers from the form data
     for (const [key, value] of data.entries()) {
         if (typeof value !== 'string') {
             throw error(StatusCodes.BAD_REQUEST, 'Cannot upload file as answer');
         }
 
+        // Append to existing answer if it already exists
+        // We're doing this for the <Checkboxes> answers
+        const items = map.get(key);
+        if (items == null) {
+            map.set(key, [value]);
+        } else {
+            items.push(value);
+        }
+    }
+
+    // Now convert it in into an array of Answer records
+    const answers = [];
+    for (const [key, items] of map.entries()) {
         answers.push({
             participant_id: participant,
             question_id: key,
-            answer: value
+            answer: items.join(UNIT_SEPARATOR)
         });
     }
 
