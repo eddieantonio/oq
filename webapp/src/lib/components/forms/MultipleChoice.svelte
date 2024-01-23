@@ -2,13 +2,15 @@
     import FormGroup from './FormGroup.svelte';
 
     export let questionId: string;
-    export let choices: string[];
+    export let choices: (string | { label: string; value: string })[];
 
     $: normalizedChoices = choices.map((choice) => {
-        return {
-            label: choice,
-            value: choice
-        };
+        return typeof choice === 'string'
+            ? {
+                  label: choice,
+                  value: choice
+              }
+            : choice;
     });
 </script>
 

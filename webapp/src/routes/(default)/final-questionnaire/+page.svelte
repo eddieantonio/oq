@@ -6,9 +6,15 @@
     import type { Diagnostics } from '$lib/types/diagnostics.js';
     import type { Condition } from '$lib/types';
     import LongAnswer from '$lib/components/forms/LongAnswer.svelte';
+    import MultipleChoice from '$lib/components/forms/MultipleChoice.svelte';
 
     export let data;
     const pems = data.pems;
+
+    let choices = pems.map((_, index) => ({
+        label: `Message ${indexToLetter(index)}`,
+        value: formatToCondition(pems[index].format)
+    }));
 
     /** Turns 0, 1, 2, ... to A, B, C, ... */
     function indexToLetter(index: number): string {
@@ -39,71 +45,31 @@
 {/each}
 
 <form method="post">
-    <div class="input-group">
-        <h2>Which error message did you find the most helpful?</h2>
+    <MultipleChoice questionId="most-helpful" {choices}>
+        Which error message did you find the most helpful?
+    </MultipleChoice>
 
-        {#each pems as pem, index}
-            <label>
-                <input type="radio" name="most-helpful" value={formatToCondition(pem.format)} />
-                Message {indexToLetter(index)}
-            </label>
-        {/each}
-    </div>
+    <MultipleChoice questionId="least-helpful" {choices}>
+        Which error message did you find the least helpful?
+    </MultipleChoice>
 
-    <div class="input-group">
-        <h2>Which error message did you find the least helpful?</h2>
+    <MultipleChoice questionId="easiest" {choices}>
+        Which error message did you find the easiest to understand?
+    </MultipleChoice>
 
-        {#each pems as pem, index}
-            <label>
-                <input type="radio" name="least-helpful" value={formatToCondition(pem.format)} />
-                Message {indexToLetter(index)}
-            </label>
-        {/each}
-    </div>
+    <MultipleChoice questionId="difficult" {choices}>
+        Which error message did you find the most difficult to understand?
+    </MultipleChoice>
 
-    <div class="input-group">
-        <h2>Which error message did you find the easiest to understand?</h2>
+    <MultipleChoice questionId="most-wanted" {choices}>
+        If you had to see an error message in the future, which style would you <em>most</em> want to
+        see?
+    </MultipleChoice>
 
-        {#each pems as pem, index}
-            <label>
-                <input type="radio" name="easiest" value={formatToCondition(pem.format)} />
-                Message {indexToLetter(index)}
-            </label>
-        {/each}
-    </div>
-
-    <div class="input-group">
-        <h2>Which error message did you find the most difficult to understand?</h2>
-
-        {#each pems as pem, index}
-            <label>
-                <input type="radio" name="difficult" value={formatToCondition(pem.format)} />
-                Message {indexToLetter(index)}
-            </label>
-        {/each}
-    </div>
-
-    <div class="input-group">
-        <h2>Which type of error message would you most want to see in the future?</h2>
-
-        {#each pems as pem, index}
-            <label>
-                <input type="radio" name="most-wanted" value={formatToCondition(pem.format)} />
-                Message {indexToLetter(index)}
-            </label>
-        {/each}
-    </div>
-
-    <div class="input-group">
-        <h2>Which type of error message would you most least to see in the future?</h2>
-
-        {#each pems as pem, index}
-            <label>
-                <input type="radio" name="least-wanted" value={formatToCondition(pem.format)} />
-                Message {indexToLetter(index)}
-            </label>
-        {/each}
-    </div>
+    <MultipleChoice questionId="least-wanted" {choices}>
+        If you had to see an error message in the future, which style would you <em>least</em> want to
+        see in the future?
+    </MultipleChoice>
 
     <LongAnswer questionId="comparison-elaboration">
         Could you explain your answers above? (optional)
@@ -121,9 +87,3 @@
         </small>
     </p>
 {/if}
-
-<style>
-    .input-group > label {
-        display: block;
-    }
-</style>
