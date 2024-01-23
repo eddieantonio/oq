@@ -1,6 +1,7 @@
 <script lang="ts">
     import { dev } from '$app/environment';
     import ActionBar from '$lib/components/forms/ActionBar.svelte';
+    import Checkboxes from '$lib/components/forms/Checkboxes.svelte';
 
     import LongAnswer from '$lib/components/forms/LongAnswer.svelte';
     import MultipleChoice from '$lib/components/forms/MultipleChoice.svelte';
@@ -40,83 +41,40 @@
         What do you feel is your level of proficiency with programming
     </MultipleChoice>
 
-    <div class="input-group">
-        <h2>
-            When you are working on code and you see an error message, what is your usual reaction?
-            (select all that apply)
-        </h2>
-        <label
-            ><input type="checkbox" name="reaction" value="panic" /> Panic, I don’t know what to do with
-            this and I don’t understand it</label
-        >
-        <label
-            ><input type="checkbox" name="reaction" value="completely-ignore" />
-            I completely ignore it and continue writing code hoping for the best</label
-        >
-        <label
-            ><input type="checkbox" name="reaction" value="ignore" /> I ignore the actual message but
-            look for the line it tells me I have a problem</label
-        >
-        <label
-            ><input type="checkbox" name="reaction" value="read-1" /> I read the message but I don’t
-            always understand what it means</label
-        >
-        <label
-            ><input type="checkbox" name="reaction" value="read-2" /> I read the message and try to understand
-            what it’s telling me</label
-        >
-        <label
-            ><input type="checkbox" name="reaction" value="read-3" /> I read the message and try to understand
-            what the problem is and on what line</label
-        >
-        <label
-            ><input type="checkbox" name="reaction" value="read-4" /> I read the message and follow the
-            suggested fix</label
-        >
-    </div>
+    <Checkboxes
+        questionId="reaction"
+        options={[
+            'Panic, I don’t know what to do with this and I don’t understand it',
+            'I completely ignore it and continue writing code hoping for the best',
+            'I ignore the actual message but look for the line it tells me I have a problem',
+            'I read the message but I don’t always understand what it means',
+            'I read the message and try to understand what it’s telling me',
+            'I read the message and try to understand what the problem is and on what line',
+            'I read the message and follow the suggested fix'
+        ]}
+    >
+        When you are working on code and you see an error message, what is your usual reaction?
+        (select all that apply)
+    </Checkboxes>
 
-    <div class="input-group">
-        <h2>
-            When you are dealing with an error message, where are you most likely to seek help?
-            (select all that apply)
-        </h2>
-        <label
-            ><input type="checkbox" name="seeking-help" value="nowhere-1" /> Nowhere, I just keep trying
-            things and see what works</label
-        >
-        <label
-            ><input type="checkbox" name="seeking-help" value="nowhere-2" /> Nowhere, the programming
-            environment tells me exactly what I need to do to fix it</label
-        >
-        <label
-            ><input type="checkbox" name="seeking-help" value="textbook" /> I look in the textbook</label
-        >
-        <label
-            ><input type="checkbox" name="seeking-help" value="web-search" /> I search on the web (e.g.
-            Google, Bing, Yahoo, etc.) and look for an explanation of what the error message means</label
-        >
-        <label
-            ><input type="checkbox" name="seeking-help" value="web-forums" /> I search on the web and
-            follow the links to forums like StackOverflow or CSDN looking for fixes that worked for others</label
-        >
-        <label
-            ><input type="checkbox" name="seeking-help" value="instructor" /> I ask my Instructor / Professor</label
-        >
-        <label
-            ><input type="checkbox" name="seeking-help" value="ta" /> I ask my Teaching Assistant / Tutor</label
-        >
-        <label
-            ><input type="checkbox" name="seeking-help" value="classmates" /> I ask my classmates</label
-        >
-        <label
-            ><input type="checkbox" name="seeking-help" value="experienced-friends" /> I ask my more
-            experienced friends</label
-        >
-        <label
-            ><input type="checkbox" name="seeking-help" value="ai" /> I ask A.I. like ChatGPT, GitHub
-            Copilot etc.</label
-        >
-    </div>
+    <Checkboxes
+        questionId="seeking-help"
+        options={[
+            'Nowhere, I just keep trying things and see what works',
+            'Nowhere, the programming environment tells me exactly what I need to do to fix it',
+            'I look in the textbook',
+            'I search on the web (e.g. Google, Bing, Yahoo, etc.) and look for an explanation of what the error message means',
+            'I search on the web and follow the links to forums like StackOverflow or CSDN looking for fixes that worked for others',
+            'I ask my Instructor / Professor',
+            'I ask my Teaching Assistant / Tutor',
+            'I ask my classmates',
+            'I ask my more experienced friends',
+            'I ask A.I. like ChatGPT, GitHub Copilot etc.'
+        ]}
+    >
+        When you are dealing with an error message, where are you most likely to seek help? (select
+        all that apply)
+    </Checkboxes>
 
     <LongAnswer questionId="general-feeling">
         How do you feel about programming error messages in general?
@@ -134,9 +92,3 @@
         </small>
     </p>
 {/if}
-
-<style>
-    .input-group > label {
-        display: block;
-    }
-</style>

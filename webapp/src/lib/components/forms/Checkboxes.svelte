@@ -2,16 +2,16 @@
     import FormGroup from './FormGroup.svelte';
 
     export let questionId: string;
-    export let choices: string[];
+    export let options: string[];
 </script>
 
 <FormGroup>
     <p class="label"><slot /></p>
     <div>
-        {#each choices as choice}
+        {#each options as option}
             <label class="choice">
-                <input type="radio" name={questionId} value={choice} class="choice__control" />
-                {choice}
+                <input type="checkbox" name={questionId} value={option} class="choice__control" />
+                {option}
             </label>
         {/each}
     </div>
@@ -19,6 +19,6 @@
 
 <style>
     .choice {
-        outline: 1px solid goldenrod;
+        outline: 1px solid rosybrown;
     }
 </style>

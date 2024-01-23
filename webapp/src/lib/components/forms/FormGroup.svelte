@@ -7,7 +7,7 @@
         outline: 1px solid magenta;
         display: flex;
         flex-direction: column;
-        margin-block-end: 1rem;
+        margin-block-end: 1.5rem;
     }
 
     .form-group :global(.label) {
@@ -23,5 +23,22 @@
         display: block;
         width: 100%;
         line-height: 1.5;
+    }
+
+    .form-group :global(.choice) {
+        box-sizing: border-box;
+        display: block;
+        padding-inline-start: 1rem;
+        width: 100%;
+        line-height: 1.5;
+        cursor: pointer;
+    }
+
+    .form-group :global(.choice):hover {
+        background-color: var(--nc-bg-2);
+    }
+
+    .form-group :global(.choice__control) {
+        margin-inline-end: 0.5em;
     }
 </style>
