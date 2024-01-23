@@ -2,8 +2,8 @@
     import { dev } from '$app/environment';
     import ActionBar from '$lib/components/forms/ActionBar.svelte';
 
-    import LikertScale from '$lib/components/forms/LikertScale.svelte';
     import LongAnswer from '$lib/components/forms/LongAnswer.svelte';
+    import MultipleChoice from '$lib/components/forms/MultipleChoice.svelte';
     import ShortAnswer from '$lib/components/forms/ShortAnswer.svelte';
 </script>
 
@@ -20,51 +20,25 @@
         Jupyter Notebooks, BlueJ, Eclipse, Netbeans, VS Code, etc.)
     </ShortAnswer>
 
-    <div class="input-group">
-        <h2>Before this module, how much prior programming experience did you have?</h2>
-        <label> <input type="radio" name="programming-experience" value="None" /> None </label>
-        <label>
-            <input type="radio" name="programming-experience" value="Very little" />Very little (0–3
-            months)
-        </label>
-        <label>
-            <input type="radio" name="programming-experience" value="Some" /> Some (3–6 months)
-        </label>
-        <label>
-            <input type="radio" name="programming-experience" value="A good deal" /> A good deal (6–12
-            months)
-        </label>
-        <label>
-            <input type="radio" name="programming-experience" value="A lot" /> A lot (1–2 years)
-        </label>
-        <label>
-            <input type="radio" name="programming-experience" value="Extensive" /> Extensive (2+ years)
-        </label>
-    </div>
+    <MultipleChoice
+        questionId="programming-experience"
+        choices={['None', 'Very little', 'Some', 'A good deal', 'A lot', 'Extensive']}
+    >
+        Before this module, how much prior programming experience did you have?
+    </MultipleChoice>
 
-    <div class="input-group">
-        <h2>What do you feel is your level of proficiency with programming</h2>
-        <label>
-            <input type="radio" name="programming-proficiency" value="Complete novice" /> Complete novice
-            - just learning programming now for the first time
-        </label>
-        <label>
-            <input type="radio" name="programming-proficiency" value="Advanced beginner" /> Advanced
-            beginner - some prior experience with programming, but not too much
-        </label>
-        <label>
-            <input type="radio" name="programming-proficiency" value="Competent" /> Competent - I can
-            write simple programs
-        </label>
-        <label>
-            <input type="radio" name="programming-proficiency" value="Proficient" /> Proficient - I can
-            write more complex programs
-        </label>
-        <label>
-            <input type="radio" name="programming-proficiency" value="Expert" /> Expert - I can write
-            any program
-        </label>
-    </div>
+    <MultipleChoice
+        questionId="programming-proficiency"
+        choices={[
+            'Complete novice - just learning programming now for the first time',
+            'Advanced beginner - some prior experience with programming, but not too much',
+            'Competent - I can write simple programs',
+            'Proficient - I can write more complex programs',
+            'Expert - I can write any program'
+        ]}
+    >
+        What do you feel is your level of proficiency with programming
+    </MultipleChoice>
 
     <div class="input-group">
         <h2>
