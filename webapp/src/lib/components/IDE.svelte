@@ -22,8 +22,6 @@
 
     /** The experimental condition. */
     export let condition: Condition; // TODO: no longer needed
-    /** The exercise that the participant is attempting. */
-    export let exercise: ExerciseId;
 
     /** When to timeout the attempt (in milliseconds). */
     export let timeout: number;
@@ -106,7 +104,7 @@
         let response;
         enableRun = false;
         try {
-            response = await runCodeOnServer(content, condition, exercise);
+            response = await runCodeOnServer(content, condition);
         } catch (error) {
             // TODO: show some sort of application error message
             console.error(error);
@@ -128,13 +126,11 @@
 
     async function runCodeOnServer(
         sourceCode: string,
-        condition: Condition,
-        exerciseId: ExerciseId
+        condition: Condition
     ): Promise<ClientSideRunResult> {
         const formData = new FormData();
         formData.append('sourceCode', sourceCode);
         formData.append('condition', condition);
-        formData.append('exerciseId', exerciseId);
 
         const res = await fetch('/api/run', {
             method: 'POST',

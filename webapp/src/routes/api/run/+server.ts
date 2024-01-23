@@ -7,7 +7,7 @@ import { StatusCodes } from 'http-status-codes';
 
 import { logCompileOutput, logCompileEvent } from '$lib/server/database';
 import { fakeEnhanceWithLLM, type RawLLMResponse } from '$lib/server/llm';
-import type { MarkdownString } from '$lib/server/newtypes';
+import type { ExerciseId, MarkdownString } from '$lib/server/newtypes';
 import type {
     Diagnostics,
     LLMEnhancedDiagnostics,
@@ -15,9 +15,8 @@ import type {
 } from '$lib/types/diagnostics';
 import type { RunResult } from '$lib/server/run-code';
 import type { ClientSideRunResult } from '$lib/types/client-side-run-results';
-import { toCondition, toExerciseId } from '$lib/server/util';
+import { toCondition } from '$lib/server/util';
 import type { PistonRequest, PistonResponse } from '$lib/types/piston.js';
-import { getParticipantIdFromCookies } from '$lib/server/participants.js';
 
 /**
  * POST to this endpoint to compile and run the code.
@@ -26,11 +25,16 @@ import { getParticipantIdFromCookies } from '$lib/server/participants.js';
 const PISTON_EXECUTE_URL = 'http://piston:2000/api/v2/execute';
 
 /** @type {import('@sveltejs/kit').RequestHandler} */
-export async function POST({ cookies, request }) {
-    const participantId = getParticipantIdFromCookies(cookies);
+export async function POST({ request, locals }) {
+    const participant = locals.participant;
+    if (!participant) throw error(StatusCodes.UNAUTHORIZED, 'Must be logged in to run code');
+
+    const participantId = participant.participant_id;
+    const exercise = participant.stage as ExerciseId;
 
     const data = await request.formData();
 
+    // TODO: We should query participant's condition instead:
     const condition = toCondition(data.get('condition'));
     if (condition === null) {
         throw fail(StatusCodes.BAD_REQUEST, { condition, missing: true });
@@ -40,11 +44,6 @@ export async function POST({ cookies, request }) {
     const sourceCode = data.get('sourceCode');
     if (!sourceCode || !(typeof sourceCode == 'string'))
         throw fail(StatusCodes.BAD_REQUEST, { sourceCode, missing: true });
-
-    const exercise = toExerciseId(data.get('exerciseId'));
-    if (exercise === null) {
-        console.warn({ route: 'api/run', warning: 'No exerciseId provided' });
-    }
 
     // Simultaneously insert a new compile event while running the actual code.
     const [compileEventId, pistonResponse] = await Promise.all([
