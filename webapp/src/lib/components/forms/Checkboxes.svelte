@@ -6,7 +6,7 @@
 </script>
 
 <FormGroup>
-    <p class="label"><slot /></p>
+    <p class="label"><slot /><span class="required">*</span></p>
     <div>
         {#each options as option}
             <label class="choice">

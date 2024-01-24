@@ -15,11 +15,11 @@
 </script>
 
 <FormGroup>
-    <p class="label"><slot /></p>
+    <p class="label"><slot /><span class="required">*</span></p>
     <div>
         {#each normalizedChoices as { label, value }}
             <label class="choice">
-                <input type="radio" name={questionId} {value} class="choice__control" />
+                <input type="radio" name={questionId} required {value} class="choice__control" />
                 {label}
             </label>
         {/each}

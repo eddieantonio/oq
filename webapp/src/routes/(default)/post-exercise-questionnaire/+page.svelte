@@ -56,9 +56,7 @@
         Please rate your agreement with the following statements:
     </LikertGroup>
 
-    <LongAnswer questionId="elaboration">
-        Could you explain your answers above? (optional)
-    </LongAnswer>
+    <LongAnswer questionId="elaboration" optional>Could you explain your answers above?</LongAnswer>
 
     <ActionBar>
         <button type="submit">Submit</button>

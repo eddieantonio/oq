@@ -5,6 +5,6 @@
 </script>
 
 <FormGroup>
-    <label for={questionId} class="label"><slot /></label>
-    <input type="text" id={questionId} name={questionId} value="" class="input" />
+    <label for={questionId} class="label"><slot /><span class="required">*</span></label>
+    <input type="text" id={questionId} name={questionId} required value="" class="input" />
 </FormGroup>

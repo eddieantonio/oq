@@ -2,11 +2,15 @@
     import FormGroup from './FormGroup.svelte';
 
     export let questionId: string;
+    export let optional: boolean = false;
+    $: required = !optional;
 </script>
 
 <FormGroup>
-    <label for={questionId} class="label"><slot /></label>
-    <textarea id={questionId} name={questionId} value="" class="input" />
+    <label for={questionId} class="label"
+        ><slot />{#if required}<span class="required">*</span>{:else}{' '}(optional){/if}</label
+    >
+    <textarea id={questionId} name={questionId} {required} value="" class="input" />
 </FormGroup>
 
 <style>

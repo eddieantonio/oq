@@ -12,7 +12,7 @@
 </script>
 
 <FormGroup>
-    <p class="label"><slot /></p>
+    <p class="label"><slot /><span class="required">*</span></p>
     <table>
         <thead>
             <tr>
@@ -29,7 +29,7 @@
                     {#each scale as _text, index}
                         <td class="checkbox-cell">
                             <label class="checkbox">
-                                <input type="radio" name={questionId} value={index + 1} />
+                                <input type="radio" name={questionId} required value={index + 1} />
                             </label>
                         </td>
                     {/each}

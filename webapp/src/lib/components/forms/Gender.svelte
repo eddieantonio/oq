@@ -7,7 +7,7 @@
 </script>
 
 <FormGroup>
-    <label for="gender" class="label"><slot /></label>
+    <label for="gender" class="label"><slot /><span class="required">*</span></label>
     <div>
         <label class="choice"
             ><input

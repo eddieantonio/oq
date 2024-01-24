@@ -51,7 +51,7 @@
             'Expert - I can write any program'
         ]}
     >
-        What do you feel is your level of proficiency with programming
+        What do you feel is your level of proficiency with programming?
     </MultipleChoice>
 
     <Checkboxes

@@ -71,8 +71,8 @@
         see in the future?
     </MultipleChoice>
 
-    <LongAnswer questionId="comparison-elaboration">
-        Could you explain your answers above? (optional)
+    <LongAnswer questionId="comparison-elaboration" optional>
+        Could you explain your answers above?
     </LongAnswer>
 
     <ActionBar>

@@ -30,7 +30,15 @@
             <tr>
                 {#each labels as _label, index}
                     {@const num = index + 1}
-                    <td><input id={id(num)} type="radio" name={questionId} value={num} /></td>
+                    <td
+                        ><input
+                            id={id(num)}
+                            type="radio"
+                            name={questionId}
+                            required
+                            value={num}
+                        /></td
+                    >
                 {/each}
             </tr>
         </tbody>

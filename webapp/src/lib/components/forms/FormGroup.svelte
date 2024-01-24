@@ -15,6 +15,10 @@
         font-weight: bold;
     }
 
+    .form-group :global(.required) {
+        color: var(--nc-red, #ff0000);
+    }
+
     .form-group :global(.input) {
         flex: 1;
         display: block;
