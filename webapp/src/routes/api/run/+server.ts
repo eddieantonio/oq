@@ -24,6 +24,11 @@ import type { PistonRequest, PistonResponse } from '$lib/types/piston.js';
  */
 const PISTON_EXECUTE_URL = 'http://piston:2000/api/v2/execute';
 
+/**
+ * The maximum length of the source code, in UTF-16 code units (yeah, sorry).
+ */
+const MAX_SOURCE_CODE_LENGTH = 1024; // 2 KiB (each code point is 2 bytes)
+
 /** @type {import('@sveltejs/kit').RequestHandler} */
 export async function POST({ request, locals }) {
     const participant = locals.participant;
@@ -43,7 +48,9 @@ export async function POST({ request, locals }) {
     // TODO: Should I accept a file upload?
     const sourceCode = data.get('sourceCode');
     if (!sourceCode || !(typeof sourceCode == 'string'))
-        throw fail(StatusCodes.BAD_REQUEST, { sourceCode, missing: true });
+        throw error(StatusCodes.BAD_REQUEST, "Missing or invalid 'sourceCode' parameter");
+    if (sourceCode.length > MAX_SOURCE_CODE_LENGTH)
+        throw error(StatusCodes.BAD_REQUEST, 'Source code is too long');
 
     // Simultaneously insert a new compile event while running the actual code.
     const [compileEventId, pistonResponse] = await Promise.all([
