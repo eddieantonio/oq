@@ -1,18 +1,50 @@
+<script lang="ts">
+    import ActionBar from '$lib/components/forms/ActionBar.svelte';
+
+    export let data: import('./$types').PageData;
+    const { tasks } = data;
+
+    const youtubeSource = 'https://www.youtube.com/embed/dQw4w9WgXcQ?si=BV4yzHzfce7xhbPS';
+</script>
+
 <header>
-    <h1>Briefing</h1>
+    <h1>What you're going to do in this study</h1>
 </header>
 
 <article>
-    <p>
-        EDDIE: what's going to happen on this page is that you're going to explain to the
-        participant what they're supposed to do when they are given an editor. Explain the scenario
-        (they are fixing some broken code) and that they need to fix it. They can rerun the code to
-        see if they fixed anything. The user can submit as soon as they are able to fix the issue
-        with the code. They can pass after a time limit.
-    </p>
-    <p>
-        Politely ask the participant to NOT use external help (google, stackoverflow, chatgpt, etc.)
-    </p>
-    <p>EDDIE: put pictures. Make it BLATENTLY OBVIOUS what they're supposed to do.</p>
-    <p>EDDIE: maybe make a YouTube video?</p>
+    <form method="POST">
+        <p>Please watch this brief video to learn about what you will do in this study:</p>
+        <div class="youtube">
+            <iframe
+                width="560"
+                height="315"
+                src={youtubeSource}
+                title="YouTube video player"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+            />
+        </div>
+
+        <p>
+            You will do <strong>{tasks} exercises</strong>, after which there will be a short
+            survey.
+        </p>
+
+        <p>
+            <strong>Please do not use AI like ChatGPT, GitHub Copilot</strong>, etc. to help you
+            with this study.
+        </p>
+        <p>When you're ready, press continue to start the first exercise:</p>
+
+        <ActionBar>
+            <button type="submit">Continue</button>
+        </ActionBar>
+    </form>
 </article>
+
+<style>
+    .youtube {
+        text-align: center;
+    }
+</style>
