@@ -8,22 +8,28 @@
 
 <article>
     <p>
-        <strong>EDDIE:</strong> write some copy here that warns the participant this this is the point
-        of no return. They should be reminded that their response will be stored ANONYMOUSLY and I will
-        be unable to associate their data with them beyond this point.
+        Heads up! <strong class="warning"
+            >This is your last chance to change opt out of data collection</strong
+        >. Remember, all data is collected anonymously and will be used for research purposes only.
     </p>
-    <p>You will not be able to unsubmit. Final answers!</p>
+    <p>
+        <strong
+            >When you press “Submit”, your study data will be permanently stored in our database.</strong
+        >
+    </p>
 
     <form method="POST">
         <ActionBar>
-            <button type="submit" name="status" value="revoke-consent"> Revoke consent </button>
+            <button type="submit" name="status" value="revoke-consent">
+                Opt out of data collection
+            </button>
             <button type="submit" name="status" value="consent"> Submit </button>
         </ActionBar>
     </form>
 </article>
 
 <style>
-    strong {
+    .warning {
         color: red;
     }
 

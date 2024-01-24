@@ -224,13 +224,19 @@ export async function setParticipantStage(participantId: ParticipantId, stage: S
 
 /**
  * Sets that the participant has submitted the questionnaire.
- * @param participantId
  */
 export async function setParticipantSubmitted(participantId: ParticipantId): Promise<void> {
     // TODO: check if already submitted?
     await Participants()
         .update({ stage: 'completed', submitted_at: new Date() })
         .where('participant_id', participantId);
+}
+
+/**
+ * Deletes the participant and all of their data.
+ */
+export async function deleteParticipant(participantId: ParticipantId) {
+    await Participants().delete().where('participant_id', participantId);
 }
 
 /**
