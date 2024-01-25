@@ -1,4 +1,4 @@
-import { CONDITIONS, type Assignment, type Condition } from '$lib/types';
+import { CONDITIONS, type Assignment } from '$lib/types';
 import { taskNames } from './tasks';
 
 export const assignmentGenerator = generateAssignments();
@@ -6,7 +6,7 @@ export const assignmentGenerator = generateAssignments();
 /**
  * Infinite generator of all possible assignments.
  *
- * This generate will return random assignments, but ensures that all possible
+ * This generator will yield random assignments, but ensures that all possible
  * assignments are equally likely. That is, task and condition are both randomly
  * assigned, but counterbalanced.
  *
@@ -16,10 +16,15 @@ export const assignmentGenerator = generateAssignments();
 function* generateAssignments(): Generator<Assignment[], undefined, undefined> {
     const allPossibleAssignments = [];
     for (const taskOrder of permutations(taskNames())) {
-        for (const prezOrder of permutations(CONDITIONS)) {
+        for (const conditionOrder of permutations(CONDITIONS)) {
+            // Cycle the conditions so that the conditions repeat if there are
+            // more tasks than conditions.
+            const cycledConditions = [...conditionOrder, ...conditionOrder];
+            console.assert(taskOrder.length <= cycledConditions.length);
+
             const assignments: Assignment[] = taskOrder.map((task, index) => ({
                 task,
-                condition: prezOrder[index] as Condition
+                condition: cycledConditions[index]
             }));
             allPossibleAssignments.push(assignments);
         }
