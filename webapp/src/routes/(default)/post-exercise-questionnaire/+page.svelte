@@ -5,6 +5,7 @@
     import DiagnosticDisplay from '$lib/components/DiagnosticDisplay.svelte';
     import LongAnswer from '$lib/components/forms/LongAnswer.svelte';
     import LikertGroup from '$lib/components/forms/LikertGroup.svelte';
+    import LikertScale from '$lib/components/forms/LikertScale.svelte';
 
     export let data;
     const pem = data.pem;
@@ -24,37 +25,34 @@
                 label: 'This error message helped me understand what was wrong with the code'
             },
             {
+                questionId: 'fix-negative',
+                label: 'This error message was useless for fixing the code'
+            },
+            {
                 questionId: 'understand-negative',
-                label: 'This error message was hard to understand'
+                label: 'This error message was difficult to understand'
             },
             {
-                questionId: 'read-negative',
-                label: 'I skimmed the error message'
-            },
-            {
-                questionId: 'read-positive',
-                label: 'I read the error message in its entirety'
-            },
-            {
-                questionId: 'quality-postive',
-                label: 'It was worth reading this error message'
-            },
-            {
-                questionId: 'quality-negative',
-                label: 'This error message was poorly written'
-            },
-            {
-                questionId: 'future-negative',
-                label: 'I do not want to see this kind of error message in the future'
-            },
-            {
-                questionId: 'future-postive',
-                label: 'I would find this error message useful in the future'
+                questionId: 'fix-postive',
+                label: 'This error message helped me fix the code'
             }
         ]}
     >
         Please rate your agreement with the following statements:
     </LikertGroup>
+
+    <LikertScale
+        questionId="length"
+        labels={[
+            'Way too short',
+            'Slightly too short',
+            'Just right',
+            'Slightly too long',
+            'Way too long'
+        ]}
+    >
+        How was the length of this error message?
+    </LikertScale>
 
     <LongAnswer questionId="elaboration" optional>Could you explain your answers above?</LongAnswer>
 

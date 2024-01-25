@@ -1,12 +1,12 @@
 <script lang="ts">
+    import FormGroup from './FormGroup.svelte';
+
     export let questionId: string;
     export let labels: string[] = [
         'Strongly disagree',
-        '',
-        '',
+        'Slighly disagree',
         'Neutral',
-        '',
-        '',
+        'Slighly agree',
         'Strongly agree'
     ];
 
@@ -15,14 +15,13 @@
     }
 </script>
 
-<fieldset>
-    <legend><slot /></legend>
-
+<FormGroup>
+    <p class="label"><slot /><span class="required">*</span></p>
     <table>
         <thead>
             <tr>
                 {#each labels as label, index}
-                    <th><label for={id(index + 1)}>{label}</label></th>
+                    <th scope="col"><label for={id(index + 1)}>{label}</label></th>
                 {/each}
             </tr>
         </thead>
@@ -30,25 +29,27 @@
             <tr>
                 {#each labels as _label, index}
                     {@const num = index + 1}
-                    <td
-                        ><input
-                            id={id(num)}
-                            type="radio"
-                            name={questionId}
-                            required
-                            value={num}
-                        /></td
+                    <td>
+                        <label class="clickable-area">
+                            <input
+                                id={id(num)}
+                                type="radio"
+                                name={questionId}
+                                required
+                                value={num}
+                            />
+                        </label></td
                     >
                 {/each}
             </tr>
         </tbody>
     </table>
-</fieldset>
+</FormGroup>
 
 <style>
     th {
-        width: calc(100% / 7);
-        font-size: small;
+        width: calc(100% / 5);
+        font-size: smaller;
         vertical-align: middle;
     }
 
@@ -59,17 +60,23 @@
         padding-inline: 0;
     }
 
-    label {
+    th > label {
         display: inline-block;
-    }
-
-    label,
-    input {
-        width: 100%;
         cursor: pointer;
     }
 
-    td:hover {
+    .clickable-area {
+        display: block;
+        height: 100%;
+        width: 100%;
+        cursor: pointer;
+    }
+    .clickable-area:hover {
         background-color: var(--nc-bg-3);
+    }
+
+    td {
+        padding-block: 0;
+        min-height: 2rem;
     }
 </style>
