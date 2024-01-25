@@ -4,12 +4,12 @@ import type { RootGCCDiagnostic } from '$lib/types/diagnostics';
 import type { MarkdownString, SHA256Hash } from './newtypes';
 import { hashSourceCode } from './hash';
 import type { RawLLMResponse } from './llm';
-import { TASK_NAMES, type TaskName } from '$lib/types';
+import type { TaskName } from '$lib/types';
 
 export const TASKS: Task[] = [];
 
 export interface Task {
-    /** One of 'easy', 'medium', 'hard' */
+    /** An arbitrary name for the task. */
     name: TaskName;
 
     /** Full source code to show the user. */
@@ -40,9 +40,7 @@ export function loadTasksSync(tasksDir: string) {
 
     // Each directory is a task:
     for (const taskDir of taskDirectories) {
-        const name = taskDir.name as Task['name'];
-        // The rest of the codebase is hardcoded to these names, so make sure we're using them:
-        console.assert(TASK_NAMES.includes(name));
+        const name = taskDir.name as TaskName;
 
         const sourceCode = fs.readFileSync(`${tasksDir}/${name}/main.c`, 'utf-8');
         const hash = hashSourceCode(sourceCode);
@@ -75,4 +73,11 @@ export function getTaskByName(name: string): Task {
     const task = TASKS.find((t) => t.name === name);
     if (!task) throw new Error(`No task found with name ${name}`);
     return task;
+}
+
+/**
+ * @returns all tasks names loaded into the server
+ */
+export function taskNames(): TaskName[] {
+    return TASKS.map((t) => t.name);
 }

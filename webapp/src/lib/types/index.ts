@@ -21,6 +21,7 @@ export type Condition = (typeof CONDITIONS)[number];
  */
 export const STAGES = [
     'pre-questionnaire',
+    // TODO: do not make this an array...
     'exercise-1',
     'post-exercise-1',
     'exercise-2',
@@ -33,9 +34,8 @@ export const STAGES = [
 /** Stage of the participant during the study. */
 export type Stage = (typeof STAGES)[number];
 
-/** The different tasks. Note: this will likely change */
-export const TASK_NAMES = ['easy', 'medium', 'hard'] as const;
-export type TaskName = (typeof TASK_NAMES)[number];
+/** The name of a task. */
+export type TaskName = string & { __taskName: never };
 
 /**
  * Participants are assigned tasks and conditions for each exercise.
