@@ -4,7 +4,7 @@
     export let data: import('./$types').PageData;
     const { tasks } = data;
 
-    const youtubeSource = 'https://www.youtube.com/embed/dQw4w9WgXcQ?si=BV4yzHzfce7xhbPS';
+    const youtubeSource = 'https://www.youtube.com/embed/EwhtQx1ZkEg?si=JkIjjsEciY11SFU8';
 </script>
 
 <header>
