@@ -11,7 +11,7 @@ import type {
 } from './newtypes';
 import { hashSourceCode } from './hash';
 import type { RunResult } from './run-code';
-import { STAGES, type Assignment, type Condition, type Stage } from '$lib/types';
+import { type Assignment, type Condition, type Stage, firstStage } from '$lib/types';
 
 ////////////////////////////////////////////// Config //////////////////////////////////////////////
 
@@ -170,7 +170,7 @@ export async function saveParticipant(participantId: ParticipantId, classroomId:
         participant_id: participantId,
         classroom_id: classroomId,
         started_at: new Date(),
-        stage: STAGES[0],
+        stage: firstStage(),
         // If we've gotten here, they have consented to all questions.
         consented_to_all: true
     });

@@ -19,7 +19,7 @@ export type Condition = (typeof CONDITIONS)[number];
  * All possible stages of the study.
  * Stages are ordered from the initial stage to the final stage (completed).
  */
-export const STAGES = [
+const STAGES = [
     'pre-questionnaire',
     // TODO: do not make this an array...
     'exercise-1',
@@ -55,4 +55,11 @@ export function nextStage(stage: Stage) {
     if (index === -1) throw new Error(`Invalid stage: ${stage}`);
     if (index === STAGES.length - 1) throw new Error(`No next stage after ${stage}`);
     return STAGES[index + 1];
+}
+
+/**
+ * @returns the initial stage of the study.
+ */
+export function firstStage(): Stage {
+    return STAGES[0];
 }
