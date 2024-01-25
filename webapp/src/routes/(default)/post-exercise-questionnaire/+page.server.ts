@@ -6,7 +6,7 @@ import { getParticipantAssignment, setParticipantStage } from '$lib/server/datab
 import { makeDiagnosticsForAssignment } from '$lib/server/diagnostics-util';
 import type { ExerciseId } from '$lib/server/newtypes';
 import { savePostExerciseQuestionnaireResponses } from '$lib/server/questionnaire';
-import { nextStage, type Stage } from '$lib/types';
+import { nextStage, previousStage, type Stage } from '$lib/types';
 import { error, redirect } from '@sveltejs/kit';
 import { StatusCodes } from 'http-status-codes';
 
@@ -59,5 +59,5 @@ export const actions: import('./$types').Actions = {
 };
 
 function isLastExercise(stage: Stage) {
-    return stage === 'post-exercise-3';
+    return stage === previousStage('final-questionnaire');
 }

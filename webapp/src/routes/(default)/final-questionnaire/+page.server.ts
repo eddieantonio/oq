@@ -3,7 +3,6 @@
  */
 
 import { StatusCodes } from 'http-status-codes';
-import { dev } from '$app/environment';
 import { error, redirect } from '@sveltejs/kit';
 
 import { saveQuestionnaireResponses } from '$lib/server/questionnaire';

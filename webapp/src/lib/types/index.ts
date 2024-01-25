@@ -21,13 +21,18 @@ export type Condition = (typeof CONDITIONS)[number];
  */
 const STAGES = [
     'pre-questionnaire',
-    // TODO: do not make this an array...
     'exercise-1',
     'post-exercise-1',
     'exercise-2',
     'post-exercise-2',
     'exercise-3',
     'post-exercise-3',
+    'exercise-4',
+    'post-exercise-4',
+    'exercise-5',
+    'post-exercise-5',
+    'exercise-6',
+    'post-exercise-6',
     'final-questionnaire',
     'completed'
 ] as const;
@@ -55,6 +60,17 @@ export function nextStage(stage: Stage) {
     if (index === -1) throw new Error(`Invalid stage: ${stage}`);
     if (index === STAGES.length - 1) throw new Error(`No next stage after ${stage}`);
     return STAGES[index + 1];
+}
+
+/**
+ * @returns the previous stage before the given stage.
+ * @throws if the given stage is invalid or if passed 'pre-questionnaire'
+ */
+export function previousStage(stage: Stage): Stage {
+    const index = STAGES.indexOf(stage);
+    if (index === -1) throw new Error(`Invalid stage: ${stage}`);
+    if (index === 0) throw new Error(`No previous stage before ${stage}`);
+    return STAGES[index - 1];
 }
 
 /**
