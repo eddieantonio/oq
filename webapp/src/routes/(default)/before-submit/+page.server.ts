@@ -15,6 +15,7 @@ export const actions: import('./$types').Actions = {
             await setParticipantSubmitted(participantId);
         } else if (status === 'revoke-consent') {
             await deleteParticipant(participantId);
+            cookies.delete('participant_id');
         }
 
         throw redirect(StatusCodes.SEE_OTHER, '/thanks');

@@ -11,7 +11,7 @@ import type {
 } from './newtypes';
 import { hashSourceCode } from './hash';
 import type { RunResult } from './run-code';
-import type { Assignment, Condition, Stage } from '$lib/types';
+import { STAGES, type Assignment, type Condition, type Stage } from '$lib/types';
 
 ////////////////////////////////////////////// Config //////////////////////////////////////////////
 
@@ -115,7 +115,7 @@ export interface CompletedExerciseAttempt {
     participant_id: ParticipantId;
     exercise_id: ExerciseId;
     completed_at: Date;
-    reason: 'completed' | 'timeout' | 'skip';
+    reason: 'submitted' | 'skipped' | 'timed-out';
 }
 
 /**
@@ -170,6 +170,7 @@ export async function saveParticipant(participantId: ParticipantId, classroomId:
         participant_id: participantId,
         classroom_id: classroomId,
         started_at: new Date(),
+        stage: STAGES[0],
         // If we've gotten here, they have consented to all questions.
         consented_to_all: true
     });

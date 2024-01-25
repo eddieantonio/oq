@@ -69,7 +69,7 @@ export const actions: import('./$types').Actions = {
 
         const form = await request.formData();
         const reason = form.get('reason');
-        if (!(reason === 'completed' || reason === 'timeout' || reason === 'skip'))
+        if (!(reason === 'submitted' || reason === 'skipped' || reason === 'timed-out'))
             throw error(StatusCodes.BAD_REQUEST, 'not a good reason');
         const exercise = participant.stage as ExerciseId;
         await logExerciseAttemptCompleted(participant.participant_id, exercise, reason);

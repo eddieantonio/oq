@@ -87,7 +87,7 @@
                 method: 'POST',
                 keepalive: true,
                 body: new URLSearchParams({
-                    reason: 'timeout'
+                    reason: 'timed-out'
                 })
             });
             // Ew, an old-school alert!
@@ -170,7 +170,7 @@
                                     class="btn btn--skip"
                                     type="submit"
                                     name="reason"
-                                    value="skip"
+                                    value="skipped"
                                     disabled={!(enabled && enableSkip)}>Skip</button
                                 >
                             </form>
@@ -181,7 +181,7 @@
                                     class="btn btn--submit"
                                     type="submit"
                                     name="reason"
-                                    value="completed"
+                                    value="submitted"
                                     disabled={!(enabled && okayToContinue)}>Submit</button
                                 >
                             </form>
