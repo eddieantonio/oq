@@ -10,6 +10,10 @@ import { getAllParticipantAssignments } from '$lib/server/database.js';
 import { makeDiagnosticsForAssignment } from '$lib/server/diagnostics-util';
 import type { Diagnostics } from '$lib/types/diagnostics';
 
+// Render the page on the server only.
+// This is so we don't shuffle the questions on the client.
+export const csr = false;
+
 /**
  * Load all of the current participant's assignments.
  */

@@ -10,6 +10,10 @@ import { nextStage, previousStage, type Stage } from '$lib/types';
 import { error, redirect } from '@sveltejs/kit';
 import { StatusCodes } from 'http-status-codes';
 
+// Render the page on the server only.
+// This is so we don't shuffle the questions on the client.
+export const csr = false;
+
 /**
  * Loads the error message that the participant just saw.
  */

@@ -1,17 +1,26 @@
 <script lang="ts">
+    import { shuffled } from '$lib/random';
     import FormGroup from './FormGroup.svelte';
 
     export let questionId: string;
     export let choices: (string | { label: string; value: string })[];
+    export let randomized: boolean = false;
 
-    $: normalizedChoices = choices.map((choice) => {
+    $: normalizedChoices = possiblyRandomizeChoices().map(normalize);
+
+    function possiblyRandomizeChoices() {
+        if (randomized) return shuffled(choices);
+        return choices;
+    }
+
+    function normalize(choice: string | { label: string; value: string }) {
         return typeof choice === 'string'
             ? {
                   label: choice,
                   value: choice
               }
             : choice;
-    });
+    }
 </script>
 
 <FormGroup>

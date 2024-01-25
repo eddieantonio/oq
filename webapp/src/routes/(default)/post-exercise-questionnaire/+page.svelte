@@ -19,6 +19,7 @@
 
 <form method="post">
     <LikertGroup
+        randomized
         questions={[
             {
                 questionId: 'understand-positive',

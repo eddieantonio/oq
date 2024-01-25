@@ -45,28 +45,28 @@
 {/each}
 
 <form method="post">
-    <MultipleChoice questionId="most-helpful" {choices}>
+    <MultipleChoice questionId="most-helpful" {choices} randomized>
         Which error message did you find the most helpful?
     </MultipleChoice>
 
-    <MultipleChoice questionId="least-helpful" {choices}>
+    <MultipleChoice questionId="least-helpful" {choices} randomized>
         Which error message did you find the least helpful?
     </MultipleChoice>
 
-    <MultipleChoice questionId="easiest" {choices}>
+    <MultipleChoice questionId="easiest" {choices} randomized>
         Which error message did you find the easiest to understand?
     </MultipleChoice>
 
-    <MultipleChoice questionId="difficult" {choices}>
+    <MultipleChoice questionId="difficult" {choices} randomized>
         Which error message did you find the most difficult to understand?
     </MultipleChoice>
 
-    <MultipleChoice questionId="most-wanted" {choices}>
+    <MultipleChoice questionId="most-wanted" {choices} randomized>
         If you had to see an error message in the future, which style would you <em>most</em> want to
         see?
     </MultipleChoice>
 
-    <MultipleChoice questionId="least-wanted" {choices}>
+    <MultipleChoice questionId="least-wanted" {choices} randomized>
         If you had to see an error message in the future, which style would you <em>least</em> want to
         see in the future?
     </MultipleChoice>

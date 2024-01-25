@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { shuffled } from '$lib/random';
     import FormGroup from './FormGroup.svelte';
 
     export let questions: { questionId: string; label: string }[];
@@ -9,6 +10,9 @@
         'Somewhat agree',
         'Strongly agree'
     ];
+
+    export let randomized: boolean = false;
+    let effectiveQuestions = randomized ? shuffled(questions) : questions;
 </script>
 
 <FormGroup>
@@ -23,7 +27,7 @@
             </tr>
         </thead>
         <tbody>
-            {#each questions as { questionId, label }}
+            {#each effectiveQuestions as { questionId, label }}
                 <tr>
                     <th scope="row" class="question-label">{label}</th>
                     {#each scale as _text, index}
