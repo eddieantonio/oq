@@ -40,6 +40,9 @@ export function loadTasksSync(tasksDir: string) {
 
     // Each directory is a task:
     for (const taskDir of taskDirectories) {
+        // Skip the +common/ directory
+        if (taskDir.name == '+common') continue;
+
         const name = taskDir.name as TaskName;
 
         const sourceCode = fs.readFileSync(`${tasksDir}/${name}/main.c`, 'utf-8');
