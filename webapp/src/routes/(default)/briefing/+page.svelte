@@ -27,8 +27,8 @@
         </div>
 
         <p>
-            You will do <strong>{tasks} exercises</strong>, after which there will be a short
-            survey.
+            You're going to see <strong>{tasks} programs and {tasks} error messages</strong>.
+            In the end there will be a short suvery in which <strong>you will be asked to group the error messages in pairs</strong>. Keep this in mind as you progress.
         </p>
 
         <p>

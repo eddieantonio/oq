@@ -1,0 +1,188 @@
+[
+  {
+    "kind": "error",
+    "message": "parameter 'length' is initialized",
+    "children": [],
+    "column-origin": 1,
+    "locations": [
+      {
+        "caret": {
+          "file": "main.c",
+          "line": 5,
+          "display-column": 4,
+          "byte-column": 4,
+          "column": 4
+        },
+        "finish": {
+          "file": "main.c",
+          "line": 5,
+          "display-column": 8,
+          "byte-column": 8,
+          "column": 8
+        }
+      }
+    ],
+    "escape-source": false
+  },
+  {
+    "kind": "error",
+    "message": "parameter 'width' is initialized",
+    "children": [],
+    "column-origin": 1,
+    "locations": [
+      {
+        "caret": {
+          "file": "main.c",
+          "line": 6,
+          "display-column": 4,
+          "byte-column": 4,
+          "column": 4
+        },
+        "finish": {
+          "file": "main.c",
+          "line": 6,
+          "display-column": 8,
+          "byte-column": 8,
+          "column": 8
+        }
+      }
+    ],
+    "escape-source": false
+  },
+  {
+    "kind": "error",
+    "message": "parameter 'area' is initialized",
+    "children": [],
+    "column-origin": 1,
+    "locations": [
+      {
+        "caret": {
+          "file": "main.c",
+          "line": 8,
+          "display-column": 4,
+          "byte-column": 4,
+          "column": 4
+        },
+        "finish": {
+          "file": "main.c",
+          "line": 8,
+          "display-column": 8,
+          "byte-column": 8,
+          "column": 8
+        }
+      }
+    ],
+    "escape-source": false
+  },
+  {
+    "kind": "error",
+    "message": "expected declaration specifiers before 'printf'",
+    "children": [],
+    "column-origin": 1,
+    "locations": [
+      {
+        "caret": {
+          "file": "main.c",
+          "line": 10,
+          "display-column": 4,
+          "byte-column": 4,
+          "column": 4
+        },
+        "finish": {
+          "file": "main.c",
+          "line": 10,
+          "display-column": 9,
+          "byte-column": 9,
+          "column": 9
+        }
+      }
+    ],
+    "escape-source": false
+  },
+  {
+    "kind": "error",
+    "message": "expected declaration specifiers before 'return'",
+    "children": [],
+    "column-origin": 1,
+    "locations": [
+      {
+        "caret": {
+          "file": "main.c",
+          "line": 12,
+          "display-column": 4,
+          "byte-column": 4,
+          "column": 4
+        },
+        "finish": {
+          "file": "main.c",
+          "line": 12,
+          "display-column": 9,
+          "byte-column": 9,
+          "column": 9
+        }
+      }
+    ],
+    "escape-source": false
+  },
+  {
+    "kind": "error",
+    "message": "expected declaration specifiers before '}' token",
+    "children": [],
+    "column-origin": 1,
+    "locations": [
+      {
+        "caret": {
+          "file": "main.c",
+          "line": 13,
+          "display-column": 1,
+          "byte-column": 1,
+          "column": 1
+        }
+      }
+    ],
+    "escape-source": false
+  },
+  {
+    "kind": "error",
+    "message": "old-style parameter declarations in prototyped function definition",
+    "children": [],
+    "column-origin": 1,
+    "locations": [
+      {
+        "caret": {
+          "file": "main.c",
+          "line": 3,
+          "display-column": 5,
+          "byte-column": 5,
+          "column": 5
+        },
+        "finish": {
+          "file": "main.c",
+          "line": 3,
+          "display-column": 8,
+          "byte-column": 8,
+          "column": 8
+        }
+      }
+    ],
+    "escape-source": false
+  },
+  {
+    "kind": "error",
+    "message": "expected '{' at end of input",
+    "children": [],
+    "column-origin": 1,
+    "locations": [
+      {
+        "caret": {
+          "file": "main.c",
+          "line": 15,
+          "display-column": -1,
+          "byte-column": -1,
+          "column": -1
+        }
+      }
+    ],
+    "escape-source": false
+  }
+]

@@ -1,0 +1,70 @@
+[
+  {
+    "kind": "error",
+    "message": "expected '{' before '=' token",
+    "children": [],
+    "column-origin": 1,
+    "locations": [
+      {
+        "caret": {
+          "file": "main.c",
+          "line": 6,
+          "display-column": 14,
+          "byte-column": 14,
+          "column": 14
+        }
+      }
+    ],
+    "escape-source": false
+  },
+  {
+    "kind": "error",
+    "message": "two or more data types in declaration specifiers",
+    "children": [],
+    "column-origin": 1,
+    "locations": [
+      {
+        "caret": {
+          "file": "main.c",
+          "line": 6,
+          "display-column": 8,
+          "byte-column": 8,
+          "column": 8
+        },
+        "finish": {
+          "file": "main.c",
+          "line": 6,
+          "display-column": 12,
+          "byte-column": 12,
+          "column": 12
+        }
+      }
+    ],
+    "escape-source": false
+  },
+  {
+    "kind": "error",
+    "message": "expected expression before 'union'",
+    "children": [],
+    "column-origin": 1,
+    "locations": [
+      {
+        "caret": {
+          "file": "main.c",
+          "line": 9,
+          "display-column": 19,
+          "byte-column": 19,
+          "column": 19
+        },
+        "finish": {
+          "file": "main.c",
+          "line": 9,
+          "display-column": 23,
+          "byte-column": 23,
+          "column": 23
+        }
+      }
+    ],
+    "escape-source": false
+  }
+]
