@@ -1,5 +1,5 @@
 import type { Condition, TaskName } from '$lib/types';
-import type { Diagnostics, GCCDiagnostics } from '$lib/types/diagnostics';
+import type { Diagnostics, GCCDiagnostics, RootGCCDiagnostic } from '$lib/types/diagnostics';
 import type { ParticipantAssignment } from './database';
 import { getMarkdownResponse } from './llm';
 import { getTaskByName, type Task } from './tasks';
@@ -18,7 +18,7 @@ export function makeDiagnosticsForAssignment(assignment: ParticipantAssignment):
 export function makeDiagnosticsFromTask(task: Task, condition: Condition): Diagnostics {
     const original: GCCDiagnostics = {
         format: 'gcc-json',
-        diagnostics: task.rawGccDiagnostics
+        diagnostics: [getFirstGCCError(task.rawGccDiagnostics)]
     };
 
     switch (condition) {
@@ -36,4 +36,14 @@ export function makeDiagnosticsFromTask(task: Task, condition: Condition): Diagn
                 original
             };
     }
+}
+
+/**
+ * @returns the first error diagnostic in the given GCC diagnostics.
+ */
+export function getFirstGCCError(diagnostics: RootGCCDiagnostic[]): RootGCCDiagnostic {
+    const firstError = diagnostics.find((d) => d.kind === 'error');
+    if (!firstError)
+        throw new Error(`No error found in GCC diagnostics: ${JSON.stringify(diagnostics)}`);
+    return firstError;
 }
