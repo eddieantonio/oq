@@ -1,8 +1,16 @@
-**Error**: there is no variable called `fahrenheit` in scope
-
-**Help**: perhaps you want to add a parameter called `fahrenheit`
+**Error**: mistake at end of line 3
 
 ```
-   1 | float convert(float fahrenheit) {
-                     ++++++++++++++++ add parameter here
+   3 | int main(int argc, char* argv[]) 
+     |                                 ^ problem detected here
+```
+
+**Help**: adding `{` will close the bracket on line 13.
+
+```
+   3 | int main(int argc, char* argv[]) {
+     |                                  + add open bracket here
+  ...
+  13 | }
+     | - to match close bracket here
 ```
