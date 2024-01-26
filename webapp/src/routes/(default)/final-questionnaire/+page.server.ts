@@ -9,10 +9,8 @@ import { saveQuestionnaireResponses } from '$lib/server/questionnaire';
 import { getAllParticipantAssignments } from '$lib/server/database.js';
 import { makeDiagnosticsForAssignment } from '$lib/server/diagnostics-util';
 import type { Diagnostics } from '$lib/types/diagnostics';
-
-// Render the page on the server only.
-// This is so we don't shuffle the questions on the client.
-export const csr = false;
+import { shuffle } from '$lib/random.js';
+import type { Condition } from '$lib/types';
 
 /**
  * Load all of the current participant's assignments.
@@ -24,9 +22,41 @@ export async function load({ locals }) {
     const allAssignments = await getAllParticipantAssignments(participant.participant_id);
     const pems: Diagnostics[] = allAssignments.map(makeDiagnosticsForAssignment);
 
+    // Group PEMs by condition
+    const pemsByCondition = new Map<Condition, Diagnostics[]>();
+    for (const pem of pems) {
+        const condition = formatToCondition(pem.format);
+        const entry = pemsByCondition.get(condition);
+        if (!entry) pemsByCondition.set(condition, [pem]);
+        else entry.push(pem);
+    }
+
+    // Convert to an array of plain objects.
+    const styles = [];
+    for (const [condition, pems] of pemsByCondition.entries()) {
+        styles.push({
+            condition,
+            pems
+        });
+    }
+    // We shuffle so that participants each participant sees the study conditions in a different order:
+    shuffle(styles);
+
     return {
-        pems
+        pems,
+        styles
     };
+}
+
+function formatToCondition(format: Diagnostics['format']): Condition {
+    switch (format) {
+        case 'gcc-json':
+            return 'control';
+        case 'manually-enhanced':
+            return 'enhanced';
+        case 'llm-enhanced':
+            return 'llm-enhanced';
+    }
 }
 
 export const actions: import('./$types').Actions = {

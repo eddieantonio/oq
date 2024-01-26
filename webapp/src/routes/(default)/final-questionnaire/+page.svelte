@@ -3,72 +3,71 @@
 
     import ActionBar from '$lib/components/forms/ActionBar.svelte';
     import DiagnosticDisplay from '$lib/components/DiagnosticDisplay.svelte';
-    import type { Diagnostics } from '$lib/types/diagnostics.js';
-    import type { Condition } from '$lib/types';
     import LongAnswer from '$lib/components/forms/LongAnswer.svelte';
     import MultipleChoice from '$lib/components/forms/MultipleChoice.svelte';
 
     export let data;
     const pems = data.pems;
+    const styles = data.styles;
 
-    let choices = pems.map((_, index) => ({
-        label: `Message ${indexToLetter(index)}`,
-        value: formatToCondition(pems[index].format)
+    let choices = styles.map(({ condition }, index) => ({
+        label: `Style ${indexToLetter(index)}`,
+        value: condition
     }));
 
     /** Turns 0, 1, 2, ... to A, B, C, ... */
     function indexToLetter(index: number): string {
         return String.fromCharCode('A'.charCodeAt(0) + index);
     }
-
-    function formatToCondition(format: Diagnostics['format']): Condition {
-        switch (format) {
-            case 'gcc-json':
-                return 'control';
-            case 'manually-enhanced':
-                return 'enhanced';
-            case 'llm-enhanced':
-                return 'llm-enhanced';
-        }
-    }
 </script>
 
-<h1>How do all three error message compare against each other?</h1>
+<h1>How do all three error message explanation styles compare against each other?</h1>
 
-<h2>You just saw these three error messages:</h2>
+<h2>You just saw these <strong>three styles</strong> of error message and explanations:</h2>
 
-{#each pems as pem, index}
-    <h3>Message {indexToLetter(index)}</h3>
-    <blockquote>
-        <DiagnosticDisplay diagnostics={pem} />
-    </blockquote>
-{/each}
+<div class="breakout">
+    <div class="style-side-by-side">
+        {#each styles as style, index}
+            <div class="style">
+                <h3 class="style__header">Style {indexToLetter(index)}</h3>
+                <div class="diagnostic-preview">
+                    {#each style.pems as pem, index}
+                        <h4 class="diagnostic__header">Message {index + 1}</h4>
+                        <DiagnosticDisplay diagnostics={pem} />
+                    {/each}
+                </div>
+            </div>
+        {/each}
+    </div>
+</div>
 
 <form method="post">
-    <MultipleChoice questionId="most-helpful" {choices} randomized>
+    <MultipleChoice questionId="most-helpful" {choices}>
         Which error message did you find the most helpful?
     </MultipleChoice>
 
-    <MultipleChoice questionId="least-helpful" {choices} randomized>
+    <MultipleChoice questionId="least-helpful" {choices}>
         Which error message did you find the least helpful?
     </MultipleChoice>
 
-    <MultipleChoice questionId="easiest" {choices} randomized>
-        Which error message did you find the easiest to understand?
+    <MultipleChoice questionId="easiest" {choices}>
+        Which error message did you find the <em>easiest</em> to understand?
     </MultipleChoice>
 
-    <MultipleChoice questionId="difficult" {choices} randomized>
-        Which error message did you find the most difficult to understand?
+    <MultipleChoice questionId="difficult" {choices}>
+        Which error message did you find the most <em>difficult</em> to understand?
     </MultipleChoice>
 
-    <MultipleChoice questionId="most-wanted" {choices} randomized>
-        If you had to see an error message in the future, which style would you <em>most</em> want to
-        see?
+    <MultipleChoice questionId="most-wanted" {choices}>
+        If you had to see an unfamiliar error message in the future, which style would you <em
+            >most</em
+        > want to see?
     </MultipleChoice>
 
-    <MultipleChoice questionId="least-wanted" {choices} randomized>
-        If you had to see an error message in the future, which style would you <em>least</em> want to
-        see in the future?
+    <MultipleChoice questionId="least-wanted" {choices}>
+        If you had to see an unfamiliar error message in the future, which style would you <em
+            >least</em
+        > want to see in the future?
     </MultipleChoice>
 
     <LongAnswer questionId="comparison-elaboration" optional>
@@ -87,3 +86,50 @@
         </small>
     </p>
 {/if}
+
+<style>
+    /* https://stackoverflow.com/a/37964247/6626414 */
+    .breakout {
+        margin-inline: calc(50% - 50vw);
+        background-color: var(--nc-bg-2);
+        box-shadow: 0 4px 8px var(--nc-bg-3);
+    }
+
+    .style {
+        flex: 1;
+        width: calc(100% / 3 - 3rem);
+    }
+
+    .style__header {
+        text-align: center;
+    }
+
+    .style-side-by-side {
+        display: flex;
+        margin-block: 1rem 2rem;
+        margin-inline: 1.5rem;
+        padding-block: 1rem;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+        overflow: hidden;
+        gap: 2rem;
+    }
+
+    .diagnostic-preview {
+        overflow-y: scroll;
+        max-height: 450px;
+    }
+
+    /* Hack to add a little space between the error messages: */
+    .diagnostic__header:not(:first-child) {
+        margin-block-start: 2em;
+    }
+
+    /* Add a line under the header */
+    .diagnostic__header::after {
+        content: '';
+        display: block;
+        border-bottom: 1px solid var(--nc-bg-3);
+        margin-block: 0.5rem;
+    }
+</style>
