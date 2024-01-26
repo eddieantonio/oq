@@ -18,14 +18,11 @@ function* generateAssignments(): Generator<Assignment[], undefined, undefined> {
     const allPossibleAssignments = [];
     for (const taskOrder of permutations(taskNames())) {
         for (const conditionOrder of permutations(CONDITIONS)) {
-            // Cycle the conditions so that the conditions repeat if there are
-            // more tasks than conditions.
-            const cycledConditions = [...conditionOrder, ...conditionOrder];
-            console.assert(taskOrder.length <= cycledConditions.length);
-
             const assignments: Assignment[] = taskOrder.map((task, index) => ({
                 task,
-                condition: cycledConditions[index]
+                // Cycle the conditions so that the conditions repeat if there are
+                // more tasks than conditions.
+                condition: conditionOrder[index % CONDITIONS.length]
             }));
             allPossibleAssignments.push(assignments);
         }
