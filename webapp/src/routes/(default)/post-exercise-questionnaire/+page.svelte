@@ -12,7 +12,7 @@
 </script>
 
 <!-- This is the questionnaire for now. Eventually I will refactor this to have its own page. -->
-<h1>You just saw this error message:</h1>
+<h1>You just saw this error message and expanation:</h1>
 <blockquote>
     <DiagnosticDisplay diagnostics={pem} />
 </blockquote>
@@ -23,19 +23,19 @@
         questions={[
             {
                 questionId: 'understand-positive',
-                label: 'This error message helped me understand what was wrong with the code'
+                label: 'This error message and explanation helped me understand what was wrong with the code'
             },
             {
                 questionId: 'fix-negative',
-                label: 'This error message was useless for fixing the code'
+                label: 'This error message and explanation was useless for fixing the code'
             },
             {
                 questionId: 'understand-negative',
-                label: 'This error message was difficult to understand'
+                label: 'This error message and explanation was difficult to understand'
             },
             {
                 questionId: 'fix-postive',
-                label: 'This error message helped me fix the code'
+                label: 'This error message and explanation helped me fix the code'
             }
         ]}
     >
@@ -52,7 +52,7 @@
             'Way too long'
         ]}
     >
-        How was the length of this error message?
+        How was the length of this error message and its explanation?
     </LikertScale>
 
     <LongAnswer questionId="elaboration" optional>Could you explain your answers above?</LongAnswer>
