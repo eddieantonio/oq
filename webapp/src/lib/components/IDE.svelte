@@ -12,6 +12,8 @@
     import type { ClientSideRunResult } from '$lib/types/client-side-run-results';
     import { createTimer, type CancelableTimer } from '$lib/cancelable-timer';
 
+    import cLogo from '$lib/assets/c-logo.svg';
+
     /** Whether the editor is enabled at all. */
     export let enabled: boolean = true;
 
@@ -161,7 +163,9 @@
             <div class="editor">
                 <div class="tabs-and-actions-container">
                     <ul class="tabs-container unstyle">
-                        <li class="tab tab-active">main.c</li>
+                        <li class="tab tab-active">
+                            <img src={cLogo} alt="" role="presentation" class="icon" /> main.c
+                        </li>
                     </ul>
                     <ul class="actions-container unstyle">
                         <li>
@@ -463,6 +467,13 @@
     .report-success {
         color: #28a745;
         font-style: italic;
+    }
+
+    .icon {
+        height: 10px;
+        height: 0.4lh;
+        aspect-ratio: 1;
+        margin-inline: 0.6ch;
     }
 
     .report-skip {
