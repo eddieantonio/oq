@@ -6,8 +6,8 @@
 ```
 
 
-**Help**: choose a different name for this variable, or add an
-underscore to the end the name to make a valid name.
+**Help**: either choose a different name for this variable or append an
+underscore to the end of the keyword to make it a valid name.
 
 ```
    6 |    int union_ = 324;

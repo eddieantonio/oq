@@ -52,6 +52,19 @@ export interface Assignment {
 }
 
 /**
+ * Code "markers", intended to be converted to annotations (e.g., red squiggly
+ * lines) in the Monaco editor.
+ */
+export interface JsonMarkerData {
+    severity: 'error' | 'hint' | 'info' | 'warning';
+    message: string;
+    startColumn: number;
+    endColumn: number;
+    startLineNumber: number;
+    endLineNumber: number;
+}
+
+/**
  * @returns the next stage after the given stage.
  * @throws if the given stage is invalid or if passed 'completed'
  */

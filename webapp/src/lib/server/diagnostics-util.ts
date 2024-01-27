@@ -27,7 +27,8 @@ export function makeDiagnosticsFromTask(task: Task, condition: Condition): Diagn
         case 'enhanced':
             return {
                 format: 'manually-enhanced',
-                markdown: task.manuallyEnhancedMessage
+                markdown: task.manuallyEnhancedMessage,
+                markers: task.manuallyEnhancedMessageMarkers
             };
         case 'llm-enhanced':
             return {

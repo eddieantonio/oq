@@ -16,6 +16,7 @@ import * as monaco from 'monaco-editor';
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
 
 import type { Diagnostics, GCCDiagnostic, GCCDiagnostics } from './types/diagnostics';
+import type { JsonMarkerData } from './types';
 
 /**
  * The owner is a string that lets us manage markers that we create in the document.
@@ -73,7 +74,7 @@ function extractMarkersFromDiagnostics(diagnostics: Diagnostics): monaco.editor.
             return extractMarkersFromDiagnostics(diagnostics.original);
         case 'manually-enhanced':
             // Currently no markers for manually enhanced diagnostics.
-            return [];
+            return convertMarkersFromJsonMarkers(diagnostics.markers);
     }
 }
 
@@ -112,12 +113,30 @@ function extractMarkersFromGCCDiagnostics(
     return markers;
 }
 
+function convertMarkersFromJsonMarkers(markers: JsonMarkerData[]): monaco.editor.IMarkerData[] {
+    return markers.map((marker) => ({
+        ...marker,
+        severity: severityStringToMonacoSeverity(marker.severity)
+    }));
+}
+
 function gccKindToMonacoSeverity(kind: GCCDiagnostic['kind']): monaco.MarkerSeverity {
     return {
         error: monaco.MarkerSeverity.Error,
         warning: monaco.MarkerSeverity.Warning,
         note: monaco.MarkerSeverity.Info
     }[kind];
+}
+
+function severityStringToMonacoSeverity(
+    severity: JsonMarkerData['severity']
+): monaco.MarkerSeverity {
+    return {
+        error: monaco.MarkerSeverity.Error,
+        warning: monaco.MarkerSeverity.Warning,
+        info: monaco.MarkerSeverity.Info,
+        hint: monaco.MarkerSeverity.Hint
+    }[severity];
 }
 
 export { monaco };

@@ -4,14 +4,13 @@ import type { RootGCCDiagnostic } from '$lib/types/diagnostics';
 import type { MarkdownString, SHA256Hash } from './newtypes';
 import { hashSourceCode } from './hash';
 import type { RawLLMResponse } from './llm';
-import type { TaskName } from '$lib/types';
+import type { TaskName, JsonMarkerData } from '$lib/types';
 
 export const TASKS: Task[] = [];
 
 export interface Task {
     /** An arbitrary name for the task. */
     name: TaskName;
-
     /** Full source code to show the user. */
     sourceCode: string;
     /** Hash of the source code. */
@@ -20,6 +19,8 @@ export interface Task {
     rawGccDiagnostics: RootGCCDiagnostic[];
     /** Manually-written enhanced error message. */
     manuallyEnhancedMessage: MarkdownString;
+    /** Markers for the manually--written messsage. */
+    manuallyEnhancedMessageMarkers: JsonMarkerData[];
     /** Response directly from OpenAI API. */
     rawLlmResponse: RawLLMResponse;
 }
@@ -58,12 +59,17 @@ export function loadTasksSync(tasksDir: string) {
             fs.readFileSync(`${tasksDir}/${name}/gpt4-response.json`, 'utf-8')
         ) as RawLLMResponse;
 
+        const manuallyEnhancedMessageMarkers = JSON.parse(
+            fs.readFileSync(`${tasksDir}/${name}/manual-markers.json`, 'utf-8')
+        ) as JsonMarkerData[];
+
         TASKS.push({
             name,
             sourceCode,
             hash,
             rawGccDiagnostics,
             manuallyEnhancedMessage,
+            manuallyEnhancedMessageMarkers,
             rawLlmResponse
         });
     }

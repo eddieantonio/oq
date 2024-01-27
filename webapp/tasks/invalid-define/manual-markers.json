@@ -1,0 +1,10 @@
+[
+  {
+    "severity": "error",
+    "message": "#const is not a valid preprocessor directive",
+    "startLineNumber": 3,
+    "endLineNumber": 3,
+    "startColumn": 1,
+    "endColumn": 7
+  }
+]

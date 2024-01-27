@@ -1,4 +1,5 @@
 import type { MarkdownString } from '$lib/server/newtypes';
+import type { JsonMarkerData } from '.';
 
 /**
  * The different types of diagnostics that can be associated with code that is
@@ -35,6 +36,7 @@ export interface LLMEnhancedDiagnostics {
 export interface ManuallyEnhancedDiagnostic {
     format: 'manually-enhanced';
     markdown: MarkdownString;
+    markers: JsonMarkerData[];
 }
 
 /**
