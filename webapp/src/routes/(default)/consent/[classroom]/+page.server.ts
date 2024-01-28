@@ -42,7 +42,11 @@ export const actions: import('./$types').Actions = {
 
         // Check that the participation code is correct before continuing:
         const codeOk = await validateParticipationCode(storedParticipationCode, participationCode);
-        if (!codeOk) throw error(StatusCodes.BAD_REQUEST, 'The participation code was incorrect.');
+        if (!codeOk)
+            throw error(StatusCodes.BAD_REQUEST, {
+                reason: 'invalid-participation-code',
+                message: 'The participation code was incorrect.'
+            });
 
         const participantID = makeNewParticipantId();
 
