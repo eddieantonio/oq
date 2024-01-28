@@ -16,7 +16,7 @@ export function redirectToCurrentStage(stage: Stage): never {
         case 'final-questionnaire':
             throw redirect(StatusCodes.SEE_OTHER, `/final-questionnaire`);
         case 'completed':
-            throw redirect(StatusCodes.SEE_OTHER, `/thanks`);
+            throw redirect(StatusCodes.SEE_OTHER, `/already-responded`);
     }
 
     throw fail(StatusCodes.INTERNAL_SERVER_ERROR);

@@ -3,6 +3,13 @@ import { StatusCodes } from 'http-status-codes';
 
 import { deleteParticipant, setParticipantSubmitted } from '$lib/server/database';
 import type { ParticipantId } from '$lib/server/newtypes';
+import { redirectToCurrentStage } from '$lib/server/redirect';
+
+export function load({ locals }) {
+    const participant = locals.participant;
+    if (!participant) throw error(StatusCodes.UNAUTHORIZED);
+    if (participant.stage != 'final-questionnaire') throw redirectToCurrentStage(participant.stage);
+}
 
 export const actions: import('./$types').Actions = {
     default: async ({ cookies, request }) => {

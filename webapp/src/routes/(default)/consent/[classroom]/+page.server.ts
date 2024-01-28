@@ -10,6 +10,16 @@ import {
 import { validateParticipationCode } from '$lib/server/validate-participation-codes';
 import type { ClassroomId } from '$lib/server/newtypes';
 import { assignmentGenerator } from '$lib/server/create-assignments';
+import { redirectToCurrentStage } from '$lib/server/redirect.js';
+
+export function load({ locals }) {
+    const participant = locals.participant;
+    // Unlike most pages, the happy case is that the participant is NOT registered.
+    // If the participant is registered, they have already consented, and thus are at some other stage of the trial. Take them there:
+    if (participant) redirectToCurrentStage(participant.stage);
+
+    return {};
+}
 
 export const actions: import('./$types').Actions = {
     /**
