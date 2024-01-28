@@ -5,12 +5,15 @@
 import { error, json } from '@sveltejs/kit';
 import { StatusCodes } from 'http-status-codes';
 
-import { logCompileOutput, logCompileEvent } from '$lib/server/database';
+import { logCompileOutput, logCompileEvent, getParticipantAssignment } from '$lib/server/database';
 import type { ExerciseId } from '$lib/server/newtypes';
 import type { Diagnostics, RootGCCDiagnostic } from '$lib/types/diagnostics';
 import type { RunResult } from '$lib/server/run-code';
 import type { ClientSideRunResult } from '$lib/types/client-side-run-results';
 import type { PistonRequest, PistonResponse } from '$lib/types/piston.js';
+import { hashSourceCode } from '$lib/server/hash.js';
+import { getTaskBySourceCodeHash } from '$lib/server/tasks.js';
+import { makeDiagnosticsFromTask } from '$lib/server/diagnostics-util.js';
 
 /**
  * POST to this endpoint to compile and run the code.
@@ -34,11 +37,33 @@ export async function POST({ request, locals }) {
     const data = await request.formData();
 
     // TODO: Should I accept a file upload?
-    const sourceCode = data.get('sourceCode');
+    let sourceCode = data.get('sourceCode');
     if (!sourceCode || !(typeof sourceCode == 'string'))
         throw error(StatusCodes.BAD_REQUEST, "Missing or invalid 'sourceCode' parameter");
     if (sourceCode.length > MAX_SOURCE_CODE_LENGTH)
         throw error(StatusCodes.BAD_REQUEST, 'Source code is too long');
+
+    // HACK: **Something** is putting CRLFs in the source code, but I am an Unix nerd,
+    // so obviously this is unacceptable! Replace all those awful, uncivilized CRLFs:
+    sourceCode = sourceCode.replace(/\r\n/g, '\n');
+
+    // Figure out if we should return the stored PEM or actually run the code.
+    const currentAssignment = await getParticipantAssignment(participant.participant_id, exercise);
+    if (!currentAssignment)
+        throw error(StatusCodes.INTERNAL_SERVER_ERROR, 'No assignment found for participant');
+    const hashed = hashSourceCode(sourceCode);
+
+    // TODO: change the promise.all to do things in parallel a bit better.
+    // TODO: only hash the source code once
+    const originalTask = getTaskBySourceCodeHash(hashed);
+    if (originalTask) {
+        await logCompileEvent(participantId, sourceCode, exercise);
+        const response: ClientSideRunResult = {
+            success: false,
+            diagnostics: makeDiagnosticsFromTask(originalTask, currentAssignment.condition)
+        };
+        return json(response);
+    }
 
     // Simultaneously insert a new compile event while running the actual code.
     const [compileEventId, pistonResponse] = await Promise.all([

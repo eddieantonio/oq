@@ -84,6 +84,11 @@ export function getTaskByName(name: string): Task {
     return task;
 }
 
+export function getTaskBySourceCodeHash(hash: SHA256Hash): Task | undefined {
+    // TODO: build a map if I have more than... oh... 16 tasks?
+    return TASKS.find((t) => t.hash === hash);
+}
+
 /**
  * @returns all tasks names loaded into the server
  */

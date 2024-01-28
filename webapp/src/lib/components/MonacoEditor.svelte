@@ -73,6 +73,10 @@
 
         // Start the editor with the supplied content:
         model = monaco.editor.createModel(content, language);
+        // All of our examples use LF line endings. This must be consistent so that
+        // the SHA-256 hash of the source code matches!
+        model.setEOL(monaco.editor.EndOfLineSequence.LF);
+
         editor.setModel(model);
         disposables.push(model);
 
