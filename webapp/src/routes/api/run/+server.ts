@@ -6,12 +6,8 @@ import { error, json } from '@sveltejs/kit';
 import { StatusCodes } from 'http-status-codes';
 
 import { logCompileOutput, logCompileEvent } from '$lib/server/database';
-import type { ExerciseId, MarkdownString } from '$lib/server/newtypes';
-import type {
-    Diagnostics,
-    LLMEnhancedDiagnostics,
-    RootGCCDiagnostic
-} from '$lib/types/diagnostics';
+import type { ExerciseId } from '$lib/server/newtypes';
+import type { Diagnostics, RootGCCDiagnostic } from '$lib/types/diagnostics';
 import type { RunResult } from '$lib/server/run-code';
 import type { ClientSideRunResult } from '$lib/types/client-side-run-results';
 import type { PistonRequest, PistonResponse } from '$lib/types/piston.js';
