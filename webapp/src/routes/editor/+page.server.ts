@@ -44,7 +44,6 @@ export async function load({ locals }) {
 
     return {
         exercise,
-        condition,
         language,
         initialSourceCode: task.sourceCode,
         initialDiagnostics: diagnostics,

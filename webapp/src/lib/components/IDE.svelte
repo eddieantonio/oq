@@ -8,7 +8,6 @@
     import DiagnosticDisplay from '$lib/components/DiagnosticDisplay.svelte';
     import Editor from '$lib/components/MonacoEditor.svelte';
     import type { Diagnostics } from '$lib/types/diagnostics';
-    import type { Condition } from '$lib/types';
     import type { ClientSideRunResult } from '$lib/types/client-side-run-results';
     import { createTimer, type CancelableTimer } from '$lib/cancelable-timer';
 
@@ -21,9 +20,6 @@
     export let content: string;
     /** The programming language of the content. */
     export let language: string;
-
-    /** The experimental condition. */
-    export let condition: Condition; // TODO: no longer needed
 
     /** When to timeout the attempt (in milliseconds). */
     export let timeout: number;
@@ -117,7 +113,7 @@
         let response;
         enableRun = false;
         try {
-            response = await runCodeOnServer(content, condition);
+            response = await runCodeOnServer(content);
         } catch (error) {
             // TODO: show some sort of application error message
             console.error(error);
@@ -137,13 +133,9 @@
         }
     }
 
-    async function runCodeOnServer(
-        sourceCode: string,
-        condition: Condition
-    ): Promise<ClientSideRunResult> {
+    async function runCodeOnServer(sourceCode: string): Promise<ClientSideRunResult> {
         const formData = new FormData();
         formData.append('sourceCode', sourceCode);
-        formData.append('condition', condition);
 
         const res = await fetch('/api/run', {
             method: 'POST',
