@@ -11,6 +11,7 @@ import { makeDiagnosticsForAssignment } from '$lib/server/diagnostics-util';
 import type { Diagnostics } from '$lib/types/diagnostics';
 import { shuffle } from '$lib/random.js';
 import type { Condition } from '$lib/types';
+import { redirectToCurrentStage } from '$lib/server/redirect';
 
 /**
  * Load all of the current participant's assignments.
@@ -18,6 +19,7 @@ import type { Condition } from '$lib/types';
 export async function load({ locals }) {
     if (!locals.participant) throw error(StatusCodes.UNAUTHORIZED, 'Not logged in');
     const participant = locals.participant;
+    if (participant.stage != 'final-questionnaire') redirectToCurrentStage(participant.stage);
 
     const allAssignments = await getAllParticipantAssignments(participant.participant_id);
     const pems: Diagnostics[] = allAssignments.map(makeDiagnosticsForAssignment);

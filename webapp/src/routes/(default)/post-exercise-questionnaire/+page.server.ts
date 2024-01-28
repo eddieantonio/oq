@@ -6,6 +6,7 @@ import { getParticipantAssignment, setParticipantStage } from '$lib/server/datab
 import { makeDiagnosticsForAssignment } from '$lib/server/diagnostics-util';
 import type { ExerciseId } from '$lib/server/newtypes';
 import { savePostExerciseQuestionnaireResponses } from '$lib/server/questionnaire';
+import { redirectToCurrentStage } from '$lib/server/redirect.js';
 import { nextStage, previousStage, type Stage } from '$lib/types';
 import { error, redirect } from '@sveltejs/kit';
 import { StatusCodes } from 'http-status-codes';
@@ -21,8 +22,7 @@ export async function load({ locals }) {
     if (!locals.participant) throw error(StatusCodes.UNAUTHORIZED, 'Not logged in');
     const participant = locals.participant;
 
-    if (!participant.stage.startsWith('post-exercise-'))
-        throw error(StatusCodes.BAD_REQUEST, 'Must have just completed an exercise');
+    if (!participant.stage.startsWith('post-exercise-')) redirectToCurrentStage(participant.stage);
 
     const exercise = participant.stage.slice('post-'.length) as ExerciseId;
     const currentAssignment = await getParticipantAssignment(participant.participant_id, exercise);

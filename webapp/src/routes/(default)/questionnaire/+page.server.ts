@@ -2,11 +2,19 @@
  * Save questionnaire answers to the database.
  */
 
-import { redirect } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import { StatusCodes } from 'http-status-codes';
 
 import { saveQuestionnaireResponses } from '$lib/server/questionnaire';
 import { getParticipantIdFromCookies } from '$lib/server/participants';
+import { redirectToCurrentStage } from '$lib/server/redirect.js';
+
+export function load({ locals }) {
+    const participant = locals.participant;
+    if (!participant) throw error(StatusCodes.UNAUTHORIZED);
+    if (participant.stage != 'pre-questionnaire') throw redirectToCurrentStage(participant.stage);
+    return {};
+}
 
 export const actions: import('./$types').Actions = {
     /**

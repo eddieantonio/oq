@@ -14,6 +14,7 @@ import type { ExerciseId } from '$lib/server/newtypes';
 import { getTaskByName } from '$lib/server/tasks';
 import { nextStage } from '$lib/types';
 import { makeDiagnosticsFromTask } from '$lib/server/diagnostics-util';
+import { redirectToCurrentStage } from '$lib/server/redirect';
 
 const TIMEOUT = 10 * 60 * 1000; // milliseconds
 const SKIP_TIMEOUT = TIMEOUT / 2;
@@ -25,8 +26,8 @@ const SKIP_TIMEOUT = TIMEOUT / 2;
 export async function load({ locals }) {
     const participant = locals.participant;
     if (!participant) throw error(StatusCodes.UNAUTHORIZED, 'No participant found');
-    if (!participant.stage.startsWith('exercise-'))
-        throw error(StatusCodes.BAD_REQUEST, 'Participant is not currently doing an exercise');
+
+    if (!participant.stage.startsWith('exercise-')) redirectToCurrentStage(participant.stage);
 
     const exercise = participant.stage as ExerciseId;
     const currentAssignment = await getParticipantAssignment(participant.participant_id, exercise);
