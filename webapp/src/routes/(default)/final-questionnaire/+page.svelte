@@ -74,6 +74,16 @@
         Could you explain your answers above?
     </LongAnswer>
 
+    <!-- We scramble the styles, but the participant my say "I like style A the
+    most" and then we have to figure out what they meant by that. This will send
+    the styles in the order that the participant saw them in order for us to
+    unscramble later. -->
+    <input
+        type="hidden"
+        name="_conditions"
+        value={styles.map(({ condition }) => condition).join(',')}
+    />
+
     <ActionBar>
         <button type="submit">Submit</button>
     </ActionBar>

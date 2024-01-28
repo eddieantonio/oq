@@ -31,15 +31,15 @@ export async function load({ locals }) {
         else entry.push(pem);
     }
 
-    // Convert to an array of plain objects.
-    const styles = [];
-    for (const [condition, pems] of pemsByCondition.entries()) {
-        styles.push({
-            condition,
-            pems
-        });
-    }
-    // We shuffle so that participants each participant sees the study conditions in a different order:
+    // Convert groups into to an array of plain objects.
+    const styles = Array.from(pemsByCondition.entries()).map(([condition, pems]) => ({
+        condition,
+        pems
+    }));
+
+    // We shuffle so that participants each participant to prevent the
+    // participants from just selecting the first option -- they have to make a
+    // choice.
     shuffle(styles);
 
     return {
