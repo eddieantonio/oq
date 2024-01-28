@@ -2,11 +2,10 @@
  * Sends code to be run on Piston and logs all necessary study data.
  */
 
-import { error, fail, json } from '@sveltejs/kit';
+import { error, json } from '@sveltejs/kit';
 import { StatusCodes } from 'http-status-codes';
 
 import { logCompileOutput, logCompileEvent } from '$lib/server/database';
-import { fakeEnhanceWithLLM, type RawLLMResponse } from '$lib/server/llm';
 import type { ExerciseId, MarkdownString } from '$lib/server/newtypes';
 import type {
     Diagnostics,
@@ -15,7 +14,6 @@ import type {
 } from '$lib/types/diagnostics';
 import type { RunResult } from '$lib/server/run-code';
 import type { ClientSideRunResult } from '$lib/types/client-side-run-results';
-import { toCondition } from '$lib/server/util';
 import type { PistonRequest, PistonResponse } from '$lib/types/piston.js';
 
 /**
@@ -39,12 +37,6 @@ export async function POST({ request, locals }) {
 
     const data = await request.formData();
 
-    // TODO: We should query participant's condition instead:
-    const condition = toCondition(data.get('condition'));
-    if (condition === null) {
-        throw fail(StatusCodes.BAD_REQUEST, { condition, missing: true });
-    }
-
     // TODO: Should I accept a file upload?
     const sourceCode = data.get('sourceCode');
     if (!sourceCode || !(typeof sourceCode == 'string'))
@@ -66,29 +58,7 @@ export async function POST({ request, locals }) {
     };
 
     // The compiler diagnostics SHOULD BE in a JSON format. Parse it!
-    result.parsedDiagnostics = (() => {
-        try {
-            const diagnostics = JSON.parse(
-                pistonResponse.compile?.stderr || '[]'
-            ) as RootGCCDiagnostic[];
-            return {
-                format: 'gcc-json',
-                diagnostics
-            };
-        } catch (e) {
-            return undefined;
-        }
-    })();
-
-    // Enhance the diagnostics with LLM, if appropriate.
-    if (!success && condition === 'llm-enhanced') {
-        if (!result.parsedDiagnostics) {
-            throw error(500, "Can only enhance PEMs with LLM if they're parsed");
-        }
-
-        // TODO: this should make a (cached!) request to the LLM.
-        result.apiResponse = await fakeEnhanceWithLLM(result.parsedDiagnostics, sourceCode);
-    }
+    result.parsedDiagnostics = parseGccDiagnostics(pistonResponse.compile?.stderr || '[]');
 
     // Log the result of the run.
     await logCompileOutput(compileEventId, result);
@@ -142,14 +112,6 @@ function toClientSideFormat(result: RunResult): ClientSideRunResult {
 }
 
 function extractDiagnostics(results: RunResult): Diagnostics | undefined {
-    if (results.apiResponse) {
-        // There is only an API response if the condition is LLM-enhanced.
-        if (results.parsedDiagnostics === undefined) {
-            throw new Error('Expecting all LLM-enhanced diagnostics to have parsed content');
-        }
-        return rawLLMResponseToDiagnostic(results.parsedDiagnostics, results.apiResponse);
-    }
-
     // Did compilation fail?
     if (results.pistonResponse.compile?.code !== 0) {
         if (!results.parsedDiagnostics) {
@@ -164,16 +126,15 @@ function extractDiagnostics(results: RunResult): Diagnostics | undefined {
     return;
 }
 
-/** Converts a raw response from the OpenAI API to a format usable by the UI. */
-function rawLLMResponseToDiagnostic(
-    originaDiagnostics: Diagnostics,
-    raw: RawLLMResponse
-): LLMEnhancedDiagnostics {
-    if (raw.choices.length === 0) throw new Error('Empty LLM response');
-
-    return {
-        format: 'llm-enhanced',
-        markdown: raw.choices[0].message.content as MarkdownString,
-        original: originaDiagnostics
-    };
+function parseGccDiagnostics(stderr: string): Diagnostics | undefined {
+    try {
+        const diagnostics = JSON.parse(stderr) as RootGCCDiagnostic[];
+        return {
+            format: 'gcc-json',
+            // Only show the first error.
+            diagnostics: diagnostics.slice(0, 1)
+        };
+    } catch (e) {
+        return undefined;
+    }
 }
