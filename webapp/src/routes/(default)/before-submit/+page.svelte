@@ -14,7 +14,8 @@
     </p>
     <p>
         <strong
-            >When you press “Submit”, your study data will be permanently stored in our database.</strong
+            >When you press “Submit”, your study data will be stored in our database for a period of
+            five years.</strong
         >
     </p>
 
