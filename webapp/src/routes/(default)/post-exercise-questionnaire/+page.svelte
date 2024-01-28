@@ -23,19 +23,19 @@
         questions={[
             {
                 questionId: 'understand-positive',
-                label: 'This error message and explanation helped me understand what was wrong with the code'
+                label: 'This error message and explanation **helped me understand what was wrong** with the code'
             },
             {
                 questionId: 'fix-negative',
-                label: 'This error message and explanation was useless for fixing the code'
+                label: 'This error message and explanation was **useless for fixing** the code'
             },
             {
                 questionId: 'understand-negative',
-                label: 'This error message and explanation was difficult to understand'
+                label: 'This error message and explanation was **difficult to understand**'
             },
             {
                 questionId: 'fix-postive',
-                label: 'This error message and explanation helped me fix the code'
+                label: 'This error message and explanation **helped me fix the code**'
             }
         ]}
     >

@@ -1,5 +1,6 @@
 <script lang="ts">
     import { shuffled } from '$lib/random';
+    import { marked } from 'marked';
     import FormGroup from './FormGroup.svelte';
 
     export let questions: { questionId: string; label: string }[];
@@ -29,7 +30,7 @@
         <tbody>
             {#each effectiveQuestions as { questionId, label }}
                 <tr>
-                    <th scope="row" class="question-label">{label}</th>
+                    <th scope="row" class="question-label">{@html marked(label)}</th>
                     {#each scale as _text, index}
                         <td class="checkbox-cell">
                             <label class="checkbox">
@@ -47,6 +48,10 @@
     .scale-label,
     .question-label {
         font-size: smaller;
+    }
+
+    .question-label {
+        font-weight: normal;
     }
 
     .scale-label {
