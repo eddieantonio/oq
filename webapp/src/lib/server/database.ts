@@ -199,6 +199,34 @@ export async function getParticipantAssignment(
 }
 
 /**
+ * @returns both the participant's current assignment and the time they started,
+ * if they have already started the exercise.
+ */
+export async function getCurrentParticipantAssignment(
+    participantId: ParticipantId,
+    exerciseId: ExerciseId
+): Promise<[Assignment, number | null]> {
+    const result = await db
+        .select('condition', 'task', 'started_at')
+        .from('participant_assignments')
+        .leftOuterJoin('exercise_attempts', function () {
+            this.on(
+                'participant_assignments.participant_id',
+                '=',
+                'exercise_attempts.participant_id'
+            ).andOn('participant_assignments.exercise_id', '=', 'exercise_attempts.exercise_id');
+        })
+        .where('participant_assignments.participant_id', participantId)
+        .andWhere('participant_assignments.exercise_id', exerciseId)
+        .first();
+
+    const { condition, task, started_at } = result;
+    const startedAt: number | null = started_at != null ? started_at.valueOf() : null;
+    const assignment: Assignment = { condition, task };
+    return [assignment, startedAt];
+}
+
+/**
  * Sets all of the task/condition assignments for the given participant.
  */
 export async function setParticipantAssignments(

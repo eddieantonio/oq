@@ -6,9 +6,9 @@ import { error, redirect } from '@sveltejs/kit';
 import { StatusCodes } from 'http-status-codes';
 
 import {
-    getParticipantAssignment,
     logExerciseAttemptCompleted,
-    setParticipantStage
+    setParticipantStage,
+    getCurrentParticipantAssignment
 } from '$lib/server/database';
 import type { ExerciseId } from '$lib/server/newtypes';
 import { getTaskByName } from '$lib/server/tasks';
@@ -30,7 +30,10 @@ export async function load({ locals }) {
     if (!participant.stage.startsWith('exercise-')) redirectToCurrentStage(participant.stage);
 
     const exercise = participant.stage as ExerciseId;
-    const currentAssignment = await getParticipantAssignment(participant.participant_id, exercise);
+    const [currentAssignment, startedAt] = await getCurrentParticipantAssignment(
+        participant.participant_id,
+        exercise
+    );
     if (!currentAssignment)
         throw error(StatusCodes.INTERNAL_SERVER_ERROR, 'No assignment found for participant');
 
@@ -41,15 +44,22 @@ export async function load({ locals }) {
     const task = getTaskByName(currentAssignment.task);
     const diagnostics = makeDiagnosticsFromTask(task, condition);
 
-    // TODO: load how long the timeout is dynamically if the participant has already started the exercise
+    // Figure out how much time they have left:
+    let timeout = TIMEOUT;
+    let skipTimeout = SKIP_TIMEOUT;
+    if (startedAt) {
+        const timeElapsed = new Date().valueOf() - startedAt;
+        timeout = Math.max(timeout - timeElapsed, 0);
+        skipTimeout = Math.max(skipTimeout - timeElapsed, 0);
+    }
 
     return {
         exercise,
         language,
         initialSourceCode: task.sourceCode,
         initialDiagnostics: diagnostics,
-        timeout: TIMEOUT,
-        skipTimeout: SKIP_TIMEOUT
+        timeout,
+        skipTimeout
     };
 }
 

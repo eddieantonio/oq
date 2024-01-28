@@ -8,7 +8,7 @@ import { redirectToCurrentStage } from '$lib/server/redirect';
 export function load({ locals }) {
     const participant = locals.participant;
     if (!participant) throw error(StatusCodes.UNAUTHORIZED);
-    if (participant.stage != 'final-questionnaire') throw redirectToCurrentStage(participant.stage);
+    if (participant.stage != 'final-questionnaire') redirectToCurrentStage(participant.stage);
 }
 
 export const actions: import('./$types').Actions = {
