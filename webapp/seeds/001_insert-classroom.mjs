@@ -18,14 +18,23 @@ const SCRYPT_COST = 2 ** SCRYPT_COST_EXP;
  * @returns {Promise<void>}
  */
 export async function seed(knex) {
+    const testClassroom = await promptForPassword(TEST_CLASSROOM_ID);
+    const realClassroom = await promptForPassword('COMP10120');
+
+    await knex('classrooms').insert([testClassroom, realClassroom]);
+}
+
+/**
+ * @param {string} classroom
+ * @returns {Promise<{ classroom_id: string, hashed_participation_code: string }>}
+ */
+async function promptForPassword(classroom) {
     // Ask for the participation code:
-    const password = await prompt(`Participation code for ${TEST_CLASSROOM_ID}: `, {
+    const password = await prompt(`Participation code for ${classroom}: `, {
         method: 'hide'
     });
 
-    await knex('classrooms').insert([
-        { classroom_id: TEST_CLASSROOM_ID, hashed_participation_code: hash(password) }
-    ]);
+    return { classroom_id: classroom, hashed_participation_code: hash(password) };
 }
 
 /**

@@ -10,6 +10,7 @@
         <div class="stacked">
             <label for="class">Please choose your class/module:</label>
             <select id="class" name="classroom" bind:value={classroom} required>
+                <option value="COMP10120">COMP10120</option>
                 <option value="TEST-CLASS">Test classroom</option>
             </select>
         </div>

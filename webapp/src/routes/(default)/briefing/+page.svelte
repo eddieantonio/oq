@@ -13,6 +13,11 @@
 
 <article>
     <form method="POST">
+        <p>
+            <strong> COMP10120 students</strong>: You can skip this video if the researcher is in
+            person.
+        </p>
+
         <p>Please watch this brief video to learn about what you will do in this study:</p>
         <div class="youtube">
             <iframe
@@ -27,8 +32,10 @@
         </div>
 
         <p>
-            You're going to see <strong>{tasks} programs and {tasks} error messages</strong>.
-            In the end there will be a short suvery in which <strong>you will be asked to group the error messages in pairs</strong>. Keep this in mind as you progress.
+            You're going to see <strong>{tasks} programs and {tasks} error messages</strong>. In the
+            end there will be a short suvery in which
+            <strong>you will be asked to group the error messages in pairs</strong>. Keep this in
+            mind as you progress.
         </p>
 
         <p>
