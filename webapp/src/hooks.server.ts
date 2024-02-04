@@ -12,6 +12,7 @@ import { env } from '$env/dynamic/private';
 import { loadTasksSync } from '$lib/server/tasks';
 import { getParticipantPossiblyUndefined } from '$lib/server/database';
 import type { ParticipantId } from '$lib/server/newtypes';
+import { StatusCodes } from 'http-status-codes';
 
 // Loads all the tasks on server start.
 // If you change the files in webapp/tasks, you need to restart the server!
@@ -30,6 +31,11 @@ export const handle: Handle = async ({ event, resolve }) => {
         const participant = await getParticipantPossiblyUndefined(participantId as ParticipantId);
         if (!participant) throw error(400, 'Invalid participant ID');
         event.locals.participant = participant;
+        event.locals.expectParticipant = () => participant;
+    } else {
+        event.locals.expectParticipant = () => {
+            throw error(StatusCodes.UNAUTHORIZED, 'Must be logged in for this page');
+        };
     }
 
     // Continue normal processing:
