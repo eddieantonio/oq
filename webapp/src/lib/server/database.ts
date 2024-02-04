@@ -410,17 +410,25 @@ export async function logExerciseAttemptStart(
 }
 
 /**
- * Logs a completed exercise attempt.
+ * Logs a completed exercise attempt and continues to the given stage.
  */
-export async function logExerciseAttemptCompleted(
+export async function logExerciseAttemptCompletedAndContinue(
     participantId: ParticipantId,
     exerciseId: ExerciseId,
-    reason: CompletedExerciseAttempt['reason']
+    reason: CompletedExerciseAttempt['reason'],
+    stage: Stage
 ) {
-    await CompletedExerciseAttempts().insert({
-        participant_id: participantId,
-        exercise_id: exerciseId,
-        completed_at: new Date(),
-        reason
+    await db.transaction(async (trx) => {
+        await trx('completed_exercise_attempts').insert({
+            participant_id: participantId,
+            exercise_id: exerciseId,
+            completed_at: new Date(),
+            reason
+        });
+        await trx('participants')
+            .update({
+                stage
+            })
+            .where('participant_id', participantId);
     });
 }

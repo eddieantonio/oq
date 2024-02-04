@@ -6,9 +6,8 @@ import { error, redirect } from '@sveltejs/kit';
 import { StatusCodes } from 'http-status-codes';
 
 import {
-    logExerciseAttemptCompleted,
-    setParticipantStage,
-    getCurrentParticipantAssignment
+    getCurrentParticipantAssignment,
+    logExerciseAttemptCompletedAndContinue
 } from '$lib/server/database';
 import type { ExerciseId } from '$lib/server/newtypes';
 import { getTaskByName } from '$lib/server/tasks';
@@ -82,8 +81,12 @@ export const actions: import('./$types').Actions = {
         if (!(reason === 'submitted' || reason === 'skipped' || reason === 'timed-out'))
             throw error(StatusCodes.BAD_REQUEST, 'not a good reason');
         const exercise = participant.stage as ExerciseId;
-        await logExerciseAttemptCompleted(participant.participant_id, exercise, reason);
-        await setParticipantStage(participant.participant_id, nextStage(participant.stage));
+        await logExerciseAttemptCompletedAndContinue(
+            participant.participant_id,
+            exercise,
+            reason,
+            nextStage(participant.stage)
+        );
 
         throw redirect(StatusCodes.SEE_OTHER, '/post-exercise-questionnaire');
     }
