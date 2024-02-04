@@ -20,6 +20,8 @@
     export let content: string;
     /** The programming language of the content. */
     export let language: string;
+    /** The filename that is currently being modified. */
+    export let filename: string = 'main.c';
 
     /** When to timeout the attempt (in milliseconds). */
     export let timeout: number;
@@ -135,6 +137,8 @@
 
     async function runCodeOnServer(sourceCode: string): Promise<ClientSideRunResult> {
         const formData = new FormData();
+        formData.append('language', language);
+        formData.append('filename', filename);
         formData.append('sourceCode', sourceCode);
 
         const res = await fetch('/api/run', {
@@ -156,7 +160,8 @@
                 <div class="tabs-and-actions-container">
                     <ul class="tabs-container unstyle">
                         <li class="tab tab-active">
-                            <img src={cLogo} alt="" role="presentation" class="icon" /> main.c
+                            <img src={cLogo} alt="" role="presentation" class="icon" />
+                            {filename}
                         </li>
                     </ul>
                     <ul class="actions-container unstyle">

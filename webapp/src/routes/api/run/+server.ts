@@ -41,6 +41,8 @@ export async function POST({ request, locals }) {
         throw error(StatusCodes.BAD_REQUEST, "Missing or invalid 'sourceCode' parameter");
     if (sourceCode.length > MAX_SOURCE_CODE_LENGTH)
         throw error(StatusCodes.BAD_REQUEST, 'Source code is too long');
+    const filename = asStringOrBadRequest(data.get('filename'));
+    const language = asStringOrBadRequest(data.get('language'));
 
     // HACK: **Something** is putting CRLFs in the source code, but I am an Unix nerd,
     // so obviously this is unacceptable! Replace all those awful, uncivilized CRLFs:
@@ -68,8 +70,8 @@ export async function POST({ request, locals }) {
     const [compileEventId, pistonResponse] = await Promise.all([
         logCompileEvent(participantId, sourceCode, exercise),
         runCode({
-            filename: 'main.c',
-            language: 'c',
+            filename,
+            language,
             sourceCode
         })
     ]);
@@ -107,13 +109,12 @@ interface Runnable {
  * @returns The result of compiling/running the code.
  */
 async function runCode({ language, filename, sourceCode }: Runnable): Promise<PistonResponse> {
-    // TODO: get this from the client.
     const request: PistonRequest = {
         language,
         version: '10.2.0',
         files: [
             {
-                name: filename,
+                name: sanitizeFilename(filename),
                 content: sourceCode
             }
         ],
@@ -132,6 +133,20 @@ async function runCode({ language, filename, sourceCode }: Runnable): Promise<Pi
         body: JSON.stringify(request)
     });
     return res.json();
+}
+
+function asStringOrBadRequest(value: FormDataEntryValue | null): string {
+    if (value === null) throw error(StatusCodes.BAD_REQUEST, 'Missing form data');
+    if (typeof value !== 'string') throw error(StatusCodes.BAD_REQUEST, 'Invalid form data');
+    return value;
+}
+
+function sanitizeFilename(filename: string): string {
+    // Make sure it is limited to a short, safe string.
+    if (!/^[a-zA-Z0-9_-]{1,223}\.[a-zA-Z0-9_-]{1,15}$/.test(filename)) {
+        throw error(StatusCodes.BAD_REQUEST, 'Invalid filename');
+    }
+    return filename;
 }
 
 function toClientSideFormat(result: RunResult): ClientSideRunResult {
