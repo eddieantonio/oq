@@ -28,8 +28,7 @@ const MAX_SOURCE_CODE_LENGTH = 1024; // 2 KiB (each code point is 2 bytes)
 
 /** @type {import('@sveltejs/kit').RequestHandler} */
 export async function POST({ request, locals }) {
-    const participant = locals.participant;
-    if (!participant) throw error(StatusCodes.UNAUTHORIZED, 'Must be logged in to run code');
+    const participant = locals.expectParticipant('Must be logged in to run code');
 
     const participantId = participant.participant_id;
     const exercise = participant.stage as ExerciseId;

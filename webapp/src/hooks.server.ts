@@ -33,8 +33,8 @@ export const handle: Handle = async ({ event, resolve }) => {
         event.locals.participant = participant;
         event.locals.expectParticipant = () => participant;
     } else {
-        event.locals.expectParticipant = () => {
-            throw error(StatusCodes.UNAUTHORIZED, 'Must be logged in for this page');
+        event.locals.expectParticipant = (message: string | undefined) => {
+            throw error(StatusCodes.UNAUTHORIZED, message ?? 'Must be logged in for this page');
         };
     }
 
