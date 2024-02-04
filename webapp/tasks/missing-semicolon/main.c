@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <iostream>
 
 int main(int argc, char* argv[]) 
 
@@ -7,7 +7,7 @@ int main(int argc, char* argv[])
 
    float area = length * width;
 
-   printf("the area is %f.\n", area);
+   std::cout << "the area is " << area << std::endl;
 
    return 0;
 }

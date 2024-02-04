@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <iostream>
 
 int fibonacci(const int n) {
     int now = 0, next = 1;
@@ -13,6 +13,6 @@ int fibonacci(const int n) {
 }
 
 int main() {
-    printf("the 7th fibonacci number is %d\n", fibonacci(7));
+    std::cout << "the 7th fibonacci number is " << fibonacci(7) << std::endl;
     return 0;
 }

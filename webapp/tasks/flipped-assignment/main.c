@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <iostream>
 
 int main(int argc, char* argv[]){
 
@@ -8,7 +8,7 @@ int main(int argc, char* argv[]){
 
     a + b = c;
 
-    printf("the sum is %d.\n", c);
+    std::cout << "the sum is " << c << std::endl;
 
     return 0;
 }

@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <iostream>
 
 int main(int argc, char* argv[]){
 
@@ -8,7 +8,7 @@ int main(int argc, char* argv[]){
 
    ratio = (float)union / (float)nonUnion;
 
-   printf("The percentage of union workers is %f.\n", 100 * ratio);
+   std::cout << "The percentage of union workers is " << 100 * ratio << std::endl;
 
    return 0;
 }

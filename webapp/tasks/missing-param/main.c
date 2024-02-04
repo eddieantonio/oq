@@ -1,10 +1,10 @@
-#include <stdio.h>
+#include <iostream>
 
 float convert() {
     return (fahrenheit - 32.0) / 1.8;
 }
 
 int main() {
-    printf("%.1f fahrenheit is %.1f celsius\n", 68.0, convert(68.0));
+    std::cout << "68 fahrenheit is " convert(68.0) << " celsius" << std::endl;
     return 0;
 }

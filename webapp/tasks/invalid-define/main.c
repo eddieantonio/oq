@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <iostream>
 
 #const pi 3.141592653589793
 
@@ -7,6 +7,6 @@ float area(float radius) {
 }
 
 int main() {
-    printf("The area of the circle is: %.1f\n", area(1.128375));
+    std::cout << "The area of the circle is: " << area(1.128375) << std::endl;
     return 0;
 }
