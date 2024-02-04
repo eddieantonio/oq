@@ -19,8 +19,7 @@ export const csr = false;
  * Loads the error message that the participant just saw.
  */
 export async function load({ locals }) {
-    if (!locals.participant) throw error(StatusCodes.UNAUTHORIZED, 'Not logged in');
-    const participant = locals.participant;
+    const participant = locals.expectParticipant();
 
     if (!participant.stage.startsWith('post-exercise-')) redirectToCurrentStage(participant.stage);
 
@@ -43,16 +42,16 @@ export const actions: import('./$types').Actions = {
      * POST to save the answers and continue to the next page.
      */
     default: async ({ request, locals }) => {
-        if (!locals.participant) throw error(StatusCodes.UNAUTHORIZED, 'Not logged in');
-        if (!locals.participant.stage.startsWith('post-exercise-'))
+        const participant = locals.expectParticipant();
+        if (!participant.stage.startsWith('post-exercise-'))
             throw error(StatusCodes.BAD_REQUEST, 'Not at the correct stage');
 
-        const participantId = locals.participant.participant_id;
-        const exercise = locals.participant.stage.slice('post-'.length) as ExerciseId;
+        const participantId = participant.participant_id;
+        const exercise = participant.stage.slice('post-'.length) as ExerciseId;
         await savePostExerciseQuestionnaireResponses(participantId, exercise, request);
-        await setParticipantStage(participantId, nextStage(locals.participant.stage));
+        await setParticipantStage(participantId, nextStage(participant.stage));
 
-        if (isLastExercise(locals.participant.stage)) {
+        if (isLastExercise(participant.stage)) {
             // This is the last exercise. Go to the final questionnaire!
             throw redirect(StatusCodes.SEE_OTHER, '/final-questionnaire');
         } else {

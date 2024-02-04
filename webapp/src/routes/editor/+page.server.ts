@@ -23,8 +23,7 @@ const SKIP_TIMEOUT = TIMEOUT / 2;
  * then return the task and initial error message.
  */
 export async function load({ locals }) {
-    const participant = locals.participant;
-    if (!participant) throw error(StatusCodes.UNAUTHORIZED, 'No participant found');
+    const participant = locals.expectParticipant();
 
     if (!participant.stage.startsWith('exercise-')) redirectToCurrentStage(participant.stage);
 
@@ -67,8 +66,7 @@ export const actions: import('./$types').Actions = {
      * Stores code submission in the database.
      */
     submit: async ({ request, locals }) => {
-        const participant = locals.participant;
-        if (!participant) throw error(StatusCodes.UNAUTHORIZED, 'No participant found');
+        const participant = locals.expectParticipant();
 
         if (!participant.stage.startsWith('exercise-'))
             throw error(

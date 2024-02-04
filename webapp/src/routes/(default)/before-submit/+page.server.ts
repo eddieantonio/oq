@@ -1,20 +1,18 @@
-import { error, redirect } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 import { StatusCodes } from 'http-status-codes';
 
 import { deleteParticipant, setParticipantSubmitted } from '$lib/server/database';
-import type { ParticipantId } from '$lib/server/newtypes';
 import { redirectToCurrentStage } from '$lib/server/redirect';
 
 export function load({ locals }) {
-    const participant = locals.participant;
-    if (!participant) throw error(StatusCodes.UNAUTHORIZED);
+    const participant = locals.expectParticipant();
     if (participant.stage != 'final-questionnaire') redirectToCurrentStage(participant.stage);
 }
 
 export const actions: import('./$types').Actions = {
-    default: async ({ cookies, request }) => {
-        const participantId = cookies.get('participant_id') as ParticipantId;
-        if (!participantId) throw error(StatusCodes.BAD_REQUEST, 'No participantId cookie found');
+    default: async ({ cookies, request, locals }) => {
+        const participant = locals.expectParticipant();
+        const participantId = participant.participant_id;
 
         const formData = await request.formData();
         const status = formData.get('status');
