@@ -67,7 +67,11 @@ export async function POST({ request, locals }) {
     // Simultaneously insert a new compile event while running the actual code.
     const [compileEventId, pistonResponse] = await Promise.all([
         logCompileEvent(participantId, sourceCode, exercise),
-        runCode(sourceCode)
+        runCode({
+            filename: 'main.c',
+            language: 'c',
+            sourceCode
+        })
     ]);
 
     // Enrich the raw run result.
@@ -89,16 +93,23 @@ export async function POST({ request, locals }) {
 }
 
 /**
+ * Code to be run on the server.
+ */
+interface Runnable {
+    language: string;
+    filename: string;
+    sourceCode: string;
+}
+
+/**
  * Runs the source code on the server.
  *
- * @param sourceCode Source code to compile and run on the server.
  * @returns The result of compiling/running the code.
  */
-async function runCode(sourceCode: string): Promise<PistonResponse> {
+async function runCode({ language, filename, sourceCode }: Runnable): Promise<PistonResponse> {
     // TODO: get this from the client.
-    const filename = 'main.c';
     const request: PistonRequest = {
-        language: 'c',
+        language,
         version: '10.2.0',
         files: [
             {
