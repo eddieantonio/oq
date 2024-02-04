@@ -136,7 +136,7 @@ const CompileEvent = () => db<CompileEvent>('compile_events');
 const Snapshot = () => db<Snapshot>('snapshots');
 const CompileOutputs = () => db<CompileOutput>('compile_outputs');
 const ExerciseAttempts = () => db<ExerciseAttempt>('exercise_attempts');
-const CompletedExerciseAttempts = () => db<CompletedExerciseAttempt>('completed_exercise_attempts');
+// Note: CompletedExerciseAttempts is never used by itself, but always in a transaction.
 const ExerciseCompileEvents = () => db<ExerciseCompileEvent>('exercise_compile_events');
 const ParticipantAssignments = () => db<ParticipantAssignment>('participant_assignments');
 
