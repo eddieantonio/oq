@@ -174,15 +174,17 @@ function extractDiagnostics(results: RunResult): Diagnostics | undefined {
 
 function parseGccDiagnostics(stderr: string): Diagnostics | undefined {
     if (stderr.startsWith('[]\n') && stderr.length > 3) {
-        // There is some other kind of error, like a link error.
+        // There is some other kind of error, like a linker error.
         return {
             format: 'preformatted',
             plainText: stderr.slice(3)
         };
     }
 
+    const firstLine = stderr.split('\n', 1)[0];
+    // TODO: what to do with the rest of stderr?
     try {
-        const diagnostics = JSON.parse(stderr) as RootGCCDiagnostic[];
+        const diagnostics = JSON.parse(firstLine) as RootGCCDiagnostic[];
         return {
             format: 'gcc-json',
             // Only show the first error.
