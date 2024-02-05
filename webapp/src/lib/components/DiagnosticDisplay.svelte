@@ -8,9 +8,6 @@
      * The diagnostics object returned by the code execution server.
      */
     export let diagnostics: Diagnostics;
-
-    // This code is ugly af because <pre> is sensitive to whitespace and
-    // Prettier does not care about my indenting preferences.
 </script>
 
 {#if diagnostics.format === 'gcc-json'}
@@ -20,5 +17,11 @@
 {:else if diagnostics.format === 'manually-enhanced'}
     <ManuallyEnhancedDiagnosticsDisplay {diagnostics} />
 {:else if diagnostics.format === 'preformatted'}
-    <pre><code>{diagnostics}</code></pre>
+    <pre><code class="problem">{diagnostics.plainText}</code></pre>
 {/if}
+
+<style>
+    .problem {
+        color: red;
+    }
+</style>

@@ -173,6 +173,14 @@ function extractDiagnostics(results: RunResult): Diagnostics | undefined {
 }
 
 function parseGccDiagnostics(stderr: string): Diagnostics | undefined {
+    if (stderr.startsWith('[]\n') && stderr.length > 3) {
+        // There is some other kind of error, like a link error.
+        return {
+            format: 'preformatted',
+            plainText: stderr.slice(3)
+        };
+    }
+
     try {
         const diagnostics = JSON.parse(stderr) as RootGCCDiagnostic[];
         return {

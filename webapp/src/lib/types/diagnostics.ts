@@ -19,7 +19,7 @@ export type Diagnostics =
  */
 export interface PreformattedDiagnostic {
     format: 'preformatted';
-    diagnostics: string;
+    plainText: string;
 }
 
 /**
