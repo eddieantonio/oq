@@ -1,4 +1,6 @@
 <script>
+    import { CONDITIONS } from '$lib/types';
+
     export let data;
 </script>
 
@@ -27,6 +29,25 @@
     <ul>
         <li><a href="/_debug/answers">Answers</a></li>
     </ul>
+
+    <h3>Create test editor</h3>
+    <form method="GET" action="/_debug/detached-editor">
+        <label for="condition">Condition:</label>
+        <select id="condition" name="condition">
+            {#each CONDITIONS as condition}
+                <option value={condition}>{condition}</option>
+            {/each}
+        </select>
+
+        <label for="task-name">Task:</label>
+        <select id="task-name" name="task">
+            {#each data.taskNames as taskName}
+                <option value={taskName}>{taskName}</option>
+            {/each}
+        </select>
+
+        <button type="submit">Go!</button>
+    </form>
 </nav>
 
 <form method="POST" action="?/debugResetParticipantId">

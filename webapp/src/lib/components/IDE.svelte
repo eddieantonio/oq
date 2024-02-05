@@ -1,121 +1,52 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
 
     // <SplitPanes> requires this CSS to be loaded.
     import './splitpanes-vscode-theme.css';
+    import './button.css';
 
     import DiagnosticDisplay from '$lib/components/DiagnosticDisplay.svelte';
     import Editor from '$lib/components/MonacoEditor.svelte';
     import type { Diagnostics } from '$lib/types/diagnostics';
-    import type { ClientSideRunResult } from '$lib/types/client-side-run-results';
-    import { createTimer, type CancelableTimer } from '$lib/cancelable-timer';
 
     import cLogo from '$lib/assets/c-logo.svg';
-
-    /** Whether the editor is enabled at all. */
-    export let enabled: boolean = true;
+    import type { RunnableProgram } from '$lib/types';
+    import type { ClientSideRunResult } from '$lib/types/client-side-run-results';
 
     /** The source code content in the editor. */
     export let content: string;
     /** The programming language of the content. */
     export let language: string;
     /** The filename that is currently being modified. */
-    export let filename: string = 'main.c';
-
-    /** When to timeout the attempt (in milliseconds). */
-    export let timeout: number;
-
-    /** When to allow skipping the attempt (in milliseconds). */
-    export let skipTimeout: number;
+    export let filename: string;
 
     /** The initial diagnostics that are displayed. */
     export let initialDiagnostics: Diagnostics | null = null;
 
-    let enableRun = true;
+    /** Function to call to run code on the server. */
+    export let runCodeOnServer: (p: RunnableProgram) => Promise<ClientSideRunResult>;
+
+    /** Whether the run button should be enabled. */
+    let enableRun: boolean = true;
     let pem: Diagnostics | null = initialDiagnostics;
     let programOutput: string | null = null;
     let bottomTab: 'problems' | 'output' = 'problems';
-    let okayToContinue = false;
-    let enableSkip = false;
+
+    /* Used for a hack to pass into the Editor. */
     let editorHeightHint = 0;
-
-    // Setup timers, compiles the code for the first time (if the initial
-    // diagnostics are not provided)
-    onMount(() => {
-        if (!enabled) {
-            console.warn('Tried to start exercise attempt when not logged in.');
-            return;
-        }
-
-        indicateExerciseStarted();
-        const timeoutTimer = startTimeout();
-        const skipTimer = startSkipTimer();
-
-        // Compile the code when the page first loads
-        // BUT only if there are no initial diagnostics!
-        if (!initialDiagnostics) {
-            runCode();
-        }
-
-        // When the IDE is no longer in mounted, cancel the timers.
-        // Otherwise, they WILL run in the background :/
-        return () => {
-            timeoutTimer.cancel();
-            skipTimer.cancel();
-        };
-    });
-
-    /** Tell the backend that we're ready to go! */
-    async function indicateExerciseStarted() {
-        const res = await fetch('/api/start-exercise', { method: 'POST' });
-        const json = await res.json();
-        if (!json.success) {
-            console.error(json);
-        }
-    }
-
-    /** Start a timeout to automatically submit the attempt. */
-    function startTimeout(): CancelableTimer {
-        return createTimer(timeout, function onTimeout() {
-            if (okayToContinue) {
-                // No need to timeout if the participant has already fixed the code.
-                return;
-            }
-
-            fetch('?/submit', {
-                method: 'POST',
-                keepalive: true,
-                body: new URLSearchParams({
-                    reason: 'timed-out'
-                })
-            });
-            // Ew, an old-school alert!
-            alert("Time's up! Continuing to the survey now...");
-            window.location.href = '/post-exercise-questionnaire';
-        });
-    }
-
-    function startSkipTimer(): CancelableTimer {
-        return createTimer(skipTimeout, function onTimeout() {
-            enableSkip = true;
-        });
-    }
 
     /**
      * Post content to the server to be compiled and run.
      */
     async function runCode() {
-        if (!enabled) {
-            console.warn('Tried to run code when not logged in.');
-            return;
-        }
-
-        /* Prepare FormData for the post including the contents */
         let response;
         enableRun = false;
         try {
-            response = await runCodeOnServer(content);
+            response = await runCodeOnServer({
+                language,
+                filename,
+                sourceCode: content
+            });
         } catch (error) {
             // TODO: show some sort of application error message
             console.error(error);
@@ -124,7 +55,6 @@
             enableRun = true;
         }
 
-        okayToContinue = response.success;
         pem = response.diagnostics || null;
         programOutput = response.output || null;
 
@@ -133,19 +63,6 @@
         } else {
             bottomTab = 'output';
         }
-    }
-
-    async function runCodeOnServer(sourceCode: string): Promise<ClientSideRunResult> {
-        const formData = new FormData();
-        formData.append('language', language);
-        formData.append('filename', filename);
-        formData.append('sourceCode', sourceCode);
-
-        const res = await fetch('/api/run', {
-            method: 'POST',
-            body: formData
-        });
-        return await res.json();
     }
 </script>
 
@@ -165,34 +82,13 @@
                         </li>
                     </ul>
                     <ul class="actions-container unstyle">
-                        <li>
-                            <form method="POST" action="?/submit">
-                                <button
-                                    class="btn btn--skip"
-                                    type="submit"
-                                    name="reason"
-                                    value="skipped"
-                                    disabled={!(enabled && enableSkip)}>Skip</button
-                                >
-                            </form>
-                        </li>
-                        <li>
-                            <form method="POST" action="?/submit">
-                                <button
-                                    class="btn btn--submit"
-                                    type="submit"
-                                    name="reason"
-                                    value="submitted"
-                                    disabled={!(enabled && okayToContinue)}>Submit</button
-                                >
-                            </form>
-                        </li>
+                        <slot name="buttons" />
                         <li class="more-space">
                             <button
                                 class="btn btn--run"
                                 type="submit"
                                 on:click={runCode}
-                                disabled={!(enabled && enableRun)}>Run</button
+                                disabled={!enableRun}>Run</button
                             >
                         </li>
                     </ul>
@@ -236,11 +132,7 @@
                             <p>No problems have been detected in the code.</p>
                         {:else}
                             <DiagnosticDisplay diagnostics={pem} />
-                            {#if enableSkip}
-                                <p class="report-skip">
-                                    If you're stuck, you can press “Skip” to continue.
-                                </p>
-                            {/if}
+                            <slot name="annotate-problems" />
                         {/if}
                     {:else if bottomTab == 'output'}
                         {#if !programOutput && pem}
@@ -422,45 +314,6 @@
         padding: 4px 16px;
     }
 
-    .btn {
-        display: inline-block;
-        padding: 0.5rem 1rem;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        background-color: #fff;
-        color: #333;
-        font-size: 1rem;
-        line-height: 1.5;
-        cursor: pointer;
-    }
-
-    .btn[disabled] {
-        cursor: not-allowed;
-        opacity: 0.5;
-    }
-
-    .btn--run {
-        /* make it a nice "green" play button kind of vibe */
-        background-color: #28a745;
-        color: #fff;
-        border-color: #28a745;
-    }
-    .btn--run:hover {
-        background-color: #218838;
-        border-color: #1e7e34;
-    }
-
-    .btn--submit {
-        /* make it a nice "blue" submit button kind of vibe */
-        background-color: #007bff;
-        color: #fff;
-        border-color: #007bff;
-    }
-    .btn--submit:hover:not([disabled]) {
-        background-color: #0069d9;
-        border-color: #0062cc;
-    }
-
     .report-success {
         color: #28a745;
         font-style: italic;
@@ -471,15 +324,5 @@
         height: 0.4lh;
         aspect-ratio: 1;
         margin-inline: 0.6ch;
-    }
-
-    .report-skip {
-        color: #444;
-        font-style: italic;
-    }
-    @media (prefers-color-scheme: dark) {
-        .report-skip {
-            color: #ccc;
-        }
     }
 </style>

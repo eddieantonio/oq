@@ -4,6 +4,7 @@
 
 import { error, json } from '@sveltejs/kit';
 import { StatusCodes } from 'http-status-codes';
+import { dev } from '$app/environment';
 
 import { logCompileOutput, logCompileEvent, getParticipantAssignment } from '$lib/server/database';
 import type { ExerciseId } from '$lib/server/newtypes';
@@ -14,6 +15,8 @@ import type { PistonRequest, PistonResponse } from '$lib/types/piston.js';
 import { hashSourceCode } from '$lib/server/hash.js';
 import { getTaskBySourceCodeHash } from '$lib/server/tasks.js';
 import { makeDiagnosticsFromTask } from '$lib/server/diagnostics-util.js';
+import type { RunnableProgram } from '$lib/types';
+import type { RequestEvent } from './$types';
 
 /**
  * POST to this endpoint to compile and run the code.
@@ -27,13 +30,17 @@ const PISTON_EXECUTE_URL = 'http://piston:2000/api/v2/execute';
 const MAX_SOURCE_CODE_LENGTH = 1024; // 2 KiB (each code point is 2 bytes)
 
 /** @type {import('@sveltejs/kit').RequestHandler} */
-export async function POST({ request, locals }) {
+export async function POST(event) {
+    const data = await event.request.formData();
+    if (dev && data.get('DEBUG')) return runCodeForDebug(data, event);
+    else return runCodeDuringStudy(data, event);
+}
+
+async function runCodeDuringStudy(data: FormData, { locals }: RequestEvent) {
     const participant = locals.expectParticipant('Must be logged in to run code');
 
     const participantId = participant.participant_id;
     const exercise = participant.stage as ExerciseId;
-
-    const data = await request.formData();
 
     // TODO: Should I accept a file upload?
     let sourceCode = data.get('sourceCode');
@@ -44,7 +51,7 @@ export async function POST({ request, locals }) {
     const filename = asStringOrBadRequest(data.get('filename'));
     const language = asStringOrBadRequest(data.get('language'));
 
-    // HACK: **Something** is putting CRLFs in the source code, but I am an Unix nerd,
+    // HACK: **Something** is putting CRLFs in the source code, but I am a Unix nerd,
     // so obviously this is unacceptable! Replace all those awful, uncivilized CRLFs:
     sourceCode = sourceCode.replace(/\r\n/g, '\n');
 
@@ -69,7 +76,7 @@ export async function POST({ request, locals }) {
     // Simultaneously insert a new compile event while running the actual code.
     const [compileEventId, pistonResponse] = await Promise.all([
         logCompileEvent(participantId, sourceCode, exercise),
-        runCode({
+        runOnPiston({
             filename,
             language,
             sourceCode
@@ -94,13 +101,34 @@ export async function POST({ request, locals }) {
     return json(response);
 }
 
-/**
- * Code to be run on the server.
- */
-interface Runnable {
-    language: string;
-    filename: string;
-    sourceCode: string;
+async function runCodeForDebug(data: FormData, _: RequestEvent) {
+    let sourceCode = data.get('sourceCode');
+    if (!sourceCode || !(typeof sourceCode == 'string'))
+        throw error(StatusCodes.BAD_REQUEST, "Missing or invalid 'sourceCode' parameter");
+    if (sourceCode.length > MAX_SOURCE_CODE_LENGTH)
+        throw error(StatusCodes.BAD_REQUEST, 'Source code is too long');
+    const filename = asStringOrBadRequest(data.get('filename'));
+    const language = asStringOrBadRequest(data.get('language'));
+
+    // HACK: **Something** is putting CRLFs in the source code, but I am a Unix nerd,
+    // so obviously this is unacceptable! Replace all those awful, uncivilized CRLFs:
+    sourceCode = sourceCode.replace(/\r\n/g, '\n');
+
+    const pistonResponse = await runOnPiston({ language, filename, sourceCode });
+
+    // Enrich the raw run result.
+    const success = pistonResponse.compile?.code === 0;
+    const result: RunResult = {
+        success,
+        pistonResponse
+    };
+
+    // The compiler diagnostics SHOULD BE in a JSON format. Parse it!
+    result.parsedDiagnostics = parseGccDiagnostics(pistonResponse.compile?.stderr || '[]');
+
+    // Okay, good to go!
+    const response: ClientSideRunResult = toClientSideFormat(result);
+    return json(response);
 }
 
 /**
@@ -108,7 +136,11 @@ interface Runnable {
  *
  * @returns The result of compiling/running the code.
  */
-async function runCode({ language, filename, sourceCode }: Runnable): Promise<PistonResponse> {
+async function runOnPiston({
+    language,
+    filename,
+    sourceCode
+}: RunnableProgram): Promise<PistonResponse> {
     const request: PistonRequest = {
         language,
         version: '10.2.0',

@@ -1,0 +1,42 @@
+/**
+ * Button styles for the IDE.
+ */
+
+.btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #333;
+    font-size: 1rem;
+    line-height: 1.5;
+    cursor: pointer;
+}
+
+.btn[disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.btn--run {
+    /* a nice "green" play button kind of vibe */
+    background-color: #28a745;
+    color: #fff;
+    border-color: #28a745;
+}
+.btn--run:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+.btn--submit {
+    /* "blue" means "submit" */
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+.btn--submit:hover:not([disabled]) {
+    background-color: #0069d9;
+    border-color: #0062cc;
+}

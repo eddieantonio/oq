@@ -52,6 +52,18 @@ export interface Assignment {
 }
 
 /**
+ * Code to be run on the server.
+ */
+export interface RunnableProgram {
+    /** Programming language. */
+    language: string;
+    /** Name of the file.  */
+    filename: string;
+    /** Full source code of the file. */
+    sourceCode: string;
+}
+
+/**
  * Code "markers", intended to be converted to annotations (e.g., red squiggly
  * lines) in the Monaco editor.
  */
