@@ -7,15 +7,14 @@
     import MultipleChoice from '$lib/components/forms/MultipleChoice.svelte';
 
     export let data;
-    const pems = data.pems;
-    const styles = data.styles;
+    const { styles } = data;
 
     let choices = styles.map(({ condition }, index) => ({
         label: `Style ${indexToLetter(index)}`,
         value: condition
     }));
 
-    /** Turns 0, 1, 2, ... to A, B, C, ... */
+    /** Turns 0, 1, 2, ... → A, B, C, ... */
     function indexToLetter(index: number): string {
         return String.fromCharCode('A'.charCodeAt(0) + index);
     }

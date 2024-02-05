@@ -44,7 +44,6 @@ export async function load({ locals }) {
     shuffle(styles);
 
     return {
-        pems,
         styles
     };
 }
@@ -57,6 +56,8 @@ function formatToCondition(format: Diagnostics['format']): Condition {
             return 'enhanced';
         case 'llm-enhanced':
             return 'llm-enhanced';
+        case 'preformatted':
+            throw new Error('Not implemented: preformatted diagnostics are not a study condition');
     }
 }
 

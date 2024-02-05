@@ -75,6 +75,9 @@ function extractMarkersFromDiagnostics(diagnostics: Diagnostics): monaco.editor.
         case 'manually-enhanced':
             // Currently no markers for manually enhanced diagnostics.
             return convertMarkersFromJsonMarkers(diagnostics.markers);
+        case 'preformatted':
+            // There are no markers for preformatted diagnostics.
+            return [];
     }
 }
 

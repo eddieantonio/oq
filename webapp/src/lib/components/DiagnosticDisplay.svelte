@@ -19,12 +19,6 @@
     <LLMDiagnosticsDisplay {diagnostics} />
 {:else if diagnostics.format === 'manually-enhanced'}
     <ManuallyEnhancedDiagnosticsDisplay {diagnostics} />
-{:else}
-    <pre class="problem"><code>{JSON.stringify(diagnostics, null, 4)}</code></pre>
+{:else if diagnostics.format === 'preformatted'}
+    <pre><code>{diagnostics}</code></pre>
 {/if}
-
-<style>
-    .problem {
-        color: red;
-    }
-</style>
