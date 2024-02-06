@@ -15,7 +15,11 @@ import type { PistonRequest, PistonResponse } from '$lib/types/piston.js';
 import { hashSourceCode } from '$lib/server/hash.js';
 import { getTaskBySourceCodeHash } from '$lib/server/tasks.js';
 import { diagnosticsForCondition } from '$lib/server/diagnostics-util.js';
-import type { RunnableProgram } from '$lib/types';
+import {
+    SUPPORTED_PROGRAMMING_LANGUAGES,
+    type ProgrammingLanguage,
+    type RunnableProgram
+} from '$lib/types';
 import type { RequestEvent } from './$types';
 
 /**
@@ -49,7 +53,7 @@ async function runCodeDuringStudy(data: FormData, { locals }: RequestEvent) {
     if (sourceCode.length > MAX_SOURCE_CODE_LENGTH)
         throw error(StatusCodes.BAD_REQUEST, 'Source code is too long');
     const filename = asStringOrBadRequest(data.get('filename'));
-    const language = asStringOrBadRequest(data.get('language'));
+    const language = asProgrammingLanguageOrBadRequest(data.get('language'));
 
     // HACK: **Something** is putting CRLFs in the source code, but I am a Unix nerd,
     // so obviously this is unacceptable! Replace all those awful, uncivilized CRLFs:
@@ -83,22 +87,21 @@ async function runCodeDuringStudy(data: FormData, { locals }: RequestEvent) {
         })
     ]);
 
-    // Enrich the raw run result.
-    const success = pistonResponse.compile?.code === 0;
+    // Process the response from Piston.
+    // Each programming language has a slightly different way of interpreting the response.
+    const languageAdaptor = ADAPTORS[language];
+    const success = languageAdaptor.getSuccess(pistonResponse);
     const result: RunResult = {
         success,
         pistonResponse
     };
-
-    // The compiler diagnostics SHOULD BE in a JSON format. Parse it!
-    result.parsedDiagnostics = parseGccDiagnostics(pistonResponse.compile?.stderr || '[]');
+    result.parsedDiagnostics = languageAdaptor.parseDiagnostics(pistonResponse);
 
     // Log the result of the run.
     await logCompileOutput(compileEventId, result);
 
     // Okay, good to go!
-    const response: ClientSideRunResult = toClientSideFormat(result);
-    return json(response);
+    return json(languageAdaptor.toClientSideFormat(result));
 }
 
 async function runCodeForDebug(data: FormData, _: RequestEvent) {
@@ -108,28 +111,63 @@ async function runCodeForDebug(data: FormData, _: RequestEvent) {
     if (sourceCode.length > MAX_SOURCE_CODE_LENGTH)
         throw error(StatusCodes.BAD_REQUEST, 'Source code is too long');
     const filename = asStringOrBadRequest(data.get('filename'));
-    const language = asStringOrBadRequest(data.get('language'));
+    const language = asProgrammingLanguageOrBadRequest(data.get('language'));
 
     // HACK: **Something** is putting CRLFs in the source code, but I am a Unix nerd,
     // so obviously this is unacceptable! Replace all those awful, uncivilized CRLFs:
     sourceCode = sourceCode.replace(/\r\n/g, '\n');
-
     const pistonResponse = await runOnPiston({ language, filename, sourceCode });
 
-    // Enrich the raw run result.
-    const success = pistonResponse.compile?.code === 0;
+    // Process the response from Piston.
+    // Each programming language has a slightly different way of interpreting the response.
+    const languageAdaptor = ADAPTORS[language];
+    const success = languageAdaptor.getSuccess(pistonResponse);
     const result: RunResult = {
         success,
         pistonResponse
     };
-
-    // The compiler diagnostics SHOULD BE in a JSON format. Parse it!
-    result.parsedDiagnostics = parseGccDiagnostics(pistonResponse.compile?.stderr || '[]');
+    result.parsedDiagnostics = languageAdaptor.parseDiagnostics(pistonResponse);
 
     // Okay, good to go!
-    const response: ClientSideRunResult = toClientSideFormat(result);
-    return json(response);
+    return json(languageAdaptor.toClientSideFormat(result));
 }
+
+interface LanguageAdaptor {
+    getSuccess(response: PistonResponse): boolean;
+    parseDiagnostics(response: PistonResponse): Diagnostics | undefined;
+    toClientSideFormat(result: RunResult): ClientSideRunResult;
+}
+
+const ADAPTORS: { [key in ProgrammingLanguage]: LanguageAdaptor } = {
+    c: {
+        getSuccess: (response: PistonResponse) => response.compile?.code === 0,
+        parseDiagnostics: (response: PistonResponse) =>
+            parseGccDiagnostics(response.compile?.stderr || '[]'),
+        toClientSideFormat: toClientSideFormat
+    },
+    python: {
+        getSuccess: (response: PistonResponse) => response.run.code === 0,
+        parseDiagnostics: (_: PistonResponse) => undefined,
+        toClientSideFormat(result: RunResult): ClientSideRunResult {
+            if (result.success) {
+                return {
+                    success: true,
+                    output: result.pistonResponse.run.stdout
+                };
+            }
+
+            // Create a preformatted diagnostic message if the code failed.
+            return {
+                success: false,
+                diagnostics: {
+                    format: 'preformatted',
+                    plainText: result.pistonResponse.run.stderr
+                },
+                output: result.pistonResponse.run.stdout
+            };
+        }
+    }
+} as const;
 
 /**
  * Runs the source code on the server.
@@ -143,7 +181,7 @@ async function runOnPiston({
 }: RunnableProgram): Promise<PistonResponse> {
     const request: PistonRequest = {
         language,
-        version: '10.2.0',
+        version: '*',
         files: [
             {
                 name: sanitizeFilename(filename),
@@ -171,6 +209,13 @@ function asStringOrBadRequest(value: FormDataEntryValue | null): string {
     if (value === null) throw error(StatusCodes.BAD_REQUEST, 'Missing form data');
     if (typeof value !== 'string') throw error(StatusCodes.BAD_REQUEST, 'Invalid form data');
     return value;
+}
+
+function asProgrammingLanguageOrBadRequest(value: FormDataEntryValue | null): ProgrammingLanguage {
+    const str = asStringOrBadRequest(value);
+    if (!(SUPPORTED_PROGRAMMING_LANGUAGES as readonly string[]).includes(str))
+        throw error(StatusCodes.BAD_REQUEST, 'Invalid programming language');
+    return str as ProgrammingLanguage;
 }
 
 function sanitizeFilename(filename: string): string {
