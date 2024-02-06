@@ -1,0 +1,10 @@
+[
+  {
+    "severity": "error",
+    "message": "mistake detected here",
+    "startLineNumber": 2,
+    "endLineNumber": 2,
+    "startColumn": 5,
+    "endColumn": 28
+  }
+]
