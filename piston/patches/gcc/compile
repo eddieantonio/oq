@@ -6,19 +6,15 @@ set -e
 
 case "${PISTON_LANGUAGE}" in
     c)
-        rename 's/$/\.c/' "$@" # Add .c extension
         gcc -std=c11 -fdiagnostics-format=json *.c -lm
         ;;
     c++)
-        rename 's/$/\.cpp/' "$@" # Add .cpp extension
         g++ -std=c++17 -fdiagnostics-format=json *.cpp
         ;;
     d)
-        rename 's/.code$/\.d/' "$@" # Add .d extension
         gdc *.d
         ;;
     fortran)
-        rename 's/.code$/\.f90/' "$@" # Add .f90 extension
         gfortran *.f90
         ;;
     *)
