@@ -24,7 +24,7 @@ services:
       - '3000:3000'
 
   piston:
-    image: ghcr.io/eddieantonio/piston:20231101-gcc10
+    image: ghcr.io/eddieantonio/piston:20231101-with-customizations
     restart: always
     tmpfs:
         - /piston/jobs:exec,uid=1000,gid=1000,mode=711
