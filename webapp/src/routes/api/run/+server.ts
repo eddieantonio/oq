@@ -142,8 +142,14 @@ const ADAPTORS: { [key in ProgrammingLanguage]: LanguageAdaptor } = {
     c: {
         getSuccess: (response: PistonResponse) => response.compile?.code === 0,
         parseDiagnostics: (response: PistonResponse) =>
-            parseGccDiagnostics(response.compile?.stderr || '[]'),
-        toClientSideFormat: toClientSideFormat
+            parseGccDiagnostics(response.compile?.stderr || '[]\n'),
+        toClientSideFormat(result: RunResult) {
+            return {
+                success: result.success,
+                diagnostics: extractDiagnostics(result),
+                output: result.pistonResponse.run.stdout
+            };
+        }
     },
     python: {
         getSuccess: (response: PistonResponse) => response.run.code === 0,
@@ -224,14 +230,6 @@ function sanitizeFilename(filename: string): string {
         throw error(StatusCodes.BAD_REQUEST, 'Invalid filename');
     }
     return filename;
-}
-
-function toClientSideFormat(result: RunResult): ClientSideRunResult {
-    return {
-        success: result.success,
-        diagnostics: extractDiagnostics(result),
-        output: result.pistonResponse.run.stdout
-    };
 }
 
 function extractDiagnostics(results: RunResult): Diagnostics | undefined {
