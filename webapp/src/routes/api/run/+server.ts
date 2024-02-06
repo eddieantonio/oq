@@ -14,7 +14,7 @@ import type { ClientSideRunResult } from '$lib/types/client-side-run-results';
 import type { PistonRequest, PistonResponse } from '$lib/types/piston.js';
 import { hashSourceCode } from '$lib/server/hash.js';
 import { getTaskBySourceCodeHash } from '$lib/server/tasks.js';
-import { makeDiagnosticsFromTask } from '$lib/server/diagnostics-util.js';
+import { diagnosticsForCondition } from '$lib/server/diagnostics-util.js';
 import type { RunnableProgram } from '$lib/types';
 import type { RequestEvent } from './$types';
 
@@ -68,7 +68,7 @@ async function runCodeDuringStudy(data: FormData, { locals }: RequestEvent) {
         await logCompileEvent(participantId, sourceCode, exercise);
         const response: ClientSideRunResult = {
             success: false,
-            diagnostics: makeDiagnosticsFromTask(originalTask, currentAssignment.condition)
+            diagnostics: diagnosticsForCondition(originalTask, currentAssignment.condition)
         };
         return json(response);
     }

@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 
-import { makeDiagnosticsFromTask } from '$lib/server/diagnostics-util';
+import { diagnosticsForCondition } from '$lib/server/diagnostics-util';
 import { getTaskByName } from '$lib/server/tasks';
 import type { Condition } from '$lib/types';
 
@@ -18,7 +18,7 @@ export function load({ url }) {
     const task = getTaskByName(taskName);
     if (!task) throw error(404, `Task not found: ${taskName}`);
 
-    const diagnostics = makeDiagnosticsFromTask(task, condition);
+    const diagnostics = diagnosticsForCondition(task, condition);
 
     return {
         // TODO: do not hardcode the next two fields:

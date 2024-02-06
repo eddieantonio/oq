@@ -1,10 +1,11 @@
 import * as fs from 'fs';
 
-import type { RootGCCDiagnostic } from '$lib/types/diagnostics';
+import type { Diagnostics, GCCDiagnostics, RootGCCDiagnostic } from '$lib/types/diagnostics';
 import type { MarkdownString, SHA256Hash } from './newtypes';
 import { hashSourceCode } from './hash';
-import type { RawLLMResponse } from './llm';
-import type { TaskName, JsonMarkerData } from '$lib/types';
+import { getMarkdownResponse, type RawLLMResponse } from './llm';
+import type { TaskName, JsonMarkerData, Condition } from '$lib/types';
+import { getFirstGCCError } from './diagnostics-util';
 
 export const TASKS: Task[] = [];
 
@@ -15,14 +16,8 @@ export interface Task {
     sourceCode: string;
     /** Hash of the source code. */
     hash: SHA256Hash;
-    /** GCC diagnostics from -fdiagnostics-format=json */
-    rawGccDiagnostics: RootGCCDiagnostic[];
-    /** Manually-written enhanced error message. */
-    manuallyEnhancedMessage: MarkdownString;
-    /** Markers for the manually--written messsage. */
-    manuallyEnhancedMessageMarkers: JsonMarkerData[];
-    /** Response directly from OpenAI API. */
-    rawLlmResponse: RawLLMResponse;
+    /** The diagnostics for each condition. */
+    diagnostics: { [key in Condition]: Diagnostics };
 }
 
 /**
@@ -63,14 +58,30 @@ export function loadTasksSync(tasksDir: string) {
             fs.readFileSync(`${tasksDir}/${name}/manual-markers.json`, 'utf-8')
         ) as JsonMarkerData[];
 
+        const original: GCCDiagnostics = {
+            format: 'gcc-json',
+            diagnostics: [getFirstGCCError(rawGccDiagnostics)]
+        };
+
+        const diagnostics: { [key in Condition]: Diagnostics } = {
+            control: original,
+            enhanced: {
+                format: 'manually-enhanced',
+                markdown: manuallyEnhancedMessage,
+                markers: manuallyEnhancedMessageMarkers
+            },
+            'llm-enhanced': {
+                format: 'llm-enhanced',
+                markdown: getMarkdownResponse(rawLlmResponse),
+                original
+            }
+        };
+
         TASKS.push({
             name,
             sourceCode,
             hash,
-            rawGccDiagnostics,
-            manuallyEnhancedMessage,
-            manuallyEnhancedMessageMarkers,
-            rawLlmResponse
+            diagnostics
         });
     }
 }

@@ -12,7 +12,7 @@ import {
 import type { ExerciseId } from '$lib/server/newtypes';
 import { getTaskByName } from '$lib/server/tasks';
 import { nextStage } from '$lib/types';
-import { makeDiagnosticsFromTask } from '$lib/server/diagnostics-util';
+import { diagnosticsForCondition } from '$lib/server/diagnostics-util';
 import { redirectToCurrentStage } from '$lib/server/redirect';
 
 const TIMEOUT = 10 * 60 * 1000; // milliseconds
@@ -40,7 +40,7 @@ export async function load({ locals }) {
     const language = 'c';
 
     const task = getTaskByName(currentAssignment.task);
-    const diagnostics = makeDiagnosticsFromTask(task, condition);
+    const diagnostics = diagnosticsForCondition(task, condition);
 
     // Figure out how much time they have left:
     let timeout = TIMEOUT;
@@ -79,13 +79,13 @@ export const actions: import('./$types').Actions = {
         if (!(reason === 'submitted' || reason === 'skipped' || reason === 'timed-out'))
             throw error(StatusCodes.BAD_REQUEST, 'not a good reason');
         const exercise = participant.stage as ExerciseId;
+
         await logExerciseAttemptCompletedAndContinue(
             participant.participant_id,
             exercise,
             reason,
             nextStage(participant.stage)
         );
-
         throw redirect(StatusCodes.SEE_OTHER, '/post-exercise-questionnaire');
     }
 };

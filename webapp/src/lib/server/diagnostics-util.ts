@@ -1,7 +1,6 @@
 import type { Condition, TaskName } from '$lib/types';
-import type { Diagnostics, GCCDiagnostics, RootGCCDiagnostic } from '$lib/types/diagnostics';
+import type { Diagnostics, RootGCCDiagnostic } from '$lib/types/diagnostics';
 import type { ParticipantAssignment } from './database';
-import { getMarkdownResponse } from './llm';
 import { getTaskByName, type Task } from './tasks';
 
 /**
@@ -9,34 +8,14 @@ import { getTaskByName, type Task } from './tasks';
  */
 export function makeDiagnosticsForAssignment(assignment: ParticipantAssignment): Diagnostics {
     const task = getTaskByName(assignment.task as TaskName);
-    return makeDiagnosticsFromTask(task, assignment.condition);
+    return diagnosticsForCondition(task, assignment.condition);
 }
 
 /**
  * @returns The diagnostics for the given task and condition.
  */
-export function makeDiagnosticsFromTask(task: Task, condition: Condition): Diagnostics {
-    const original: GCCDiagnostics = {
-        format: 'gcc-json',
-        diagnostics: [getFirstGCCError(task.rawGccDiagnostics)]
-    };
-
-    switch (condition) {
-        case 'control':
-            return original;
-        case 'enhanced':
-            return {
-                format: 'manually-enhanced',
-                markdown: task.manuallyEnhancedMessage,
-                markers: task.manuallyEnhancedMessageMarkers
-            };
-        case 'llm-enhanced':
-            return {
-                format: 'llm-enhanced',
-                markdown: getMarkdownResponse(task.rawLlmResponse),
-                original
-            };
-    }
+export function diagnosticsForCondition(task: Task, condition: Condition): Diagnostics {
+    return task.diagnostics[condition];
 }
 
 /**
