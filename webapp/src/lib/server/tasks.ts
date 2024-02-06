@@ -59,14 +59,38 @@ function loadOneTaskSync(taskDir: string, name: TaskName) {
     const metadata = JSON.parse(fs.readFileSync(`${taskDir}/task.json`, 'utf-8')) as TaskMetadata;
     const language = metadata.language;
 
-    // TODO: do not hardcode the filename:
-    const filename = 'main.c';
+    const filename = (() => {
+        switch (language) {
+            case 'c':
+                return 'main.c';
+            case 'python':
+                return 'main.py';
+        }
+    })();
     const sourceCode = fs.readFileSync(`${taskDir}/${filename}`, 'utf-8');
     const hash = hashSourceCode(sourceCode);
 
-    const rawGccDiagnostics = JSON.parse(
-        fs.readFileSync(`${taskDir}/gcc-diagnostics.json`, 'utf-8')
-    );
+    const original: Diagnostics = (() => {
+        switch (language) {
+            case 'c': {
+                const rawGccDiagnostics = JSON.parse(
+                    fs.readFileSync(`${taskDir}/gcc-diagnostics.json`, 'utf-8')
+                );
+                return {
+                    format: 'gcc-json',
+                    diagnostics: [getFirstGCCError(rawGccDiagnostics)]
+                };
+            }
+            case 'python': {
+                const textFile = fs.readFileSync(`${taskDir}/python-errors.txt`, 'utf-8');
+                return {
+                    format: 'preformatted',
+                    plainText: textFile
+                };
+            }
+        }
+    })();
+
     const manuallyEnhancedMessage = fs.readFileSync(
         `${taskDir}/manual-explanation.md`,
         'utf-8'
@@ -77,11 +101,6 @@ function loadOneTaskSync(taskDir: string, name: TaskName) {
     const rawLlmResponse = JSON.parse(
         fs.readFileSync(`${taskDir}/gpt4-response.json`, 'utf-8')
     ) as RawLLMResponse;
-
-    const original: GCCDiagnostics = {
-        format: 'gcc-json',
-        diagnostics: [getFirstGCCError(rawGccDiagnostics)]
-    };
 
     const diagnostics: Task['diagnostics'] = {
         control: original,
