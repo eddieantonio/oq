@@ -42,6 +42,5 @@ services:
       - /app/node_modules
 
   piston:
-    build: ./piston
     ports:
         - 2000:2000
