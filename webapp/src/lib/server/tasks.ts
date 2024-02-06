@@ -1,10 +1,10 @@
 import * as fs from 'fs';
 
-import type { Diagnostics, GCCDiagnostics, RootGCCDiagnostic } from '$lib/types/diagnostics';
+import type { Diagnostics, GCCDiagnostics } from '$lib/types/diagnostics';
 import type { MarkdownString, SHA256Hash } from './newtypes';
 import { hashSourceCode } from './hash';
 import { getMarkdownResponse, type RawLLMResponse } from './llm';
-import type { TaskName, JsonMarkerData, Condition } from '$lib/types';
+import type { TaskName, JsonMarkerData, Condition, ProgrammingLanguage } from '$lib/types';
 import { getFirstGCCError } from './diagnostics-util';
 
 export const TASKS: Task[] = [];
@@ -12,12 +12,23 @@ export const TASKS: Task[] = [];
 export interface Task {
     /** An arbitrary name for the task. */
     name: TaskName;
+    /** The programming language supported */
+    language: ProgrammingLanguage;
+    /** What should be the file name in error messages: */
+    filename: string;
     /** Full source code to show the user. */
     sourceCode: string;
     /** Hash of the source code. */
     hash: SHA256Hash;
     /** The diagnostics for each condition. */
     diagnostics: { [key in Condition]: Diagnostics };
+}
+
+/**
+ * Schema of the task.json metadata file.
+ */
+interface TaskMetadata {
+    language: ProgrammingLanguage;
 }
 
 /**
@@ -41,8 +52,16 @@ export function loadTasksSync(tasksDir: string) {
 
         const name = taskDir.name as TaskName;
 
-        const sourceCode = fs.readFileSync(`${tasksDir}/${name}/main.c`, 'utf-8');
+        const metadata = JSON.parse(
+            fs.readFileSync(`${tasksDir}/${name}/task.json`, 'utf-8')
+        ) as TaskMetadata;
+        const language = metadata.language;
+
+        // TODO: do not hardcode the filename:
+        const filename = 'main.c';
+        const sourceCode = fs.readFileSync(`${tasksDir}/${name}/${filename}`, 'utf-8');
         const hash = hashSourceCode(sourceCode);
+
         const rawGccDiagnostics = JSON.parse(
             fs.readFileSync(`${tasksDir}/${name}/gcc-diagnostics.json`, 'utf-8')
         );
@@ -50,13 +69,12 @@ export function loadTasksSync(tasksDir: string) {
             `${tasksDir}/${name}/manual-explanation.md`,
             'utf-8'
         ) as MarkdownString;
-        const rawLlmResponse = JSON.parse(
-            fs.readFileSync(`${tasksDir}/${name}/gpt4-response.json`, 'utf-8')
-        ) as RawLLMResponse;
-
         const manuallyEnhancedMessageMarkers = JSON.parse(
             fs.readFileSync(`${tasksDir}/${name}/manual-markers.json`, 'utf-8')
         ) as JsonMarkerData[];
+        const rawLlmResponse = JSON.parse(
+            fs.readFileSync(`${tasksDir}/${name}/gpt4-response.json`, 'utf-8')
+        ) as RawLLMResponse;
 
         const original: GCCDiagnostics = {
             format: 'gcc-json',
@@ -79,6 +97,8 @@ export function loadTasksSync(tasksDir: string) {
 
         TASKS.push({
             name,
+            language,
+            filename,
             sourceCode,
             hash,
             diagnostics

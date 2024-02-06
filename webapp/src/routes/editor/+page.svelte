@@ -6,9 +6,7 @@
     import { onMount } from 'svelte';
 
     export let data: import('./$types').PageData;
-    const { language, initialDiagnostics, timeout, skipTimeout } = data;
-    // TODO: This should be loaded from data
-    let filename = 'main.c';
+    const { language, filename, initialDiagnostics, timeout, skipTimeout } = data;
     let content = data.initialSourceCode;
 
     let okayToContinue = false;

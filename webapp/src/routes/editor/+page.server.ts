@@ -36,8 +36,6 @@ export async function load({ locals }) {
         throw error(StatusCodes.INTERNAL_SERVER_ERROR, 'No assignment found for participant');
 
     const condition = currentAssignment.condition;
-    // The programming language is hardcoded for now:
-    const language = 'c';
 
     const task = getTaskByName(currentAssignment.task);
     const diagnostics = diagnosticsForCondition(task, condition);
@@ -45,7 +43,7 @@ export async function load({ locals }) {
     // Figure out how much time they have left:
     let timeout = TIMEOUT;
     let skipTimeout = SKIP_TIMEOUT;
-    if (startedAt) {
+    if (startedAt != null) {
         const timeElapsed = new Date().valueOf() - startedAt;
         timeout = Math.max(timeout - timeElapsed, 0);
         skipTimeout = Math.max(skipTimeout - timeElapsed, 0);
@@ -53,7 +51,8 @@ export async function load({ locals }) {
 
     return {
         exercise,
-        language,
+        language: task.language,
+        filename: task.filename,
         initialSourceCode: task.sourceCode,
         initialDiagnostics: diagnostics,
         timeout,

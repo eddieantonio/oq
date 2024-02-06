@@ -21,9 +21,8 @@ export function load({ url }) {
     const diagnostics = diagnosticsForCondition(task, condition);
 
     return {
-        // TODO: do not hardcode the next two fields:
-        language: 'c',
-        filename: 'main.c',
+        language: task.language,
+        filename: task.filename,
         initialSourceCode: task.sourceCode,
         initialDiagnostics: diagnostics
     };

@@ -10,13 +10,13 @@
     import type { Diagnostics } from '$lib/types/diagnostics';
 
     import cLogo from '$lib/assets/c-logo.svg';
-    import type { RunnableProgram } from '$lib/types';
+    import type { ProgrammingLanguage, RunnableProgram } from '$lib/types';
     import type { ClientSideRunResult } from '$lib/types/client-side-run-results';
 
     /** The source code content in the editor. */
     export let content: string;
     /** The programming language of the content. */
-    export let language: string;
+    export let language: ProgrammingLanguage;
     /** The filename that is currently being modified. */
     export let filename: string;
 

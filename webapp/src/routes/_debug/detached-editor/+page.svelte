@@ -4,9 +4,8 @@
     import type { ClientSideRunResult } from '$lib/types/client-side-run-results';
 
     export let data: import('./$types').PageData;
-    const { language, initialDiagnostics, initialSourceCode } = data;
+    const { language, filename, initialDiagnostics, initialSourceCode } = data;
     let content = initialSourceCode;
-    let filename = 'main.c';
 
     async function runCodeOnServer({
         language,
