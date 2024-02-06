@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 
-import type { Diagnostics, GCCDiagnostics } from '$lib/types/diagnostics';
+import type { Diagnostics, RootGCCDiagnostic } from '$lib/types/diagnostics';
 import type { MarkdownString, SHA256Hash } from './newtypes';
 import { hashSourceCode } from './hash';
 import { getMarkdownResponse, type RawLLMResponse } from './llm';
@@ -54,43 +54,37 @@ export function loadTasksSync(tasksDir: string) {
         TASKS.push(loadOneTaskSync(`${tasksDir}/${name}`, name));
     }
 }
+/**
+ * Returns the task with the given name. If the task doesn't exist, throws an error.
+ */
+export function getTaskByName(name: string): Task {
+    const task = TASKS.find((t) => t.name === name);
+    if (!task) throw new Error(`No task found with name ${name}`);
+    return task;
+}
+
+export function getTaskBySourceCodeHash(hash: SHA256Hash): Task | undefined {
+    // TODO: build a map if I have more than... oh... 16 tasks?
+    return TASKS.find((t) => t.hash === hash);
+}
+
+/**
+ * @returns all tasks names loaded into the server
+ */
+export function taskNames(): TaskName[] {
+    return TASKS.map((t) => t.name);
+}
 
 function loadOneTaskSync(taskDir: string, name: TaskName) {
     const metadata = JSON.parse(fs.readFileSync(`${taskDir}/task.json`, 'utf-8')) as TaskMetadata;
     const language = metadata.language;
+    const loader = loaders[language];
 
-    const filename = (() => {
-        switch (language) {
-            case 'c':
-                return 'main.c';
-            case 'python':
-                return 'main.py';
-        }
-    })();
+    const filename = loader.getFilename();
     const sourceCode = fs.readFileSync(`${taskDir}/${filename}`, 'utf-8');
     const hash = hashSourceCode(sourceCode);
 
-    const original: Diagnostics = (() => {
-        switch (language) {
-            case 'c': {
-                const rawGccDiagnostics = JSON.parse(
-                    fs.readFileSync(`${taskDir}/gcc-diagnostics.json`, 'utf-8')
-                );
-                return {
-                    format: 'gcc-json',
-                    diagnostics: [getFirstGCCError(rawGccDiagnostics)]
-                };
-            }
-            case 'python': {
-                const textFile = fs.readFileSync(`${taskDir}/python-errors.txt`, 'utf-8');
-                return {
-                    format: 'preformatted',
-                    plainText: textFile
-                };
-            }
-        }
-    })();
-
+    const original = loader.getOriginalDiagnostics(taskDir);
     const manuallyEnhancedMessage = fs.readFileSync(
         `${taskDir}/manual-explanation.md`,
         'utf-8'
@@ -126,23 +120,37 @@ function loadOneTaskSync(taskDir: string, name: TaskName) {
     };
 }
 
-/**
- * Returns the task with the given name. If the task doesn't exist, throws an error.
- */
-export function getTaskByName(name: string): Task {
-    const task = TASKS.find((t) => t.name === name);
-    if (!task) throw new Error(`No task found with name ${name}`);
-    return task;
-}
-
-export function getTaskBySourceCodeHash(hash: SHA256Hash): Task | undefined {
-    // TODO: build a map if I have more than... oh... 16 tasks?
-    return TASKS.find((t) => t.hash === hash);
+interface TaskLoader {
+    getFilename(): string;
+    getOriginalDiagnostics(taskDir: string): Diagnostics;
 }
 
 /**
- * @returns all tasks names loaded into the server
+ * Task loaders for each programming language.
+ * Figures out which files to load for each programming language, and how to parse them.
  */
-export function taskNames(): TaskName[] {
-    return TASKS.map((t) => t.name);
-}
+const loaders: { [key in ProgrammingLanguage]: TaskLoader } = {
+    c: {
+        getFilename: () => 'main.c',
+        getOriginalDiagnostics(taskDir) {
+            const rawGccDiagnostics = JSON.parse(
+                fs.readFileSync(`${taskDir}/gcc-diagnostics.json`, 'utf-8')
+            ) as RootGCCDiagnostic[];
+
+            return {
+                format: 'gcc-json',
+                diagnostics: [getFirstGCCError(rawGccDiagnostics)]
+            };
+        }
+    },
+    python: {
+        getFilename: () => 'main.py',
+        getOriginalDiagnostics(taskDir) {
+            const textFile = fs.readFileSync(`${taskDir}/python-errors.txt`, 'utf-8');
+            return {
+                format: 'preformatted',
+                plainText: textFile
+            };
+        }
+    }
+} as const;
