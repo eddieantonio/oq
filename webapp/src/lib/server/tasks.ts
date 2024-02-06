@@ -51,59 +51,60 @@ export function loadTasksSync(tasksDir: string) {
         if (taskDir.name == '+common') continue;
 
         const name = taskDir.name as TaskName;
-
-        const metadata = JSON.parse(
-            fs.readFileSync(`${tasksDir}/${name}/task.json`, 'utf-8')
-        ) as TaskMetadata;
-        const language = metadata.language;
-
-        // TODO: do not hardcode the filename:
-        const filename = 'main.c';
-        const sourceCode = fs.readFileSync(`${tasksDir}/${name}/${filename}`, 'utf-8');
-        const hash = hashSourceCode(sourceCode);
-
-        const rawGccDiagnostics = JSON.parse(
-            fs.readFileSync(`${tasksDir}/${name}/gcc-diagnostics.json`, 'utf-8')
-        );
-        const manuallyEnhancedMessage = fs.readFileSync(
-            `${tasksDir}/${name}/manual-explanation.md`,
-            'utf-8'
-        ) as MarkdownString;
-        const manuallyEnhancedMessageMarkers = JSON.parse(
-            fs.readFileSync(`${tasksDir}/${name}/manual-markers.json`, 'utf-8')
-        ) as JsonMarkerData[];
-        const rawLlmResponse = JSON.parse(
-            fs.readFileSync(`${tasksDir}/${name}/gpt4-response.json`, 'utf-8')
-        ) as RawLLMResponse;
-
-        const original: GCCDiagnostics = {
-            format: 'gcc-json',
-            diagnostics: [getFirstGCCError(rawGccDiagnostics)]
-        };
-
-        const diagnostics: { [key in Condition]: Diagnostics } = {
-            control: original,
-            enhanced: {
-                format: 'manually-enhanced',
-                markdown: manuallyEnhancedMessage,
-                markers: manuallyEnhancedMessageMarkers
-            },
-            'llm-enhanced': {
-                format: 'llm-enhanced',
-                markdown: getMarkdownResponse(rawLlmResponse),
-                original
-            }
-        };
-
-        TASKS.push({
-            name,
-            language,
-            filename,
-            sourceCode,
-            hash,
-            diagnostics
-        });
+        TASKS.push(loadOneTaskSync(`${tasksDir}/${name}`, name));
     }
+}
+
+function loadOneTaskSync(taskDir: string, name: TaskName) {
+    const metadata = JSON.parse(fs.readFileSync(`${taskDir}/task.json`, 'utf-8')) as TaskMetadata;
+    const language = metadata.language;
+
+    // TODO: do not hardcode the filename:
+    const filename = 'main.c';
+    const sourceCode = fs.readFileSync(`${taskDir}/${filename}`, 'utf-8');
+    const hash = hashSourceCode(sourceCode);
+
+    const rawGccDiagnostics = JSON.parse(
+        fs.readFileSync(`${taskDir}/gcc-diagnostics.json`, 'utf-8')
+    );
+    const manuallyEnhancedMessage = fs.readFileSync(
+        `${taskDir}/manual-explanation.md`,
+        'utf-8'
+    ) as MarkdownString;
+    const manuallyEnhancedMessageMarkers = JSON.parse(
+        fs.readFileSync(`${taskDir}/manual-markers.json`, 'utf-8')
+    ) as JsonMarkerData[];
+    const rawLlmResponse = JSON.parse(
+        fs.readFileSync(`${taskDir}/gpt4-response.json`, 'utf-8')
+    ) as RawLLMResponse;
+
+    const original: GCCDiagnostics = {
+        format: 'gcc-json',
+        diagnostics: [getFirstGCCError(rawGccDiagnostics)]
+    };
+
+    const diagnostics: Task['diagnostics'] = {
+        control: original,
+        enhanced: {
+            format: 'manually-enhanced',
+            markdown: manuallyEnhancedMessage,
+            markers: manuallyEnhancedMessageMarkers
+        },
+        'llm-enhanced': {
+            format: 'llm-enhanced',
+            markdown: getMarkdownResponse(rawLlmResponse),
+            original
+        }
+    };
+
+    return {
+        name,
+        language,
+        filename,
+        sourceCode,
+        hash,
+        diagnostics
+    };
 }
 
 /**

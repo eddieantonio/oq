@@ -76,7 +76,7 @@ export interface JsonMarkerData {
     endLineNumber: number;
 }
 
-export const SUPPORTED_PROGRAMMING_LANGUAGES = ['c'] as const;
+export const SUPPORTED_PROGRAMMING_LANGUAGES = ['c', 'python'] as const;
 /** A programming language supported by the webapp. */
 export type ProgrammingLanguage = (typeof SUPPORTED_PROGRAMMING_LANGUAGES)[number];
 
