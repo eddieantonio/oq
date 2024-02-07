@@ -14,7 +14,7 @@ export const assignmentGenerator = generateAssignments();
  * NOTE: assignments will be counterbalanced AS LONG AS only one server process
  * is creating the assignments and does not restart between all assignments!
  */
-function* generateAssignments(): Generator<Assignment[], undefined, undefined> {
+export function* generateAssignments(): Generator<Assignment[], undefined, undefined> {
     const allPossibleAssignments = [];
     for (const taskOrder of permutations(taskNames())) {
         for (const conditionOrder of permutations(CONDITIONS)) {
