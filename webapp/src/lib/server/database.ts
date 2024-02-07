@@ -127,6 +127,15 @@ export interface ExerciseCompileEvent {
     exercise_id: ExerciseId;
 }
 
+/**
+ * Stores state for the classroom. Currently, the state is updated every time a participant
+ * joins the classroom.
+ */
+export interface ClassroomState {
+    classroom_id: ClassroomId;
+    state: string | null;
+}
+
 ////////////////////////////////// Tables (for use in TypeScript) //////////////////////////////////
 
 const Participants = () => db<Participant>('participants');
@@ -139,6 +148,7 @@ const ExerciseAttempts = () => db<ExerciseAttempt>('exercise_attempts');
 // Note: CompletedExerciseAttempts is never used by itself, but always in a transaction.
 const ExerciseCompileEvents = () => db<ExerciseCompileEvent>('exercise_compile_events');
 const ParticipantAssignments = () => db<ParticipantAssignment>('participant_assignments');
+// Note: ClassroomStates is only used in a transaction.
 
 //////////////////////////////////////////// Public API ////////////////////////////////////////////
 
@@ -430,5 +440,42 @@ export async function logExerciseAttemptCompletedAndContinue(
                 stage
             })
             .where('participant_id', participantId);
+    });
+}
+
+export async function setParticipantAssignmentsWithState(
+    participantId: ParticipantId,
+    classroomId: ClassroomId,
+    update: (state: string | null) => [Assignment[], string]
+) {
+    await db.transaction(async (trx) => {
+        // Get the current classroom state
+        const row = await trx<ClassroomState>('classroom_state')
+            .first('state')
+            .where('classroom_id', classroomId);
+        const oldState = row?.state ?? null;
+        console.log({ oldState });
+
+        // Now run the updater
+        const [assignments, newState] = update(oldState);
+
+        // Insert the participant's assignments
+        await trx('participant_assignments').insert(
+            assignments.map((assignment, index) => ({
+                participant_id: participantId,
+                exercise_id: `exercise-${index + 1}` as ExerciseId,
+                condition: assignment.condition,
+                task: assignment.task
+            }))
+        );
+
+        // Update the classroom state
+        await trx('classroom_state')
+            .insert({
+                classroom_id: classroomId,
+                state: newState
+            })
+            .onConflict('classroom_id')
+            .merge();
     });
 }

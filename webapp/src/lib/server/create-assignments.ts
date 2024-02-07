@@ -30,7 +30,7 @@ export function* generateAssignments(
     }
 }
 
-interface GeneratorState {
+export interface GeneratorState {
     allPossibleAssignments: Assignment[][];
     index: number;
 }

@@ -5,12 +5,18 @@ import { makeNewParticipantId } from '$lib/server/participants';
 import {
     getParticipationCode,
     saveParticipant,
-    setParticipantAssignments
+    setParticipantAssignmentsWithState
 } from '$lib/server/database';
 import { validateParticipationCode } from '$lib/server/validate-participation-codes';
 import type { ClassroomId } from '$lib/server/newtypes';
-import { assignmentGenerator } from '$lib/server/create-assignments';
+import {
+    createInitialState,
+    yieldNextAssignment,
+    type GeneratorState
+} from '$lib/server/create-assignments';
 import { redirectToCurrentStage } from '$lib/server/redirect.js';
+import { TASKS } from '$lib/server/tasks';
+import type { TaskName } from '$lib/types/index.js';
 
 export function load({ locals }) {
     const participant = locals.participant;
@@ -60,16 +66,34 @@ export const actions: import('./$types').Actions = {
 
         const participantID = makeNewParticipantId();
 
+        // TODO: merge the two below in one transaction:
         await saveParticipant(participantID, classroom);
         cookies.set('participant_id', participantID, { path: '/' });
 
         // Give the participant their assignments:
-        // TODO: should this be done in a later stage?
-        const assignments = assignmentGenerator.next().value;
-        if (assignments == null)
-            throw error(StatusCodes.INTERNAL_SERVER_ERROR, 'Could not generate assignments');
-        await setParticipantAssignments(participantID, assignments);
+        await setParticipantAssignmentsWithState(participantID, classroom, (stateString) => {
+            let state: GeneratorState;
+            if (stateString == null) {
+                const tasks = cTasks();
+                if (tasks.length > 6)
+                    throw new Error(
+                        `${tasks.length} tasks will create too many possible assignments.`
+                    );
+                state = createInitialState(tasks);
+            } else {
+                // Hopefully the state is correct.
+                state = JSON.parse(stateString);
+            }
+
+            const [assignment, updatedState] = yieldNextAssignment(state);
+            return [assignment, JSON.stringify(updatedState)];
+        });
 
         throw redirect(StatusCodes.SEE_OTHER, '/questionnaire');
     }
 };
+
+// TODO: only tasks for C
+function cTasks(): TaskName[] {
+    return TASKS.filter((task) => task.language == 'c').map((task) => task.name);
+}

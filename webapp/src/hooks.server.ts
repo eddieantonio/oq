@@ -9,7 +9,7 @@ import { error, type Handle } from '@sveltejs/kit';
 import { building } from '$app/environment';
 import { env } from '$env/dynamic/private';
 
-import { loadTasksSync } from '$lib/server/tasks';
+import { loadTasksSync, TASKS } from '$lib/server/tasks';
 import { getParticipantPossiblyUndefined } from '$lib/server/database';
 import type { ParticipantId } from '$lib/server/newtypes';
 import { StatusCodes } from 'http-status-codes';
@@ -19,7 +19,7 @@ import { StatusCodes } from 'http-status-codes';
 
 // TODO: do some env bullcrap
 // so that tasks are loaded from /app/tasks on server load
-if (!building) loadTasksSync(currentTasksDir());
+if (!building && TASKS.length === 0) loadTasksSync(currentTasksDir());
 
 /**
  * Loads the participant into EVERY page when logged in.
