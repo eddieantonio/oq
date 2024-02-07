@@ -1,8 +1,12 @@
 import { shuffle } from '$lib/random';
-import { CONDITIONS, type Assignment } from '$lib/types';
-import { taskNames } from './tasks';
+import { CONDITIONS, type Assignment, type TaskName } from '$lib/types';
+import { TASKS } from './tasks';
 
-export const assignmentGenerator = generateAssignments();
+// TODO: DO NOT USE THIS GLOBAL ANY MORE
+export const assignmentGenerator = generateAssignments(
+    // Only assign C tasks.
+    TASKS.filter((task) => task.language == 'c').map((task) => task.name)
+);
 
 /**
  * Infinite generator of all possible assignments.
@@ -14,8 +18,10 @@ export const assignmentGenerator = generateAssignments();
  * NOTE: assignments will be counterbalanced AS LONG AS only one server process
  * is creating the assignments and does not restart between all assignments!
  */
-export function* generateAssignments(): Generator<Assignment[], undefined, undefined> {
-    let state = createInitialState();
+export function* generateAssignments(
+    taskNames: TaskName[]
+): Generator<Assignment[], undefined, undefined> {
+    let state = createInitialState(taskNames);
 
     while (true) {
         const [assignments, updatedState] = yieldNextAssignment(state);
@@ -52,9 +58,9 @@ export function yieldNextAssignment(state: GeneratorState): [Assignment[], Gener
 /**
  * @returns the initial state of the generator
  */
-export function createInitialState(): GeneratorState {
+export function createInitialState(taskNames: TaskName[]): GeneratorState {
     const allPossibleAssignments = [];
-    for (const taskOrder of permutations(taskNames())) {
+    for (const taskOrder of permutations(taskNames)) {
         for (const conditionOrder of permutations(CONDITIONS)) {
             const assignments: Assignment[] = taskOrder.map((task, index) => ({
                 task,

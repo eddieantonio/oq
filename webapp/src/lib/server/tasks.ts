@@ -69,6 +69,7 @@ export function getTaskBySourceCodeHash(hash: SHA256Hash): Task | undefined {
 }
 
 /**
+ * @deprecated This function is not language aware, and returns ALL tasks! (that is bad)
  * @returns all tasks names loaded into the server
  */
 export function taskNames(): TaskName[] {
