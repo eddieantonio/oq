@@ -17,7 +17,7 @@ beforeAll(() => {
 
 test('generates a random assignment', () => {
     // Just check that the first thing yielded is an array of assignments.
-    const gen = generateAssignments();
+    const gen = generateAssignments(taskNames());
     const first = gen.next().value;
     if (first === undefined) {
         throw new Error('Expected a value');
@@ -31,7 +31,7 @@ test('generates a random assignment', () => {
 test('generates all possible assignments', () => {
     const totalPossibleAssignments = factorial(taskNames().length) * factorial(CONDITIONS.length);
 
-    const gen = generateAssignments();
+    const gen = generateAssignments(taskNames());
     const set = new Set();
     for (let i = 0; i < totalPossibleAssignments; i++) {
         const assignments = gen.next().value;
