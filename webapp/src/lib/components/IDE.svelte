@@ -31,6 +31,8 @@
     let pem: Diagnostics | null = initialDiagnostics;
     let programOutput: string | null = null;
     let bottomTab: 'problems' | 'output' = 'problems';
+    /** Whether the program has run and/or has errors. */
+    let status: 'unknown' | 'has-errors' | 'successful' = 'unknown';
 
     /* Used for a hack to pass into the Editor. */
     let editorHeightHint = 0;
@@ -55,8 +57,9 @@
             enableRun = true;
         }
 
-        pem = response.diagnostics || null;
-        programOutput = response.output || null;
+        pem = response.diagnostics ?? null;
+        programOutput = response.output ?? null;
+        status = response.success ? 'successful' : 'has-errors';
 
         if (pem) {
             bottomTab = 'problems';
@@ -135,15 +138,17 @@
                             <slot name="annotate-problems" />
                         {/if}
                     {:else if bottomTab == 'output'}
-                        {#if !programOutput && pem}
-                            <p>Fix the errors, then run the program to see output.</p>
-                        {:else if !programOutput}
+                        {#if status == 'unknown'}
                             <p>Run the program to see output</p>
                         {:else}
                             <pre class="output"><code>{programOutput}</code></pre>
+                        {/if}
+                        {#if status == 'successful'}
                             <p class="report-success">
                                 Code ran successfully. Press submit to continue.
                             </p>
+                        {:else if status == 'has-errors'}
+                            <p>Fix the errors, then run the program to see output.</p>
                         {/if}
                     {/if}
                 </div>
