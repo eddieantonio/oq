@@ -15,6 +15,44 @@ export const assignmentGenerator = generateAssignments();
  * is creating the assignments and does not restart between all assignments!
  */
 export function* generateAssignments(): Generator<Assignment[], undefined, undefined> {
+    let state = createInitialState();
+
+    while (true) {
+        const [assignments, updatedState] = yieldNextAssignment(state);
+        state = updatedState;
+        yield assignments;
+    }
+}
+
+interface GeneratorState {
+    allPossibleAssignments: Assignment[][];
+    index: number;
+}
+
+/**
+ * Generates the next possible assignment.
+ * @param state the current state of the generator
+ * @returns one array of assignments and the updated state.
+ */
+export function yieldNextAssignment(state: GeneratorState): [Assignment[], GeneratorState] {
+    const { allPossibleAssignments } = state;
+    let { index } = state;
+
+    // Reached the end of all possible assignments: shuffle and start over.
+    if (index >= allPossibleAssignments.length) {
+        shuffle(allPossibleAssignments);
+        index = 0;
+    }
+
+    // Get the next assignment
+    const assignments = allPossibleAssignments[index];
+    return [assignments, { allPossibleAssignments, index: state.index + 1 }];
+}
+
+/**
+ * @returns the initial state of the generator
+ */
+export function createInitialState(): GeneratorState {
     const allPossibleAssignments = [];
     for (const taskOrder of permutations(taskNames())) {
         for (const conditionOrder of permutations(CONDITIONS)) {
@@ -27,11 +65,7 @@ export function* generateAssignments(): Generator<Assignment[], undefined, undef
             allPossibleAssignments.push(assignments);
         }
     }
-
-    while (true) {
-        shuffle(allPossibleAssignments);
-        yield* allPossibleAssignments;
-    }
+    return { allPossibleAssignments, index: 0 };
 }
 
 // Returns an array of all permutations of the given array.
