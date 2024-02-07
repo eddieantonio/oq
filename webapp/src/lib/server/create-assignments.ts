@@ -1,3 +1,5 @@
+import seedrandom from 'seedrandom';
+
 import { shuffle } from '$lib/random';
 import { CONDITIONS, type Assignment, type TaskName } from '$lib/types';
 import { TASKS } from './tasks';
@@ -31,7 +33,8 @@ export function* generateAssignments(
 }
 
 export interface GeneratorState {
-    allPossibleAssignments: Assignment[][];
+    rngState: seedrandom.State.Xorshift7;
+    tasks: TaskName[];
     index: number;
 }
 
@@ -41,24 +44,37 @@ export interface GeneratorState {
  * @returns one array of assignments and the updated state.
  */
 export function yieldNextAssignment(state: GeneratorState): [Assignment[], GeneratorState] {
-    const { allPossibleAssignments } = state;
-    let { index } = state;
+    const { tasks } = state;
+    let { rngState, index } = state;
 
-    // Reached the end of all possible assignments: shuffle and start over.
+    // Build the list again:
+    const allPossibleAssignments = createAllPossibleAssignments(tasks);
+    const prng = seedrandom.xorshift7(undefined, { state: rngState });
+    shuffle(allPossibleAssignments, prng);
+
+    // Reached the end of all possible assignments: start over.
     if (index >= allPossibleAssignments.length) {
-        shuffle(allPossibleAssignments);
         index = 0;
+        // We update the RNG state here, because it should be EXACTLY the same RNG state
+        // for the previous calls.
+        rngState = prng.state();
     }
 
     // Get the next assignment
     const assignments = allPossibleAssignments[index];
-    return [assignments, { allPossibleAssignments, index: state.index + 1 }];
+    return [assignments, { rngState, tasks, index: state.index + 1 }];
 }
 
 /**
  * @returns the initial state of the generator
  */
 export function createInitialState(taskNames: TaskName[]): GeneratorState {
+    const prng = seedrandom.xorshift7(undefined, { state: true });
+
+    return { rngState: prng.state(), tasks: taskNames, index: 0 };
+}
+
+function createAllPossibleAssignments(taskNames: TaskName[]): Assignment[][] {
     const allPossibleAssignments = [];
     for (const taskOrder of permutations(taskNames)) {
         for (const conditionOrder of permutations(CONDITIONS)) {
@@ -71,7 +87,7 @@ export function createInitialState(taskNames: TaskName[]): GeneratorState {
             allPossibleAssignments.push(assignments);
         }
     }
-    return { allPossibleAssignments, index: 0 };
+    return allPossibleAssignments;
 }
 
 // Returns an array of all permutations of the given array.
