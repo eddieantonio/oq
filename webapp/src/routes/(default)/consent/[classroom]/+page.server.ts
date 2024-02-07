@@ -2,11 +2,7 @@ import { error, redirect } from '@sveltejs/kit';
 import { StatusCodes } from 'http-status-codes';
 
 import { makeNewParticipantId } from '$lib/server/participants';
-import {
-    getParticipationCode,
-    saveParticipant,
-    setParticipantAssignmentsWithState
-} from '$lib/server/database';
+import { getParticipationCode, setParticipantAssignmentsWithState } from '$lib/server/database';
 import { validateParticipationCode } from '$lib/server/validate-participation-codes';
 import type { ClassroomId } from '$lib/server/newtypes';
 import {
@@ -64,13 +60,8 @@ export const actions: import('./$types').Actions = {
                 message: 'The participation code was incorrect.'
             });
 
+        // Create a new participant, and assign their tasks:
         const participantID = makeNewParticipantId();
-
-        // TODO: merge the two below in one transaction:
-        await saveParticipant(participantID, classroom);
-        cookies.set('participant_id', participantID, { path: '/' });
-
-        // Give the participant their assignments:
         await setParticipantAssignmentsWithState(participantID, classroom, (stateString) => {
             let state: GeneratorState;
             if (stateString == null) {
@@ -88,6 +79,7 @@ export const actions: import('./$types').Actions = {
             const [assignment, updatedState] = yieldNextAssignment(state);
             return [assignment, JSON.stringify(updatedState)];
         });
+        cookies.set('participant_id', participantID, { path: '/' });
 
         throw redirect(StatusCodes.SEE_OTHER, '/questionnaire');
     }

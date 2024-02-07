@@ -456,8 +456,20 @@ export async function setParticipantAssignmentsWithState(
         const oldState = row?.state ?? null;
         console.log({ oldState });
 
-        // Now run the updater
+        // Fetch the new assignments
         const [assignments, newState] = update(oldState);
+
+        // Create the new participant
+        await Participants()
+            .insert({
+                participant_id: participantId,
+                classroom_id: classroomId,
+                started_at: new Date(),
+                stage: firstStage(),
+                // If we've gotten here, they have consented to all questions.
+                consented_to_all: true
+            })
+            .transacting(trx);
 
         // Insert the participant's assignments
         await trx('participant_assignments').insert(
