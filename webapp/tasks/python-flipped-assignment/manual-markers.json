@@ -1,0 +1,10 @@
+[
+  {
+    "severity": "error",
+    "message": "cannot assign to this expression",
+    "startLineNumber": 9,
+    "endLineNumber": 9,
+    "startColumn": 5,
+    "endColumn": 10
+  }
+]

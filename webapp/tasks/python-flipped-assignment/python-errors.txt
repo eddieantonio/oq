@@ -1,0 +1,4 @@
+  File "main.py", line 5
+    a + b = c
+    ^^^^^
+SyntaxError: cannot assign to expression here. Maybe you meant '==' instead of '='?
