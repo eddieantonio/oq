@@ -74,6 +74,7 @@
         questionId="seeking-help"
         options={[
             'Nowhere, I just keep trying things and see what works',
+            'Nowhere, I read the message and try to use it to fix the problem',
             'Nowhere, the programming environment tells me exactly what I need to do to fix it',
             'I look in the textbook',
             'I search on the web (e.g. Google, Bing, Yahoo, etc.) and look for an explanation of what the error message means',
