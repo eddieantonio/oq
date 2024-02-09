@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "main.py", line 13, in <module>
+    print("the first 7 fibonacci numbers are", fibonacci(7))
+                                               ^^^^^^^^^^^^
+  File "main.py", line 9, in fibonacci
+    sequence.append(now)
+    ^^^^^^^^^^^^^^^
+AttributeError: 'tuple' object has no attribute 'append'

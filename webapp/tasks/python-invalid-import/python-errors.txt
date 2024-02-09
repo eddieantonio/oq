@@ -1,0 +1,4 @@
+  File "main.py", line 1
+    import pi from math
+    ^^^^^^^^^^^^^^^^^^^
+SyntaxError: Did you mean to use 'from ... import ...' instead?

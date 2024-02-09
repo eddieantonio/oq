@@ -1,0 +1,18 @@
+[
+  {
+    "severity": "error",
+    "message": "assignment not allowed: `n` is const",
+    "startLineNumber": 10,
+    "endLineNumber": 10,
+    "startColumn": 9,
+    "endColumn": 18
+  },
+  {
+    "severity": "hint",
+    "message": "`n` declared const here",
+    "startLineNumber": 3,
+    "endLineNumber": 3,
+    "startColumn": 15,
+    "endColumn": 20
+  }
+]
