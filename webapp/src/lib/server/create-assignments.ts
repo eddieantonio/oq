@@ -1,12 +1,5 @@
 import { shuffle } from '$lib/random';
 import { CONDITIONS, type Assignment, type TaskName } from '$lib/types';
-import { TASKS } from './tasks';
-
-// TODO: DO NOT USE THIS GLOBAL ANY MORE
-export const assignmentGenerator = generateAssignments(
-    // Only assign C tasks.
-    TASKS.filter((task) => task.language == 'c').map((task) => task.name)
-);
 
 /**
  * Infinite generator of all possible assignments.

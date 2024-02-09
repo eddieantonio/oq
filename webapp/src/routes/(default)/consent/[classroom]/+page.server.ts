@@ -5,8 +5,16 @@ import { makeNewParticipantId } from '$lib/server/participants';
 import { getParticipationCode, saveParticipant } from '$lib/server/database';
 import { validateParticipationCode } from '$lib/server/validate-participation-codes';
 import type { ClassroomId } from '$lib/server/newtypes';
-import { assignmentGenerator } from '$lib/server/create-assignments';
 import { redirectToCurrentStage } from '$lib/server/redirect.js';
+import { generateAssignments } from '$lib/server/create-assignments';
+import { TASKS } from '$lib/server/tasks';
+
+// HACK: this global is WAY easier than storing the state in the database,
+// but it means that only one study can run at a time, unfortunately.
+const assignmentGenerator = generateAssignments(
+    // Only assign Python tasks.
+    TASKS.filter((task) => task.language == 'python').map((task) => task.name)
+);
 
 export function load({ locals }) {
     const participant = locals.participant;
