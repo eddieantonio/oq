@@ -2,16 +2,11 @@
     import { dev } from '$app/environment';
     import ActionBar from '$lib/components/forms/ActionBar.svelte';
     import Checkboxes from '$lib/components/forms/Checkboxes.svelte';
-    import FormGroup from '$lib/components/forms/FormGroup.svelte';
     import Gender from '$lib/components/forms/Gender.svelte';
 
     import LongAnswer from '$lib/components/forms/LongAnswer.svelte';
     import MultipleChoice from '$lib/components/forms/MultipleChoice.svelte';
     import ShortAnswer from '$lib/components/forms/ShortAnswer.svelte';
-
-    let gender: string;
-    let preferToSelfDescribe: string = '';
-    $: submittedGender = gender == 'self-describe' ? preferToSelfDescribe : gender;
 </script>
 
 <h1>Error Message and you</h1>
