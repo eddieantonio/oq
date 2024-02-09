@@ -39,6 +39,7 @@ interface TaskMetadata {
  */
 export function loadTasksSync(tasksDir: string) {
     // Sorry about this :/
+    console.log('Loading tasks from', tasksDir);
 
     // First, figure out what the task names are from the folder names
     const taskDirectories = fs
@@ -53,6 +54,8 @@ export function loadTasksSync(tasksDir: string) {
         const name = taskDir.name as TaskName;
         TASKS.push(loadOneTaskSync(`${tasksDir}/${name}`, name));
     }
+
+    console.log('Loaded', TASKS.length, 'tasks');
 }
 /**
  * Returns the task with the given name. If the task doesn't exist, throws an error.

@@ -14,6 +14,7 @@ import { CONDITIONS, type Assignment, type TaskName } from '$lib/types';
 export function* generateAssignments(
     taskNames: TaskName[]
 ): Generator<Assignment[], undefined, undefined> {
+    console.log('Generating assignments for', taskNames.join(', '));
     let state = createInitialState(taskNames);
 
     while (true) {

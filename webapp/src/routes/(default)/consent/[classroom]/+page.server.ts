@@ -11,10 +11,22 @@ import { TASKS } from '$lib/server/tasks';
 
 // HACK: this global is WAY easier than storing the state in the database,
 // but it means that only one study can run at a time, unfortunately.
-const assignmentGenerator = generateAssignments(
-    // Only assign Python tasks.
-    TASKS.filter((task) => task.language == 'python').map((task) => task.name)
-);
+const ASSIGNMENTS = (function () {
+    // Lazy initialization of the generator.
+    const init = () =>
+        generateAssignments(
+            // Only assign Python tasks.
+            TASKS.filter((task) => task.language == 'python').map((task) => task.name)
+        );
+
+    let instance: ReturnType<typeof init> | null = null;
+    return {
+        get generator() {
+            if (instance == null) instance = init();
+            return instance;
+        }
+    };
+})();
 
 export function load({ locals }) {
     const participant = locals.participant;
@@ -64,7 +76,7 @@ export const actions: import('./$types').Actions = {
 
         // Create a participant and given them their assignments right away:
         const participantID = makeNewParticipantId();
-        const assignments = unwrap(assignmentGenerator.next().value);
+        const assignments = unwrap(ASSIGNMENTS.generator.next().value);
         await saveParticipant(participantID, classroom, assignments);
         cookies.set('participant_id', participantID, { path: '/' });
 
