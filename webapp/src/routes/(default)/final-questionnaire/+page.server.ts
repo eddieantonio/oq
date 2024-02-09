@@ -51,13 +51,12 @@ export async function load({ locals }) {
 function formatToCondition(format: Diagnostics['format']): Condition {
     switch (format) {
         case 'gcc-json':
+        case 'preformatted':
             return 'control';
         case 'manually-enhanced':
             return 'enhanced';
         case 'llm-enhanced':
             return 'llm-enhanced';
-        case 'preformatted':
-            throw new Error('Not implemented: preformatted diagnostics are not a study condition');
     }
 }
 

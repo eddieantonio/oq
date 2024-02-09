@@ -1,12 +1,11 @@
-import { TASKS } from '$lib/server/tasks';
+import { taskNames } from '$lib/server/tasks';
 
 /**
  * @type {import('@sveltejs/kit').Load}
  */
 export function load() {
-    const taskNames = TASKS.map((task) => task.name);
     return {
-        taskNames
+        taskNames: taskNames()
     };
 }
 

@@ -1,12 +1,13 @@
 import { setParticipantStage } from '$lib/server/database';
-import { TASKS } from '$lib/server/tasks';
+import { getTasksForLanguage } from '$lib/server/tasks';
 import { redirect } from '@sveltejs/kit';
 import { StatusCodes } from 'http-status-codes';
 
 export function load() {
     return {
         // How many exercises the participant will do:
-        tasks: TASKS.length
+        // TODO: DO NOT HARDCODE THE PROGRAMMING LANGUAGE
+        tasks: getTasksForLanguage('python').length
     };
 }
 

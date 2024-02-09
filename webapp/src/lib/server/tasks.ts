@@ -7,7 +7,7 @@ import { getMarkdownResponse, type RawLLMResponse } from './llm';
 import type { TaskName, JsonMarkerData, Condition, ProgrammingLanguage } from '$lib/types';
 import { getFirstGCCError } from './diagnostics-util';
 
-export const TASKS: Task[] = [];
+const TASKS: Task[] = [];
 
 export interface Task {
     /** An arbitrary name for the task. */
@@ -66,9 +66,27 @@ export function getTaskByName(name: string): Task {
     return task;
 }
 
+/**
+ * Returns a task by its source code file's hash.
+ * @returns the task, or undefined if no task has the given hash.
+ */
 export function getTaskBySourceCodeHash(hash: SHA256Hash): Task | undefined {
     // TODO: build a map if I have more than... oh... 16 tasks?
     return TASKS.find((t) => t.hash === hash);
+}
+
+/**
+ * Returns all tasks for the given language.
+ */
+export function getTasksForLanguage(language: ProgrammingLanguage): Task[] {
+    return TASKS.filter((t) => t.language === language);
+}
+
+/**
+ * Returns whether any tasks have been loaded into the server.
+ */
+export function hasLoadedTasks(): boolean {
+    return TASKS.length > 0;
 }
 
 /**
