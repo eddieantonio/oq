@@ -1,4 +1,0 @@
-  File "/Users/eddie/Programming/oq/webapp/tasks/python-capital-if/main.py", line 2
-    If (input == "s3cr37"): print("You are in!")
-    ^^^^^^^^^^^^^^^^^^^^^^
-SyntaxError: illegal target for annotation
