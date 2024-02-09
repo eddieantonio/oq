@@ -165,14 +165,31 @@ export async function getParticipantPossiblyUndefined(
 /**
  * Saves a new participant to the database.
  */
-export async function saveParticipant(participantId: ParticipantId, classroomId: ClassroomId) {
-    await Participants().insert({
-        participant_id: participantId,
-        classroom_id: classroomId,
-        started_at: new Date(),
-        stage: firstStage(),
-        // If we've gotten here, they have consented to all questions.
-        consented_to_all: true
+export async function saveParticipant(
+    participantId: ParticipantId,
+    classroomId: ClassroomId,
+    assignments: Assignment[]
+) {
+    await db.transaction(async (trx) => {
+        await Participants().transacting(trx).insert({
+            participant_id: participantId,
+            classroom_id: classroomId,
+            started_at: new Date(),
+            stage: firstStage(),
+            // If we've gotten here, they have consented to all questions.
+            consented_to_all: true
+        });
+
+        await ParticipantAssignments()
+            .transacting(trx)
+            .insert(
+                assignments.map((assignment, index) => ({
+                    participant_id: participantId,
+                    exercise_id: `exercise-${index + 1}` as ExerciseId,
+                    condition: assignment.condition,
+                    task: assignment.task
+                }))
+            );
     });
 }
 
@@ -224,23 +241,6 @@ export async function getCurrentParticipantAssignment(
     const startedAt: number | null = started_at != null ? started_at.valueOf() : null;
     const assignment: Assignment = { condition, task };
     return [assignment, startedAt];
-}
-
-/**
- * Sets all of the task/condition assignments for the given participant.
- */
-export async function setParticipantAssignments(
-    participantId: ParticipantId,
-    assignments: Assignment[]
-) {
-    await ParticipantAssignments().insert(
-        assignments.map((assignment, index) => ({
-            participant_id: participantId,
-            exercise_id: `exercise-${index + 1}` as ExerciseId,
-            condition: assignment.condition,
-            task: assignment.task
-        }))
-    );
 }
 
 /**

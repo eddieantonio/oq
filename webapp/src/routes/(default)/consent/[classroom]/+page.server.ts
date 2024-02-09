@@ -2,11 +2,7 @@ import { error, redirect } from '@sveltejs/kit';
 import { StatusCodes } from 'http-status-codes';
 
 import { makeNewParticipantId } from '$lib/server/participants';
-import {
-    getParticipationCode,
-    saveParticipant,
-    setParticipantAssignments
-} from '$lib/server/database';
+import { getParticipationCode, saveParticipant } from '$lib/server/database';
 import { validateParticipationCode } from '$lib/server/validate-participation-codes';
 import type { ClassroomId } from '$lib/server/newtypes';
 import { assignmentGenerator } from '$lib/server/create-assignments';
@@ -58,18 +54,21 @@ export const actions: import('./$types').Actions = {
                 message: 'The participation code was incorrect.'
             });
 
+        // Create a participant and given them their assignments right away:
         const participantID = makeNewParticipantId();
-
-        await saveParticipant(participantID, classroom);
+        const assignments = unwrap(assignmentGenerator.next().value);
+        await saveParticipant(participantID, classroom, assignments);
         cookies.set('participant_id', participantID, { path: '/' });
-
-        // Give the participant their assignments:
-        // TODO: should this be done in a later stage?
-        const assignments = assignmentGenerator.next().value;
-        if (assignments == null)
-            throw error(StatusCodes.INTERNAL_SERVER_ERROR, 'Could not generate assignments');
-        await setParticipantAssignments(participantID, assignments);
 
         throw redirect(StatusCodes.SEE_OTHER, '/questionnaire');
     }
 };
+
+/**
+ * Like Rust's unwrap, but for null/undefined.
+ * @returns the value, if it exists.
+ */
+function unwrap<T>(value: NonNullable<T> | null | undefined): T {
+    if (value == null) throw new Error('Was undefined, but should never be');
+    return value;
+}
