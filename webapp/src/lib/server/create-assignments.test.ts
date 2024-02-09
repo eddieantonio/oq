@@ -1,37 +1,33 @@
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { beforeAll, expect, test } from 'vitest';
+import { expect, test } from 'vitest';
 import { generateAssignments } from './create-assignments';
-import { TASKS, loadTasksSync, taskNames } from './tasks';
-import { CONDITIONS } from '$lib/types';
+import { CONDITIONS, type TaskName } from '$lib/types';
 
-// Need to load all the tasks before running the tests.
-beforeAll(() => {
-    const here = path.dirname(fileURLToPath(import.meta.url));
-    const defaultTasksDir = path.resolve(`${here}/../../../tasks`);
-
-    if (TASKS.length === 0) {
-        loadTasksSync(defaultTasksDir);
-    }
-});
+const TASK_NAMES = [
+    'flipped-assignment' as TaskName,
+    'invalid-import' as TaskName,
+    'keyword-as-identifier' as TaskName,
+    'missing-indent' as TaskName,
+    'missing-param' as TaskName,
+    'modify-const' as TaskName
+];
 
 test('generates a random assignment', () => {
     // Just check that the first thing yielded is an array of assignments.
-    const gen = generateAssignments(taskNames());
+    const gen = generateAssignments(TASK_NAMES);
     const first = gen.next().value;
     if (first === undefined) {
         throw new Error('Expected a value');
     }
     expect(first).instanceOf(Array);
-    expect(first.length).toBe(taskNames().length);
+    expect(first.length).toBe(TASK_NAMES.length);
     expect(first[0]).toHaveProperty('task');
     expect(first[0]).toHaveProperty('condition');
 });
 
 test('generates all possible assignments', () => {
-    const totalPossibleAssignments = factorial(taskNames().length) * factorial(CONDITIONS.length);
+    const totalPossibleAssignments = factorial(TASK_NAMES.length) * factorial(CONDITIONS.length);
 
-    const gen = generateAssignments(taskNames());
+    const gen = generateAssignments(TASK_NAMES);
     const set = new Set();
     for (let i = 0; i < totalPossibleAssignments; i++) {
         const assignments = gen.next().value;
