@@ -43,7 +43,7 @@ test('generates all possible assignments', () => {
 
     expect(set.size).toBe(totalPossibleAssignments);
 
-    // Generate another one, for a laugh.
+    // Get another one, for a laugh.
     const assignments = gen.next().value;
     if (assignments === undefined) {
         throw new Error('Expected a value');
