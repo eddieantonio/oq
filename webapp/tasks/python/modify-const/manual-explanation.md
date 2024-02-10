@@ -17,5 +17,5 @@ element to the end of a sequence, consider using a `list` instead.
 
 ```
    2 |     sequence = list()
-     |                ++++ consider using a list here
+     |                ^^^^ consider using a list here
 ```
