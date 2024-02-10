@@ -2,17 +2,17 @@
   {
     "severity": "error",
     "message": "assignment not allowed: `n` is const",
-    "startLineNumber": 10,
-    "endLineNumber": 10,
-    "startColumn": 9,
-    "endColumn": 18
+    "startLineNumber": 9,
+    "endLineNumber": 9,
+    "startColumn": 18,
+    "endColumn": 24
   },
   {
     "severity": "hint",
-    "message": "`n` declared const here",
-    "startLineNumber": 3,
-    "endLineNumber": 3,
-    "startColumn": 15,
-    "endColumn": 20
+    "message": "`sequence` is created here",
+    "startLineNumber": 2,
+    "endLineNumber": 2,
+    "startColumn": 16,
+    "endColumn": 17
   }
 ]

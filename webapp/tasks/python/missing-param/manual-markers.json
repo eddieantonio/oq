@@ -1,10 +1,18 @@
 [
   {
     "severity": "error",
-    "message": "no variable called `fahrenheit` in scope",
+    "message": "argument mismatch",
     "startLineNumber": 4,
     "endLineNumber": 4,
-    "startColumn": 13,
-    "endColumn": 23
+    "startColumn": 30,
+    "endColumn": 43
+  },
+  {
+    "severity": "hint",
+    "message": "convert() takes 0 arguments",
+    "startLineNumber": 1,
+    "endLineNumber": 1,
+    "startColumn": 12,
+    "endColumn": 13
   }
 ]

@@ -1,18 +1,10 @@
 [
   {
     "severity": "error",
-    "message": "mistake detected here",
-    "startLineNumber": 3,
-    "endLineNumber": 3,
-    "startColumn": 33,
-    "endColumn": 34
-  },
-  {
-    "severity": "hint",
-    "message": "insert open brace above to match this close brace",
-    "startLineNumber": 13,
-    "endLineNumber": 13,
+    "message": "function body must be indented",
+    "startLineNumber": 2,
+    "endLineNumber": 2,
     "startColumn": 1,
-    "endColumn": 2
+    "endColumn": 14
   }
 ]

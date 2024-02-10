@@ -1,26 +1,26 @@
 [
   {
     "severity": "error",
-    "message": "keyword `union` cannot be used as a variable name",
-    "startLineNumber": 6,
-    "endLineNumber": 6,
-    "startColumn": 8,
-    "endColumn": 13
+    "message": "reserved word `import` cannot be used as a variable name",
+    "startLineNumber": 2,
+    "endLineNumber": 2,
+    "startColumn": 1,
+    "endColumn": 7
   },
   {
     "severity": "hint",
     "message": "append underscore here to make a valid variable name",
-    "startLineNumber": 6,
-    "endLineNumber": 6,
-    "startColumn": 13,
-    "endColumn": 14
+    "startLineNumber": 2,
+    "endLineNumber": 2,
+    "startColumn": 7,
+    "endColumn": 8
   },
   {
     "severity": "hint",
     "message": "append underscore here to make a valid variable name",
-    "startLineNumber": 9,
-    "endLineNumber": 9,
+    "startLineNumber": 3,
+    "endLineNumber": 3,
     "startColumn": 24,
-    "endColumn": 24
+    "endColumn": 25
   }
 ]

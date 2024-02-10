@@ -1,13 +1,14 @@
-**Error**: `#const` is not a valid preprocessor directive.
+**Error**: incorrect syntax.
 
 ```
-   3 | #const pi 3.141592653589793
-       ~~~~~~ invalid
+   1 | import pi from math
+       ~~~~~~~~~~~~~~~~~~~ incorrect syntax
 ```
 
-**Help**: If you are trying to define a preprocessor constant, use `#define` instead:
+**Help**: If you are trying to import `pi` from the `math` module, it
+should be written like this:
 
 ```
-   3 | #define pi 3.141592653589793
-       ^^^^^^^ change here
+   3 | from math import pi
+       ^^^^^^^^^^^^^^^^^^^ correct syntax
 ```

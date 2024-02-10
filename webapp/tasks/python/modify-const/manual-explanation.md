@@ -1,41 +1,21 @@
-**Error**: trying to reassign (modify) `n`, but `n` is declared `const`.
-Variables declared `const` (constant) cannot be reassigned.
+**Error**: `tuple` does not have a method called `.append()`.
 
 ```
-  10 |         n = n - 1;
-     |         ~~~~~~~~~ not allowed: n is const
+   9 |         sequence.append(now)
+     |                  ~~~~~~ method not found for tuple
 ```
 
-**Note**: `n` is declared `const` on line 3:
+**Note**: `sequence` is a `tuple` created on line 2:
 
 ```
-  3  | int fibonacci(const int n) {
-     |               ----- declared const here
+   2 |     sequence = tuple()
+     |                ----- created here
 ```
 
-**Help**: Option 1: Remove `const` from `n`
+**Help**: `.append()` exists on `list` objects. If you want to append an
+element to the end of a sequence, consider using a `list` instead.
 
 ```
-  3  | int fibonacci(const int n) {
-     |               ^^^^^ remove this
-```
-
-**Help**: Option 2: Introduce a new, non-`const` variable
-
- 1. Create a new variable and initialize it with the value of `n`:
-
-```
-  4  |     int i = n;
-     |     ++++++++++ new variable
-```
-
- 2. Change all instance of `n` to this new variable:
-
-```
-  7  |     while (i > 0){
-     |            ^ change here
-  ...
-     |
-  11 |         i = i - 1;
-     |         ^   ^ change here
+   2 |     sequence = list()
+     |                ++++ consider using a list here
 ```
