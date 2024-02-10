@@ -4,7 +4,13 @@ import type { Diagnostics, RootGCCDiagnostic } from '$lib/types/diagnostics';
 import type { MarkdownString, SHA256Hash } from './newtypes';
 import { hashSourceCode } from './hash';
 import { getMarkdownResponse, type RawLLMResponse } from './llm';
-import type { TaskName, JsonMarkerData, Condition, ProgrammingLanguage } from '$lib/types';
+import {
+    type TaskName,
+    type JsonMarkerData,
+    type Condition,
+    type ProgrammingLanguage,
+    SUPPORTED_PROGRAMMING_LANGUAGES
+} from '$lib/types';
 import { getFirstGCCError } from './diagnostics-util';
 
 const TASKS: Task[] = [];
@@ -25,13 +31,6 @@ export interface Task {
 }
 
 /**
- * Schema of the task.json metadata file.
- */
-interface TaskMetadata {
-    language: ProgrammingLanguage;
-}
-
-/**
  * Loading the tasks synchronously on server startup is okay because it only
  * happens once, and the data never changes.  That said... if the tasks DO
  * change, you need to restart the server. Yes, even in dev mode!
@@ -41,22 +40,57 @@ export function loadTasksSync(tasksDir: string) {
     // Sorry about this :/
     console.log('Loading tasks from', tasksDir);
 
-    // First, figure out what the task names are from the folder names
-    const taskDirectories = fs
+    // The structure of the tasks directory is:
+    // tasks/
+    //   [ProgrammingLanguage]/
+    //      [TaskName]/             each task is a directory
+    //
+    // e.g.,
+    // tasks/
+    //   c/
+    //      +common/                common files for all C tasks
+    //      missing-semicolon/
+    //      invalid-define/
+    //  python/
+    //      +common/                common files for all Python tasks
+    //      missing-colon/
+    //      missing-indentation/
+
+    // First, figure out what languages exist, from the folder names
+    const langDirectories = fs
         .readdirSync(tasksDir, { withFileTypes: true })
         .filter((entry) => entry.isDirectory());
 
     // Each directory is a task:
-    for (const taskDir of taskDirectories) {
-        // Skip the +common/ directory
-        if (taskDir.name == '+common') continue;
+    for (const langDir of langDirectories) {
+        const langDirPath = `${tasksDir}/${langDir.name}`;
+        const language = requireSupportedProgrammingLanguage(langDir.name);
+        const taskDirs = fs
+            .readdirSync(langDirPath, {
+                withFileTypes: true
+            })
+            .filter((entry) => entry.isDirectory())
+            .filter((taskDir) => taskDir.name !== '+common');
 
-        const name = taskDir.name as TaskName;
-        TASKS.push(loadOneTaskSync(`${tasksDir}/${name}`, name));
+        for (const taskDir of taskDirs) {
+            const name = taskDir.name as TaskName;
+            TASKS.push(loadOneTaskSync(`${langDirPath}/${name}`, name, language));
+        }
     }
+
+    // The code base assumes that task names are unique. Ensure that on start up:
+    const taskNames = new Set(TASKS.map((t) => t.name));
+    if (taskNames.size !== TASKS.length) throw new Error('duplicate task names found');
 
     console.log('Loaded', TASKS.length, 'tasks');
 }
+
+function requireSupportedProgrammingLanguage(s: string): ProgrammingLanguage {
+    if ((SUPPORTED_PROGRAMMING_LANGUAGES as readonly string[]).includes(s))
+        return s as ProgrammingLanguage;
+    throw new Error(`Unsupported programming language: ${s}`);
+}
+
 /**
  * Returns the task with the given name. If the task doesn't exist, throws an error.
  */
@@ -97,9 +131,7 @@ export function taskNames(): TaskName[] {
     return TASKS.map((t) => t.name);
 }
 
-function loadOneTaskSync(taskDir: string, name: TaskName) {
-    const metadata = JSON.parse(fs.readFileSync(`${taskDir}/task.json`, 'utf-8')) as TaskMetadata;
-    const language = metadata.language;
+function loadOneTaskSync(taskDir: string, name: TaskName, language: ProgrammingLanguage) {
     const loader = loaders[language];
 
     const filename = loader.getFilename();
@@ -133,13 +165,22 @@ function loadOneTaskSync(taskDir: string, name: TaskName) {
     };
 
     return {
-        name,
+        name: renameTaskHack(language, name),
         language,
         filename,
         sourceCode,
         hash,
         diagnostics
     };
+}
+
+/**
+ * Renames a task. Non-C tasks are prefixed with the language name for... reasons...
+ * @deprecated This is a hack. Tasks should be indexed by language AND name.
+ */
+function renameTaskHack(language: ProgrammingLanguage, name: string): TaskName {
+    if (language === 'c') return name as TaskName;
+    return `${language}-${name}` as TaskName;
 }
 
 interface TaskLoader {
