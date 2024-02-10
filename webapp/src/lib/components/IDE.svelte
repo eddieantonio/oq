@@ -4,6 +4,7 @@
     // <SplitPanes> requires this CSS to be loaded.
     import './splitpanes-vscode-theme.css';
     import './button.css';
+    import './kbd-styles.css';
 
     import DiagnosticDisplay from '$lib/components/DiagnosticDisplay.svelte';
     import Editor from '$lib/components/MonacoEditor.svelte';
