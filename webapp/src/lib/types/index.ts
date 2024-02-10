@@ -33,7 +33,6 @@ const STAGES = [
     'post-exercise-5',
     'exercise-6',
     'post-exercise-6',
-    'final-questionnaire',
     'completed'
 ] as const;
 /** Stage of the participant during the study. */
@@ -106,5 +105,5 @@ export function previousStage(stage: Stage): Stage {
  * @returns the initial stage of the study.
  */
 export function firstStage(): Stage {
-    return STAGES[0];
+    return 'exercise-1'; // HACK
 }

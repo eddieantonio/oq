@@ -55,12 +55,12 @@ export function yieldNextAssignment(state: GeneratorState): [Assignment[], Gener
 export function createInitialState(taskNames: TaskName[]): GeneratorState {
     const allPossibleAssignments = [];
     for (const taskOrder of permutations(taskNames)) {
-        for (const conditionOrder of permutations(CONDITIONS)) {
-            const assignments: Assignment[] = taskOrder.map((task, index) => ({
+        for (const _conditionOrder of permutations(CONDITIONS)) {
+            const assignments: Assignment[] = taskOrder.map((task, _index) => ({
                 task,
                 // Cycle the conditions so that the conditions repeat if there are
                 // more tasks than conditions.
-                condition: conditionOrder[index % CONDITIONS.length]
+                condition: 'enhanced'
             }));
             allPossibleAssignments.push(assignments);
         }

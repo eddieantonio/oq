@@ -62,5 +62,5 @@ export const actions: import('./$types').Actions = {
 };
 
 function isLastExercise(stage: Stage) {
-    return stage === previousStage('final-questionnaire');
+    return stage === previousStage('completed');
 }

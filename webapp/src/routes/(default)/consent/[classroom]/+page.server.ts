@@ -80,7 +80,7 @@ export const actions: import('./$types').Actions = {
         await saveParticipant(participantID, classroom, assignments);
         cookies.set('participant_id', participantID, { path: '/' });
 
-        throw redirect(StatusCodes.SEE_OTHER, '/questionnaire');
+        throw redirect(StatusCodes.SEE_OTHER, '/editor'); // HACK
     }
 };
 
