@@ -3,7 +3,7 @@
 
 ```
    4 | print(68.0, "fahrenheit is", convert(68.0), "celsius")
-     |                              ^^^^^^^^^^^^^ argument mismatch
+     |                              ~~~~~~~~~~~~~ argument mismatch
 ```
 
 **Note**: `convert()` is defined on line 1:
@@ -17,7 +17,7 @@
 call on line 4** to remove the unnecessary argument.
 
 ```
-   4 | print(68.0, "fahrenheit is", convert(), "celsius")
+   4 | print(68.0, "fahrenheit is", convert( ), "celsius")
      |                                      - remove this argument
 ```
 
@@ -25,6 +25,6 @@ call on line 4** to remove the unnecessary argument.
 on line 1** to declare an extra parameter.
 
 ```
-   1 | def convert(«…»):
+   1 | def convert(   ):
      |             +++ insert a parameter name here
 ```
