@@ -48,9 +48,13 @@ export async function load({ locals }) {
     };
 }
 
+/**
+ * @deprecated the condition should NOT be a function of the diagnostics format, but here we are
+ */
 function formatToCondition(format: Diagnostics['format']): Condition {
     switch (format) {
         case 'gcc-json':
+        case 'parsed-python':
         case 'preformatted':
             return 'control';
         case 'manually-enhanced':

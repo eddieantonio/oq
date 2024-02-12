@@ -12,6 +12,7 @@ import {
     SUPPORTED_PROGRAMMING_LANGUAGES
 } from '$lib/types';
 import { getFirstGCCError } from './diagnostics-util';
+import { parsePythonTraceback } from './python-traceback-parser';
 
 const TASKS: Task[] = [];
 
@@ -210,9 +211,12 @@ const loaders: { [key in ProgrammingLanguage]: TaskLoader } = {
         getFilename: () => 'main.py',
         getOriginalDiagnostics(taskDir) {
             const textFile = fs.readFileSync(`${taskDir}/python-errors.txt`, 'utf-8');
+            const diagnostics = parsePythonTraceback(textFile);
+            if (diagnostics == null)
+                throw new Error(`Could not parse Python traceback in ${taskDir}`);
             return {
-                format: 'preformatted',
-                plainText: textFile
+                format: 'parsed-python',
+                diagnostics
             };
         }
     }

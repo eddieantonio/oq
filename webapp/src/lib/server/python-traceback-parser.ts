@@ -47,6 +47,7 @@ export function parsePythonTraceback(error: string): PythonTraceback | null {
     if (lines.length == 0) return null;
 
     try {
+        // TODO: indicate whether this is a compiler or runtime error.
         parseTraceback();
         const frames = parseFrames();
         const [exception, message] = parseException();

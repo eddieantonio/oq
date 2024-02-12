@@ -11,6 +11,7 @@ import type { JsonMarkerData } from '.';
 export type Diagnostics =
     | PreformattedDiagnostic
     | GCCDiagnostics
+    | PythonDiagnostics
     | LLMEnhancedDiagnostics
     | ManuallyEnhancedDiagnostic;
 
@@ -20,6 +21,14 @@ export type Diagnostics =
 export interface PreformattedDiagnostic {
     format: 'preformatted';
     plainText: string;
+}
+
+/**
+ * Diagnostics parsed from a Python traceback.
+ */
+export interface PythonDiagnostics {
+    format: 'parsed-python';
+    diagnostics: PythonTraceback;
 }
 
 /**

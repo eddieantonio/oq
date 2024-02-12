@@ -3,6 +3,7 @@
     import GCCDiagnosticsDisplay from './diagnostics/GCCDiagnosticsDisplay.svelte';
     import LLMDiagnosticsDisplay from './diagnostics/LLMDiagnosticsDisplay.svelte';
     import ManuallyEnhancedDiagnosticsDisplay from './diagnostics/ManuallyEnhancedDiagnosticsDisplay.svelte';
+    import PythonDiagnosticsDisplay from './diagnostics/PythonDiagnosticsDisplay.svelte';
 
     /**
      * The diagnostics object returned by the code execution server.
@@ -16,6 +17,8 @@
     <LLMDiagnosticsDisplay {diagnostics} />
 {:else if diagnostics.format === 'manually-enhanced'}
     <ManuallyEnhancedDiagnosticsDisplay {diagnostics} />
+{:else if diagnostics.format === 'parsed-python'}
+    <PythonDiagnosticsDisplay {diagnostics} />
 {:else if diagnostics.format === 'preformatted'}
     <pre><code class="problem">{diagnostics.plainText}</code></pre>
 {/if}

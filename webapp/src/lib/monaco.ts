@@ -15,7 +15,12 @@ import * as monaco from 'monaco-editor';
 // See: https://v3.vitejs.dev/guide/features.html#import-with-query-suffixes
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
 
-import type { Diagnostics, GCCDiagnostic, GCCDiagnostics } from './types/diagnostics';
+import type {
+    Diagnostics,
+    GCCDiagnostic,
+    GCCDiagnostics,
+    PythonTraceback
+} from './types/diagnostics';
 import type { JsonMarkerData } from './types';
 
 /**
@@ -69,6 +74,8 @@ function extractMarkersFromDiagnostics(diagnostics: Diagnostics): monaco.editor.
     switch (diagnostics.format) {
         case 'gcc-json':
             return extractMarkersFromGCCDiagnostics(diagnostics);
+        case 'parsed-python':
+            return extractMarkersFromPythonTraceback(diagnostics.diagnostics);
         case 'llm-enhanced':
             // Defer to the original diagnostics.
             return extractMarkersFromDiagnostics(diagnostics.original);
@@ -114,6 +121,46 @@ function extractMarkersFromGCCDiagnostics(
     }
 
     return markers;
+}
+
+function extractMarkersFromPythonTraceback(
+    pythonError: PythonTraceback
+): monaco.editor.IMarkerData[] {
+    const numberOfFrames = pythonError.frames.length;
+    if (numberOfFrames == 0) return [];
+
+    const lastFrame = pythonError.frames[numberOfFrames - 1];
+
+    // The marker is literally the text squiggles:
+    // e.g, in the following:
+    //  Traceback (most recent call last):
+    //    File "/private/tmp/herp.py", line 1, in <module>
+    //      "hello" / 0
+    //      ~~~~~~~~^~~
+    //  TypeError: unsupported operand type(s) for /: 'str' and 'int'
+    //
+    // It would be `~~~~~~~~^~~`
+    const marker = lastFrame.marker;
+    if (marker == null) return [];
+
+    // Figure out how many spaces come before it:
+    // TODO: support tabs
+    const match = marker.match(/^ */);
+    const spaces = match?.[0].length ?? 0;
+
+    const { exception, message } = pythonError;
+    return [
+        {
+            // It's always an *error* message:
+            severity: monaco.MarkerSeverity.Error,
+            message: `${exception}: ${message}`,
+            startLineNumber: lastFrame.startLineNumber,
+            endLineNumber: lastFrame.startLineNumber,
+            // Adjust columns from zero-indexing to one-indexing:
+            startColumn: 1 + spaces,
+            endColumn: 1 + marker.length
+        }
+    ];
 }
 
 function convertMarkersFromJsonMarkers(markers: JsonMarkerData[]): monaco.editor.IMarkerData[] {

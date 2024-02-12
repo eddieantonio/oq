@@ -21,6 +21,7 @@ import {
     type RunnableProgram
 } from '$lib/types';
 import type { RequestEvent } from './$types';
+import { parsePythonTraceback } from '$lib/server/python-traceback-parser';
 
 /**
  * POST to this endpoint to compile and run the code.
@@ -153,7 +154,14 @@ const ADAPTORS: { [key in ProgrammingLanguage]: LanguageAdaptor } = {
     },
     python: {
         getSuccess: (response: PistonResponse) => response.run.code === 0,
-        parseDiagnostics: (_: PistonResponse) => undefined,
+        parseDiagnostics(response: PistonResponse) {
+            const diagnostics = parsePythonTraceback(response.run.stderr);
+            if (diagnostics == null) return undefined;
+            return {
+                format: 'parsed-python',
+                diagnostics
+            };
+        },
         toClientSideFormat(result: RunResult): ClientSideRunResult {
             if (result.success) {
                 return {
