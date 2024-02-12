@@ -149,6 +149,7 @@ interface GCCPosition {
  * See also: https://github.com/python/cpython/blob/3.12/Lib/traceback.py#L679
  */
 export interface PythonTraceback {
+    hasTraceback: boolean;
     exception: string;
     message: string;
     frames: PythonFrame[];

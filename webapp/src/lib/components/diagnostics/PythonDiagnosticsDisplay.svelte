@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { PythonDiagnostics } from '$lib/types/diagnostics';
 
-    /** Diagnostics emitted by GCC's `--diagnostics-format=json` */
+    /** Diagnostics parsed from a Python traceback. */
     export let diagnostics: PythonDiagnostics;
     $: error = diagnostics.diagnostics;
 
@@ -10,8 +10,9 @@
 </script>
 
 <pre><code class="text"
-        ><span class="traceback-header">Traceback (most recent call last):</span
-        >{'\n'}{#each error.frames as frame}{'  '}File <span class="filename"
+        >{#if error.hasTraceback}<span class="traceback-header"
+                >Traceback (most recent call last):</span
+            >{'\n'}{/if}{#each error.frames as frame}{'  '}File <span class="filename"
                 >"{frame.filename}"</span
             >, line <span class="number">{frame.startLineNumber ?? '???'}</span
             >{#if frame.name != null}, in <span class="name">{frame.name}</span

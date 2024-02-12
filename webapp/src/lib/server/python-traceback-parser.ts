@@ -48,10 +48,11 @@ export function parsePythonTraceback(error: string): PythonTraceback | null {
 
     try {
         // TODO: indicate whether this is a compiler or runtime error.
-        parseTraceback();
+        const hasTraceback = parseTraceback();
         const frames = parseFrames();
         const [exception, message] = parseException();
         return {
+            hasTraceback,
             exception,
             message,
             frames
@@ -62,8 +63,12 @@ export function parsePythonTraceback(error: string): PythonTraceback | null {
         throw e;
     }
 
-    function parseTraceback() {
-        if (currentLine() == 'Traceback (most recent call last):') nextLine();
+    function parseTraceback(): boolean {
+        if (currentLine() == 'Traceback (most recent call last):') {
+            nextLine();
+            return true;
+        }
+        return false;
     }
 
     function parseFrames(): PythonFrame[] {
