@@ -56,7 +56,8 @@ export function setMarkersFromDiagnostics(
     // TODO: looks like this can be done using the `uri` field of the model
     // and IMarkerData.code:
     // See: https://github.com/microsoft/vscode/blob/578ad35313f41c4aeff777ab25bd3265c645ab34/src/vs/platform/markers/common/markers.ts#L86-L101
-    const markers = extractMarkersFromDiagnostics(diagnostics);
+    const sourceCode = model.getValue();
+    const markers = extractMarkersFromDiagnostics(diagnostics, sourceCode);
     monaco.editor.setModelMarkers(model, OQ_OWNER, markers);
 }
 
@@ -70,15 +71,18 @@ export function clearAllMarkers() {
 /**
  * Extracts markers appropriate for the given diagnostics.
  */
-function extractMarkersFromDiagnostics(diagnostics: Diagnostics): monaco.editor.IMarkerData[] {
+function extractMarkersFromDiagnostics(
+    diagnostics: Diagnostics,
+    sourceCode: string
+): monaco.editor.IMarkerData[] {
     switch (diagnostics.format) {
         case 'gcc-json':
             return extractMarkersFromGCCDiagnostics(diagnostics);
         case 'parsed-python':
-            return extractMarkersFromPythonTraceback(diagnostics.diagnostics);
+            return extractMarkersFromPythonTraceback(diagnostics.diagnostics, sourceCode);
         case 'llm-enhanced':
             // Defer to the original diagnostics.
-            return extractMarkersFromDiagnostics(diagnostics.original);
+            return extractMarkersFromDiagnostics(diagnostics.original, sourceCode);
         case 'manually-enhanced':
             // Currently no markers for manually enhanced diagnostics.
             return convertMarkersFromJsonMarkers(diagnostics.markers);
@@ -124,8 +128,11 @@ function extractMarkersFromGCCDiagnostics(
 }
 
 function extractMarkersFromPythonTraceback(
-    pythonError: PythonTraceback
+    pythonError: PythonTraceback,
+    sourceCode: string
 ): monaco.editor.IMarkerData[] {
+    // TODO: check that the error occurred in the same file
+
     const numberOfFrames = pythonError.frames.length;
     if (numberOfFrames == 0) return [];
 
@@ -144,9 +151,17 @@ function extractMarkersFromPythonTraceback(
     if (marker == null) return [];
 
     // Figure out how many spaces come before it:
+    // This is annoying... we need to figure out where
     // TODO: support tabs
-    const match = marker.match(/^ */);
-    const spaces = match?.[0].length ?? 0;
+    const lines = sourceCode.split('\n');
+    const line = lines[lastFrame.startLineNumber - 1];
+    // Bail: Something weird happened:
+    if (line == null) return [];
+    const lineWhitespace = line.match(/^ */);
+    const adjustment = lineWhitespace?.[0].length ?? 0;
+
+    const markerWhitespace = marker.match(/^ */);
+    const markerStart = markerWhitespace?.[0].length ?? 0;
 
     const { exception, message } = pythonError;
     return [
@@ -157,8 +172,8 @@ function extractMarkersFromPythonTraceback(
             startLineNumber: lastFrame.startLineNumber,
             endLineNumber: lastFrame.startLineNumber,
             // Adjust columns from zero-indexing to one-indexing:
-            startColumn: 1 + spaces,
-            endColumn: 1 + marker.length
+            startColumn: 1 + adjustment + markerStart,
+            endColumn: 1 + adjustment + marker.length
         }
     ];
 }
