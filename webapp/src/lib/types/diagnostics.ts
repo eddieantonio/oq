@@ -136,3 +136,23 @@ interface GCCPosition {
      */
     column: number;
 }
+/**
+ * See also: https://github.com/python/cpython/blob/3.12/Lib/traceback.py#L679
+ */
+export interface PythonTraceback {
+    exception: string;
+    message: string;
+    frames: PythonFrame[];
+}
+/**
+ * See also: https://github.com/python/cpython/blob/3.12/Lib/traceback.py#L248
+ */
+
+export interface PythonFrame {
+    filename: string;
+    startLineNumber: number;
+    /** The name of the function, method, or module for this frame. */
+    name?: string;
+    line?: string;
+    marker?: string;
+}

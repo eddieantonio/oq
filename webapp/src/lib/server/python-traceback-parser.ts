@@ -1,23 +1,4 @@
-/**
- * See also: https://github.com/python/cpython/blob/3.12/Lib/traceback.py#L679
- */
-export interface PythonError {
-    exception: string;
-    message: string;
-    frames: Frame[];
-}
-
-/**
- * See also: https://github.com/python/cpython/blob/3.12/Lib/traceback.py#L248
- */
-export interface Frame {
-    filename: string;
-    startLineNumber: number;
-    /** The name of the function, method, or module for this frame. */
-    name?: string;
-    line?: string;
-    marker?: string;
-}
+import type { PythonTraceback, PythonFrame } from '$lib/types/diagnostics';
 
 /**
  * Parses simple Python tracebacks. Currently supported:
@@ -28,7 +9,7 @@ export interface Frame {
  *  - exception groups
  *  - nested exceptions
  */
-export function parsePythonTraceback(error: string): PythonError | null {
+export function parsePythonTraceback(error: string): PythonTraceback | null {
     // The following is a weird, line-based recursive descent parser thing.
     // Key observation: most lines can be categorized by their leading whitespace:
     //
@@ -84,7 +65,7 @@ export function parsePythonTraceback(error: string): PythonError | null {
         if (currentLine() == 'Traceback (most recent call last):') nextLine();
     }
 
-    function parseFrames(): Frame[] {
+    function parseFrames(): PythonFrame[] {
         const frames = [];
         let nextFrame;
         while ((nextFrame = parseFrame()) != null) {
@@ -93,7 +74,7 @@ export function parsePythonTraceback(error: string): PythonError | null {
         return frames;
     }
 
-    function parseFrame(): Frame | null {
+    function parseFrame(): PythonFrame | null {
         // A frame will ALWAYS have at least two spaces of indentation
         if (currentLeadingWhitespace() < 2) return null;
 
@@ -104,7 +85,7 @@ export function parsePythonTraceback(error: string): PythonError | null {
 
         const context = parseLine();
 
-        const frame: Frame = {
+        const frame: PythonFrame = {
             filename,
             startLineNumber: +lineNumber
         };
