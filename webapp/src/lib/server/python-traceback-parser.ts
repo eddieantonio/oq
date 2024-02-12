@@ -1,12 +1,19 @@
+/**
+ * See also: https://github.com/python/cpython/blob/3.12/Lib/traceback.py#L679
+ */
 export interface PythonError {
     exception: string;
     message: string;
     frames: Frame[];
 }
 
+/**
+ * See also: https://github.com/python/cpython/blob/3.12/Lib/traceback.py#L248
+ */
 export interface Frame {
     filename: string;
     startLineNumber: number;
+    /** The name of the function, method, or module for this frame. */
     name?: string;
     line?: string;
     marker?: string;
@@ -48,9 +55,10 @@ export function parsePythonTraceback(error: string): PythonError | null {
     // before deciding how to parse any given line.
     let lineIndex = 0;
     const lines = error.split('\n').map((line) => {
+        // Determine how many leading spaces the line has:
         const match = line.match(/^ */);
-        if (match == null) throw new Error('failure-proof regex failed');
-        const whitespace = match[0].length;
+        // Note: the regex SHOULD be infallible -- it will accept EVERY string.
+        const whitespace = match?.[0].length ?? 0;
         return { whitespace, line };
     });
 
@@ -150,7 +158,7 @@ export function parsePythonTraceback(error: string): PythonError | null {
         return lines[lineIndex].line;
     }
 
-    function currentLeadingWhitespace() {
+    function currentLeadingWhitespace(): number {
         if (lineIndex >= lines.length) throw new ParseError('premature end of input');
         return lines[lineIndex].whitespace;
     }
