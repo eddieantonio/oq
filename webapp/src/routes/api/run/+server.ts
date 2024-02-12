@@ -170,13 +170,15 @@ const ADAPTORS: { [key in ProgrammingLanguage]: LanguageAdaptor } = {
                 };
             }
 
-            // Create a preformatted diagnostic message if the code failed.
+            // Fallback to preformatted diagnostics if the Python traceback failed to parse:
+            const diagnostics = result.parsedDiagnostics ?? {
+                format: 'preformatted',
+                plainText: result.pistonResponse.run.stderr
+            };
+
             return {
                 success: false,
-                diagnostics: {
-                    format: 'preformatted',
-                    plainText: result.pistonResponse.run.stderr
-                },
+                diagnostics,
                 output: result.pistonResponse.run.stdout
             };
         }
