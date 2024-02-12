@@ -1,1 +1,1 @@
-../+common/Makefile.python
+../+common/Makefile
