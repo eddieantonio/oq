@@ -5,6 +5,14 @@
     export let diagnostics: PythonDiagnostics;
     $: error = diagnostics.diagnostics;
 
+    /**
+     * If given a /path/to/file.ext, returns just file.ext
+     */
+    function filenameOnly(path: string): string {
+        const components = path.split('/');
+        return components[components.length - 1] ?? path;
+    }
+
     // This code is ugly af because <pre> is sensitive to whitespace and
     // Prettier does not care about my indenting preferences.
 </script>
@@ -13,7 +21,7 @@
         >{#if error.hasTraceback}<span class="traceback-header"
                 >Traceback (most recent call last):</span
             >{'\n'}{/if}{#each error.frames as frame}{'  '}File <span class="filename"
-                >"{frame.filename}"</span
+                >"{filenameOnly(frame.filename)}"</span
             >, line <span class="number">{frame.startLineNumber ?? '???'}</span
             >{#if frame.name != null}, in <span class="name">{frame.name}</span
                 >{/if}
