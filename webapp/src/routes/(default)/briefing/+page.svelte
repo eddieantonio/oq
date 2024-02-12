@@ -14,7 +14,7 @@
 <article>
     <form method="POST">
         <p>
-            <strong> COMP10120 students</strong>: You can skip this video if the researcher is in
+            <strong> COMP10020 students</strong>: You can skip this video if the researcher is in
             person.
         </p>
 

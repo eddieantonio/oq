@@ -19,7 +19,7 @@ const SCRYPT_COST = 2 ** SCRYPT_COST_EXP;
  */
 export async function seed(knex) {
     const testClassroom = await promptForPassword(TEST_CLASSROOM_ID);
-    const realClassroom = await promptForPassword('COMP10120');
+    const realClassroom = await promptForPassword('COMP10020');
 
     await knex('classrooms').insert([testClassroom, realClassroom]);
 }
