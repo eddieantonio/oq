@@ -1,5 +1,6 @@
 <script lang="ts">
     import { Pane, Splitpanes } from 'svelte-splitpanes';
+    import { assets } from '$app/paths';
 
     // <SplitPanes> requires this CSS to be loaded.
     import './splitpanes-vscode-theme.css';
@@ -10,7 +11,6 @@
     import Editor from '$lib/components/MonacoEditor.svelte';
     import type { Diagnostics } from '$lib/types/diagnostics';
 
-    import cLogo from '$lib/assets/c-logo.svg';
     import type { ProgrammingLanguage, RunnableProgram } from '$lib/types';
     import type { ClientSideRunResult } from '$lib/types/client-side-run-results';
 
@@ -26,6 +26,13 @@
 
     /** Function to call to run code on the server. */
     export let runCodeOnServer: (p: RunnableProgram) => Promise<ClientSideRunResult>;
+
+    const iconLocations: { [key in ProgrammingLanguage]: string } = {
+        c: `${assets}/icons/c-logo.svg`,
+        python: `${assets}/icons/python-logo.svg`
+    };
+    /** Path to the tiny programming language icon next to the filename. */
+    const iconSrc = iconLocations[language];
 
     /** Whether the run button should be enabled. */
     let enableRun: boolean = true;
@@ -81,7 +88,7 @@
                 <div class="tabs-and-actions-container">
                     <ul class="tabs-container unstyle">
                         <li class="tab tab-active">
-                            <img src={cLogo} alt="" role="presentation" class="icon" />
+                            <img src={iconSrc} alt="" role="presentation" class="icon" />
                             {filename}
                         </li>
                     </ul>
