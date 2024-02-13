@@ -6,3 +6,6 @@ gcc-diagnostics.json: main.c
 
 gpt4-response.json: main.c
 	../+common/prompt-gpt4.py $< $@
+
+gpt4-response.md: gpt4-response.json
+	jq -r '.choices[0].message.content' $< | sponge $@
