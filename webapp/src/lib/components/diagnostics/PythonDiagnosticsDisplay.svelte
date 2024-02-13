@@ -3,6 +3,10 @@
 
     /** Diagnostics parsed from a Python traceback. */
     export let diagnostics: PythonDiagnostics;
+
+    /** Whether to show the traceback lines. */
+    export let showTraceback: boolean = true;
+
     $: error = diagnostics.diagnostics;
 
     /**
@@ -13,22 +17,24 @@
         return components[components.length - 1] ?? path;
     }
 
-    // This code is ugly af because <pre> is sensitive to whitespace and
-    // Prettier does not care about my indenting preferences.
+    // This code is ugly af fr no cap because <pre> is sensitive to whitespace
+    // and Prettier does not care about my indenting preferences.
+    // I'm sorry, but this is even worse than the GCC version :/
 </script>
 
 <pre><code class="text"
-        >{#if error.hasTraceback}<span class="traceback-header"
-                >Traceback (most recent call last):</span
-            >{'\n'}{/if}{#each error.frames as frame}{'  '}<span class="frame-header"
-                >File <span class="filename">"{filenameOnly(frame.filename)}"</span>, line <span
-                    class="line-number">{frame.startLineNumber ?? '???'}</span
-                >{#if frame.name != null}, in <span class="name">{frame.name}</span>{/if}</span
-            >
+        >{#if showTraceback}{#if error.hasTraceback}<span class="traceback-header"
+                    >Traceback (most recent call last):</span
+                >{'\n'}{/if}{#each error.frames as frame}{'  '}<span class="frame-header"
+                    >File <span class="filename">"{filenameOnly(frame.filename)}"</span>, line <span
+                        class="line-number">{frame.startLineNumber ?? '???'}</span
+                    >{#if frame.name != null}, in <span class="name">{frame.name}</span>{/if}</span
+                >
 {#if frame.line != null}{'    '}<span class="code">{frame.line}</span
-                >{/if}
-{#if frame.marker != null}{'    '}<span class="squiggles">{frame.marker}</span
-                >{/if}{'\n'}{/each}<span class="exception">{error.exception}</span
+                    >{/if}
+{#if frame.marker != null}{'    '}<span class="squiggles"
+                        >{frame.marker}</span
+                    >{/if}{'\n'}{/each}{/if}<span class="exception">{error.exception}</span
         >: {error.message}</code
     ></pre>
 
@@ -57,7 +63,7 @@
     }
 
     .exception {
-        /* This isn't part of IPython/Jupyter's colours, but it SHOULD BE! */
+        /* This isn't part of IPython/Jupyter's theme, but it SHOULD BE! */
         font-weight: bold;
     }
 </style>
