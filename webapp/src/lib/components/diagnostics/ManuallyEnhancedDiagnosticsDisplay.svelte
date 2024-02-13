@@ -1,9 +1,8 @@
 <script lang="ts">
-    import { marked } from 'marked';
-
     import type { ManuallyEnhancedDiagnostic } from '$lib/types/diagnostics';
+    import Markdown from '../Markdown.svelte';
 
     export let diagnostics: ManuallyEnhancedDiagnostic;
 </script>
 
-{@html marked.parse(diagnostics.markdown)}
+<Markdown markdown={diagnostics.markdown} />

@@ -1,9 +1,8 @@
 <script lang="ts">
-    import * as marked from 'marked';
-
     import type { LLMEnhancedDiagnostics } from '$lib/types/diagnostics';
     import DiagnosticDisplay from '../DiagnosticDisplay.svelte';
     import PythonDiagnosticsDisplay from './PythonDiagnosticsDisplay.svelte';
+    import Markdown from '../Markdown.svelte';
 
     export let diagnostics: LLMEnhancedDiagnostics;
     $: original = diagnostics.original;
@@ -18,4 +17,4 @@
     {/if}
 </blockquote>
 <p><strong>Explanation:</strong></p>
-{@html marked.parse(diagnostics.markdown)}
+<Markdown markdown={diagnostics.markdown} />
