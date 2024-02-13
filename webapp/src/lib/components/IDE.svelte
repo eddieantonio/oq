@@ -7,6 +7,11 @@
     import './button.css';
     import './kbd-styles.css';
 
+    //import spinnerIcon from '$lib/assets/spinner-solid.svg?raw';
+    //import warningIcon from '$lib/assets/triangle-exclamation-solid.svg?raw';
+    import SpinnerIcon from '$lib/assets/SpinnerIcon.svelte';
+    import TriangleIcon from '$lib/assets/TriangleIcon.svelte';
+
     import DiagnosticDisplay from '$lib/components/DiagnosticDisplay.svelte';
     import Editor from '$lib/components/MonacoEditor.svelte';
     import type { Diagnostics } from '$lib/types/diagnostics';
@@ -41,6 +46,8 @@
     let bottomTab: 'problems' | 'output' = 'problems';
     /** Whether the program has run and/or has errors. */
     let status: 'unknown' | 'has-errors' | 'successful' = 'unknown';
+    /** Status of execution.  */
+    let executionStatus: 'idle' | 'running' | 'errored' = 'idle';
 
     /* Used for a hack to pass into the Editor. */
     let editorHeightHint = 0;
@@ -51,15 +58,16 @@
     async function runCode() {
         let response;
         enableRun = false;
+        executionStatus = 'running';
         try {
             response = await runCodeOnServer({
                 language,
                 filename,
                 sourceCode: content
             });
+            executionStatus = 'idle';
         } catch (error) {
-            // TODO: show some sort of application error message
-            console.error(error);
+            executionStatus = 'errored';
             return;
         } finally {
             enableRun = true;
@@ -88,10 +96,19 @@
                 <div class="tabs-and-actions-container">
                     <ul class="tabs-container unstyle">
                         <li class="tab tab-active">
-                            <img src={iconSrc} alt="" role="presentation" class="icon" />
+                            <img src={iconSrc} alt="" role="presentation" class="file-icon" />
                             {filename}
                         </li>
                     </ul>
+
+                    <div class="execution-status">
+                        {#if executionStatus == 'running'}
+                            <SpinnerIcon class="icon spin running" />
+                        {:else if executionStatus == 'errored'}
+                            <TriangleIcon class="icon errored" />
+                        {/if}
+                    </div>
+
                     <ul class="actions-container unstyle">
                         <slot name="buttons" />
                         <li class="more-space">
@@ -241,7 +258,7 @@
     .tabs-and-actions-container {
         display: flex;
         flex-flow: row nowrap;
-        justify-content: space-between;
+        justify-content: flex-end;
         align-items: flex-end;
 
         margin: 0;
@@ -250,6 +267,45 @@
 
     .tabs-container {
         display: flex;
+        margin-inline-end: auto;
+    }
+
+    .execution-status {
+        height: 100%;
+        display: grid;
+        place-items: center;
+    }
+
+    :global(.execution-status > .icon) {
+        height: 1em;
+        aspect-ratio: 1;
+    }
+
+    :global(.icon.spin) {
+        animation: spin 2s linear infinite;
+    }
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    :global(.icon.running) {
+        color: #999;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        :global(.icon.running) {
+            color: #eee;
+        }
+    }
+
+    :global(.icon.errored) {
+        /* like an orange warning color */
+        color: #ff8c00;
     }
 
     /* The bottom panel shows "Problems" and "Output" */
@@ -332,7 +388,7 @@
         font-style: italic;
     }
 
-    .icon {
+    .file-icon {
         height: 10px;
         height: 0.4lh;
         aspect-ratio: 1;
