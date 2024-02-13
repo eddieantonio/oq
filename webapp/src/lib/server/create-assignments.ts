@@ -14,45 +14,6 @@ import { CONDITIONS, type Assignment, type TaskName } from '$lib/types';
 export function* generateAssignments(
     taskNames: TaskName[]
 ): Generator<Assignment[], undefined, undefined> {
-    console.log('Generating assignments for', taskNames.join(', '));
-    let state = createInitialState(taskNames);
-
-    while (true) {
-        const [assignments, updatedState] = yieldNextAssignment(state);
-        state = updatedState;
-        yield assignments;
-    }
-}
-
-interface GeneratorState {
-    allPossibleAssignments: Assignment[][];
-    index: number;
-}
-
-/**
- * Generates the next possible assignment.
- * @param state the current state of the generator
- * @returns one array of assignments and the updated state.
- */
-export function yieldNextAssignment(state: GeneratorState): [Assignment[], GeneratorState] {
-    const { allPossibleAssignments } = state;
-    let { index } = state;
-
-    // Reached the end of all possible assignments: shuffle and start over.
-    if (index >= allPossibleAssignments.length) {
-        shuffle(allPossibleAssignments);
-        index = 0;
-    }
-
-    // Get the next assignment
-    const assignments = allPossibleAssignments[index];
-    return [assignments, { allPossibleAssignments, index: state.index + 1 }];
-}
-
-/**
- * @returns the initial state of the generator
- */
-export function createInitialState(taskNames: TaskName[]): GeneratorState {
     const allPossibleAssignments = [];
     for (const taskOrder of permutations(taskNames)) {
         for (const conditionOrder of permutations(CONDITIONS)) {
@@ -65,7 +26,11 @@ export function createInitialState(taskNames: TaskName[]): GeneratorState {
             allPossibleAssignments.push(assignments);
         }
     }
-    return { allPossibleAssignments, index: 0 };
+
+    while (true) {
+        shuffle(allPossibleAssignments);
+        yield* allPossibleAssignments;
+    }
 }
 
 // Returns an array of all permutations of the given array.
