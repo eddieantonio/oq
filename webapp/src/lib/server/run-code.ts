@@ -14,6 +14,8 @@ export interface RunResult {
      * it might not be the same as the exit code from the raw run result.
      */
     success: boolean;
+    /** Whether the exectution terminated due to a time out. */
+    executionTimedOut: boolean;
     /** Raw results from Piston. */
     pistonResponse: PistonResponse;
     /** (optional) The raw response from enhancing the diagnostics with an LLM. */

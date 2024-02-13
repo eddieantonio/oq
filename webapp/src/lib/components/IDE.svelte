@@ -65,7 +65,6 @@
                 filename,
                 sourceCode: content
             });
-            executionStatus = 'idle';
         } catch (error) {
             executionStatus = 'errored';
             return;
@@ -73,11 +72,17 @@
             enableRun = true;
         }
 
+        if (response.executionTimedOut) {
+            executionStatus = 'errored';
+        } else {
+            executionStatus = 'idle';
+        }
+
         pem = response.diagnostics ?? null;
         programOutput = response.output ?? null;
         status = response.success ? 'successful' : 'has-errors';
 
-        if (pem) {
+        if (pem || executionStatus == 'errored') {
             bottomTab = 'problems';
         } else {
             bottomTab = 'output';
@@ -156,7 +161,12 @@
 
                 <div class="pane-contents">
                     {#if bottomTab == 'problems'}
-                        {#if pem == null}
+                        {#if executionStatus == 'errored'}
+                            <p>
+                                Running code took too long, so the program was forcefully ended. Do
+                                you have an infinite loop?
+                            </p>
+                        {:else if pem == null}
                             <p>No problems have been detected in the code.</p>
                         {:else}
                             <DiagnosticDisplay diagnostics={pem} />

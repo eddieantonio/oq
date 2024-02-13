@@ -73,6 +73,7 @@ async function runCodeDuringStudy(data: FormData, { locals }: RequestEvent) {
         await logCompileEvent(participantId, sourceCode, exercise);
         const response: ClientSideRunResult = {
             success: false,
+            executionTimedOut: false,
             diagnostics: diagnosticsForCondition(originalTask, currentAssignment.condition)
         };
         return json(response);
@@ -88,12 +89,15 @@ async function runCodeDuringStudy(data: FormData, { locals }: RequestEvent) {
         })
     ]);
 
+    console.log({ pistonResponse });
+
     // Process the response from Piston.
     // Each programming language has a slightly different way of interpreting the response.
     const languageAdaptor = ADAPTORS[language];
     const success = languageAdaptor.getSuccess(pistonResponse);
     const result: RunResult = {
         success,
+        executionTimedOut: didPistonTimeOut(pistonResponse),
         pistonResponse
     };
     result.parsedDiagnostics = languageAdaptor.parseDiagnostics(pistonResponse);
@@ -119,12 +123,15 @@ async function runCodeForDebug(data: FormData, _: RequestEvent) {
     sourceCode = sourceCode.replace(/\r\n/g, '\n');
     const pistonResponse = await runOnPiston({ language, filename, sourceCode });
 
+    console.log({ pistonResponse });
+
     // Process the response from Piston.
     // Each programming language has a slightly different way of interpreting the response.
     const languageAdaptor = ADAPTORS[language];
     const success = languageAdaptor.getSuccess(pistonResponse);
     const result: RunResult = {
         success,
+        executionTimedOut: didPistonTimeOut(pistonResponse),
         pistonResponse
     };
     result.parsedDiagnostics = languageAdaptor.parseDiagnostics(pistonResponse);
@@ -147,6 +154,7 @@ const ADAPTORS: { [key in ProgrammingLanguage]: LanguageAdaptor } = {
         toClientSideFormat(result: RunResult) {
             return {
                 success: result.success,
+                executionTimedOut: result.executionTimedOut,
                 diagnostics: extractDiagnostics(result),
                 output: result.pistonResponse.run.stdout
             };
@@ -166,6 +174,7 @@ const ADAPTORS: { [key in ProgrammingLanguage]: LanguageAdaptor } = {
             if (result.success) {
                 return {
                     success: true,
+                    executionTimedOut: result.executionTimedOut,
                     output: result.pistonResponse.run.stdout
                 };
             }
@@ -178,6 +187,7 @@ const ADAPTORS: { [key in ProgrammingLanguage]: LanguageAdaptor } = {
 
             return {
                 success: false,
+                executionTimedOut: result.executionTimedOut,
                 diagnostics,
                 output: result.pistonResponse.run.stdout
             };
@@ -278,4 +288,8 @@ function parseGccDiagnostics(stderr: string): Diagnostics | undefined {
     } catch (e) {
         return undefined;
     }
+}
+
+function didPistonTimeOut(pistonResponse: PistonResponse): boolean {
+    return pistonResponse.run.signal === 'SIGKILL' || pistonResponse.compile?.signal === 'SIGKILL';
 }
