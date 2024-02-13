@@ -181,7 +181,7 @@ function loadOneTaskSync(taskDir: string, name: TaskName, language: ProgrammingL
  */
 function renameTaskHack(language: ProgrammingLanguage, name: string): TaskName {
     if (language === 'c') return name as TaskName;
-    return `${language}-${name}` as TaskName;
+    return `${language}:${name}` as TaskName;
 }
 
 interface TaskLoader {
