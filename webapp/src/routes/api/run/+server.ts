@@ -314,5 +314,10 @@ function parseGccDiagnostics(stderr: string): Diagnostics | undefined {
 }
 
 function didPistonTimeOut(pistonResponse: PistonResponse): boolean {
+    if (pistonResponse.language === 'rust') {
+        // For some stupid reason, the Piston reports that some regular Rust errors end in a SIGKILL.
+        return false;
+    }
+
     return pistonResponse.run.signal === 'SIGKILL' || pistonResponse.compile?.signal === 'SIGKILL';
 }
