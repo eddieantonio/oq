@@ -8,7 +8,7 @@ import { dev } from '$app/environment';
 
 import { logCompileOutput, logCompileEvent, getParticipantAssignment } from '$lib/server/database';
 import type { ExerciseId } from '$lib/server/newtypes';
-import type { Diagnostics, RootGCCDiagnostic } from '$lib/types/diagnostics';
+import type { Diagnostics, RootGCCDiagnostic, RootRustDiagnostic } from '$lib/types/diagnostics';
 import type { RunResult } from '$lib/server/run-code';
 import type { ClientSideRunResult } from '$lib/types/client-side-run-results';
 import type { PistonRequest, PistonResponse } from '$lib/types/piston.js';
@@ -189,6 +189,29 @@ const ADAPTORS: { [key in ProgrammingLanguage]: LanguageAdaptor } = {
                 success: false,
                 executionTimedOut: result.executionTimedOut,
                 diagnostics,
+                output: result.pistonResponse.run.stdout
+            };
+        }
+    },
+    rust: {
+        getSuccess: (response: PistonResponse) =>
+            response.compile?.code === 0 && response.run.code === 0,
+        parseDiagnostics(response: PistonResponse) {
+            const diagnostics = response.compile?.stderr
+                .split('\n')
+                .filter((line) => line.length > 0)
+                .map((line) => JSON.parse(line) as RootRustDiagnostic);
+            if (diagnostics == null) return undefined;
+            return {
+                format: 'rustc-json',
+                diagnostics: diagnostics
+            };
+        },
+        toClientSideFormat(result: RunResult) {
+            return {
+                success: result.success,
+                executionTimedOut: result.executionTimedOut,
+                diagnostics: extractDiagnostics(result),
                 output: result.pistonResponse.run.stdout
             };
         }

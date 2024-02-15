@@ -55,12 +55,17 @@ function formatToCondition(format: Diagnostics['format']): Condition {
     switch (format) {
         case 'gcc-json':
         case 'parsed-python':
+        case 'rustc-json':
         case 'preformatted':
             return 'control';
         case 'manually-enhanced':
             return 'enhanced';
         case 'llm-enhanced':
             return 'llm-enhanced';
+        /* NOTE! I intentionally do not use a case for
+         *  default:
+         *      return 'control';
+         * because I want the compiler errors to remind me of my shame. */
     }
 }
 

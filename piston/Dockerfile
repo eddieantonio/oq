@@ -10,3 +10,4 @@ COPY ./data/piston/packages /piston/packages
 # Now, apply necessary customizations:
 FROM ghcr.io/eddieantonio/piston:202311011-packages-only@sha256:d67093c35634650deed96685d3537d20cd93e212a60e140fb697505484a1e27f as with-customizations
 COPY ./patches/gcc/compile /piston/packages/gcc/10.2.0/compile
+COPY ./patches/rust/compile /piston/packages/rust/1.68.2/compile

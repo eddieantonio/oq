@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 
-import type { Diagnostics, RootGCCDiagnostic } from '$lib/types/diagnostics';
+import type { Diagnostics, RootGCCDiagnostic, RootRustDiagnostic } from '$lib/types/diagnostics';
 import type { MarkdownString, SHA256Hash } from './newtypes';
 import { hashSourceCode } from './hash';
 import { getMarkdownResponse, type RawLLMResponse } from './llm';
@@ -219,5 +219,25 @@ const loaders: { [key in ProgrammingLanguage]: TaskLoader } = {
                 diagnostics
             };
         }
+    },
+    rust: {
+        getFilename: () => 'main.rs',
+        getOriginalDiagnostics(taskDir) {
+            const rawRustcDiagnostics = fs.readFileSync(`${taskDir}/rustc-error.json`, 'utf-8');
+            const diagnostics = rawRustcDiagnostics
+                .split('\n')
+                .filter((line) => line.length > 0)
+                .map((line) => JSON.parse(line) as RootRustDiagnostic);
+            return {
+                format: 'rustc-json',
+                diagnostics: [getFirstRustcError(diagnostics)]
+            };
+        }
     }
 } as const;
+
+function getFirstRustcError(diagnostics: RootRustDiagnostic[]): RootRustDiagnostic {
+    const error = diagnostics.find((d) => d.level === 'error');
+    if (error == null) throw new Error('No error found in rustc diagnostics');
+    return error;
+}

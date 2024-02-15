@@ -19,7 +19,9 @@ import type {
     Diagnostics,
     GCCDiagnostic,
     GCCDiagnostics,
-    PythonTraceback
+    PythonTraceback,
+    RootRustDiagnostic,
+    RustDiagnostic
 } from './types/diagnostics';
 import type { JsonMarkerData } from './types';
 
@@ -80,6 +82,8 @@ function extractMarkersFromDiagnostics(
             return extractMarkersFromGCCDiagnostics(diagnostics);
         case 'parsed-python':
             return extractMarkersFromPythonTraceback(diagnostics.diagnostics, sourceCode);
+        case 'rustc-json':
+            return extractMarkersFromRustDiagnostics(diagnostics.diagnostics);
         case 'llm-enhanced':
             // Defer to the original diagnostics.
             return extractMarkersFromDiagnostics(diagnostics.original, sourceCode);
@@ -178,6 +182,35 @@ function extractMarkersFromPythonTraceback(
     ];
 }
 
+function extractMarkersFromRustDiagnostics(
+    diagnostics: RootRustDiagnostic[]
+): monaco.editor.IMarkerData[] {
+    const markers = [];
+
+    for (const diagnostic of diagnostics) {
+        // If there's no location, then we don't know where to put the marker.
+        // So just skip it.
+        if (diagnostic.spans.length === 0) {
+            continue;
+        }
+
+        // TODO: This needs a lot more work. Rust's diagnostics are very RICH!
+        const span = diagnostic.spans[0];
+        const start = span;
+        const end = span;
+        markers.push({
+            message: diagnostic.message,
+            severity: rustLevelToMonacoSeverity(diagnostic.level),
+            startLineNumber: start.line_start,
+            endLineNumber: end.line_end,
+            startColumn: start.column_start,
+            endColumn: end.column_end
+        });
+    }
+
+    return markers;
+}
+
 function convertMarkersFromJsonMarkers(markers: JsonMarkerData[]): monaco.editor.IMarkerData[] {
     return markers.map((marker) => ({
         ...marker,
@@ -202,6 +235,17 @@ function severityStringToMonacoSeverity(
         info: monaco.MarkerSeverity.Info,
         hint: monaco.MarkerSeverity.Hint
     }[severity];
+}
+
+function rustLevelToMonacoSeverity(level: RustDiagnostic['level']): monaco.MarkerSeverity {
+    return {
+        error: monaco.MarkerSeverity.Error,
+        warning: monaco.MarkerSeverity.Warning,
+        note: monaco.MarkerSeverity.Info,
+        help: monaco.MarkerSeverity.Hint,
+        'failure-note': monaco.MarkerSeverity.Info,
+        'error: internal compiler error': monaco.MarkerSeverity.Error
+    }[level];
 }
 
 export { monaco };
