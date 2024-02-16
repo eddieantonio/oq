@@ -1,1 +1,18 @@
-../+common/manual-markers.json
+[
+  {
+    "severity": "error",
+    "message": "mistake detected here",
+    "startLineNumber": 1,
+    "endLineNumber": 1,
+    "startColumn": 10,
+    "endColumn": 11
+  },
+  {
+    "severity": "hint",
+    "message": "insert open brace above to match this close brace",
+    "startLineNumber": 9,
+    "endLineNumber": 9,
+    "startColumn": 1,
+    "endColumn": 2
+  }
+]

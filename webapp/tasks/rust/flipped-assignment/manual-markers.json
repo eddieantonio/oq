@@ -1,1 +1,10 @@
-../+common/manual-markers.json
+[
+  {
+    "severity": "error",
+    "message": "cannot assign to this expression",
+    "startLineNumber": 6,
+    "endLineNumber": 6,
+    "startColumn": 5,
+    "endColumn": 10
+  }
+]

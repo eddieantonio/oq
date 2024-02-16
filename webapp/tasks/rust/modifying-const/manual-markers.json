@@ -1,1 +1,18 @@
-../+common/manual-markers.json
+[
+  {
+    "severity": "error",
+    "message": "assignment not allowed: `n` is not mut",
+    "startLineNumber": 8,
+    "endLineNumber": 8,
+    "startColumn": 9,
+    "endColumn": 18
+  },
+  {
+    "severity": "hint",
+    "message": "`n` declared here",
+    "startLineNumber": 1,
+    "endLineNumber": 1,
+    "startColumn": 14,
+    "endColumn": 20
+  }
+]
