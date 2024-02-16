@@ -1,7 +1,7 @@
-let pi = 3.141592653589793;
+let PI = 3.141592653589793;
 
 fn area(radius: f64) -> f64 {
-    return pi * radius * radius;
+    return PI * radius * radius;
 }
 
 fn main() {
