@@ -15,8 +15,8 @@ const ASSIGNMENTS = (function () {
     // Lazy initialization of the generator.
     const init = () =>
         generateAssignments(
-            // Only assign Python tasks.
-            getTasksForLanguage('python').map((task) => task.name)
+            // Only assign Rust tasks.
+            getTasksForLanguage('rust').map((task) => task.name)
         );
 
     let instance: ReturnType<typeof init> | null = null;
