@@ -89,8 +89,6 @@ async function runCodeDuringStudy(data: FormData, { locals }: RequestEvent) {
         })
     ]);
 
-    console.log({ pistonResponse });
-
     // Process the response from Piston.
     // Each programming language has a slightly different way of interpreting the response.
     const languageAdaptor = ADAPTORS[language];
