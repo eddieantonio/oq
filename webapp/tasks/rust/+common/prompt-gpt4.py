@@ -48,23 +48,23 @@ PROG_NAME = sys.argv[0]
 c_file = Path(sys.argv[1])
 assert c_file.exists(), "source file not found"
 
-# output_file = Path(sys.argv[2])
-# if output_file.exists():
-#    print(
-#        f"{PROG_NAME}: not overwriting existing output file: {output_file}",
-#        file=sys.stderr,
-#    )
-#    sys.exit(1)
-#
-#
-# try:
-#    OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
-# except KeyError:
-#    print(
-#        f"{PROG_NAME}: you must set the OPENAI_API_KEY environment variable",
-#        file=sys.stderr,
-#    )
-#    sys.exit(1)
+output_file = Path(sys.argv[2])
+if output_file.exists():
+    print(
+        f"{PROG_NAME}: not overwriting existing output file: {output_file}",
+        file=sys.stderr,
+    )
+    sys.exit(1)
+
+
+try:
+    OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
+except KeyError:
+    print(
+        f"{PROG_NAME}: you must set the OPENAI_API_KEY environment variable",
+        file=sys.stderr,
+    )
+    sys.exit(1)
 
 details = subprocess.run(
     [COMPILER, "--error-format=json", "-o", "/dev/null", str(c_file)],
@@ -102,18 +102,13 @@ data = dict(
     temperature=0,
 )
 
-from pprint import pprint
-
-print(formatted_error)
-pprint(data)
-
-# request = urllib.request.Request(
-#    URL,
-#    headers={
-#        "Content-Type": "application/json",
-#        "Authorization": f"Bearer {OPENAI_API_KEY}",
-#    },
-#    data=json.dumps(data).encode("UTF-8"),
-# )
-# response = urllib.request.urlopen(request)
-# output_file.write_bytes(response.read())
+request = urllib.request.Request(
+    URL,
+    headers={
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {OPENAI_API_KEY}",
+    },
+    data=json.dumps(data).encode("UTF-8"),
+)
+response = urllib.request.urlopen(request)
+output_file.write_bytes(response.read())
