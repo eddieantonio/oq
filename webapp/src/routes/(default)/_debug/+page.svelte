@@ -2,7 +2,7 @@
     import { CONDITIONS } from '$lib/types';
 
     export let data;
-    const classroom = 'aalto-rust';
+    const classroom = 'TEST-CLASS';
 </script>
 
 <header>

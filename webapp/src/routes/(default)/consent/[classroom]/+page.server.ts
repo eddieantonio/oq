@@ -8,16 +8,15 @@ import type { ClassroomId } from '$lib/server/newtypes';
 import { redirectToCurrentStage } from '$lib/server/redirect.js';
 import { generateAssignments } from '$lib/server/create-assignments';
 import { getTasksForLanguage } from '$lib/server/tasks';
+import type { ProgrammingLanguage } from '$lib/types';
 
 // HACK: this global is WAY easier than storing the state in the database,
-// but it means that only one study can run at a time, unfortunately.
+// but it means that **only one study can run at a time**, unfortunately.
+const CURRENT_STUDY_LANGUAGE: ProgrammingLanguage = 'c';
 const ASSIGNMENTS = (function () {
     // Lazy initialization of the generator.
     const init = () =>
-        generateAssignments(
-            // Only assign Rust tasks.
-            getTasksForLanguage('rust').map((task) => task.name)
-        );
+        generateAssignments(getTasksForLanguage(CURRENT_STUDY_LANGUAGE).map((task) => task.name));
 
     let instance: ReturnType<typeof init> | null = null;
     return {
