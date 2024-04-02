@@ -7,8 +7,6 @@
     import './button.css';
     import './kbd-styles.css';
 
-    //import spinnerIcon from '$lib/assets/spinner-solid.svg?raw';
-    //import warningIcon from '$lib/assets/triangle-exclamation-solid.svg?raw';
     import SpinnerIcon from '$lib/assets/SpinnerIcon.svelte';
     import TriangleIcon from '$lib/assets/TriangleIcon.svelte';
 

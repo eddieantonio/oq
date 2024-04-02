@@ -121,8 +121,6 @@ async function runCodeForDebug(data: FormData, _: RequestEvent) {
     sourceCode = sourceCode.replace(/\r\n/g, '\n');
     const pistonResponse = await runOnPiston({ language, filename, sourceCode });
 
-    console.log({ pistonResponse });
-
     // Process the response from Piston.
     // Each programming language has a slightly different way of interpreting the response.
     const languageAdaptor = ADAPTORS[language];
