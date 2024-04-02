@@ -16,6 +16,7 @@
         "test": "vitest"
     },
     "dependencies": {
+        "ansi_up": "^6.0.2",
         "better-sqlite3": "^9.0.0",
         "http-status-codes": "^2.3.0",
         "knex": "^3.0.1",

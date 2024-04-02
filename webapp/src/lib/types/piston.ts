@@ -1,3 +1,5 @@
+import type { ProgrammingLanguage } from '.';
+
 /**
  * A request to compile and run code in Piston.
  *
@@ -25,7 +27,7 @@ export interface PistonRequest {
  * See: https://github.com/engineer-man/piston/tree/b46690de0607fe5049bf648a2e5dbd4f584c27be?tab=readme-ov-file#execute-endpoint
  */
 export interface PistonResponse {
-    language: 'c';
+    language: ProgrammingLanguage;
     version: string;
     compile?: {
         stdout: string;

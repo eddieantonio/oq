@@ -13,11 +13,6 @@
 
 <article>
     <form method="POST">
-        <p>
-            <strong> COMP10020 students</strong>: You can skip this video if the researcher is in
-            person.
-        </p>
-
         <p>Please watch this brief video to learn about what you will do in this study:</p>
         <div class="youtube">
             <iframe

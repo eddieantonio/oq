@@ -6,8 +6,6 @@
 import prompt from 'password-prompt';
 import * as crypto from 'crypto';
 
-const TEST_CLASSROOM_ID = 'TEST-CLASS';
-
 const SALT_LENGTH = 16;
 const HASH_LENGTH = 32;
 const SCRYPT_COST_EXP = 14;
@@ -18,10 +16,9 @@ const SCRYPT_COST = 2 ** SCRYPT_COST_EXP;
  * @returns {Promise<void>}
  */
 export async function seed(knex) {
-    const testClassroom = await promptForPassword(TEST_CLASSROOM_ID);
-    const realClassroom = await promptForPassword('COMP10020');
+    const realClassroom = await promptForPassword('aalto-rust');
 
-    await knex('classrooms').insert([testClassroom, realClassroom]);
+    await knex('classrooms').insert([realClassroom]);
 }
 
 /**

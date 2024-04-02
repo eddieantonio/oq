@@ -3,6 +3,7 @@
     import DiagnosticDisplay from '../DiagnosticDisplay.svelte';
     import PythonDiagnosticsDisplay from './PythonDiagnosticsDisplay.svelte';
     import Markdown from '../Markdown.svelte';
+    import RustDiagnosticsDisplay from './RustDiagnosticsDisplay.svelte';
 
     export let diagnostics: LLMEnhancedDiagnostics;
     $: original = diagnostics.original;
@@ -12,6 +13,8 @@
 <blockquote>
     {#if original.format == 'parsed-python'}<!-- Show only the last line of a Python error message. -->
         <PythonDiagnosticsDisplay diagnostics={original} showTraceback={false} />
+    {:else if original.format == 'rustc-json'}
+        <RustDiagnosticsDisplay diagnostics={original} showDiagnosticWindow={false} />
     {:else}
         <DiagnosticDisplay diagnostics={original} />
     {/if}

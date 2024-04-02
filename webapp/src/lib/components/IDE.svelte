@@ -34,7 +34,8 @@
 
     const iconLocations: { [key in ProgrammingLanguage]: string } = {
         c: `${assets}/icons/c-logo.svg`,
-        python: `${assets}/icons/python-logo.svg`
+        python: `${assets}/icons/python-logo.svg`,
+        rust: `${assets}/icons/rust-logo.svg`
     };
     /** Path to the tiny programming language icon next to the filename. */
     const iconSrc = iconLocations[language];

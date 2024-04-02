@@ -1,0 +1,26 @@
+[
+  {
+    "severity": "error",
+    "message": "keyword `ref` cannot be used as a variable name",
+    "startLineNumber": 3,
+    "endLineNumber": 3,
+    "startColumn": 9,
+    "endColumn": 12
+  },
+  {
+    "severity": "hint",
+    "message": "add r# to use a raw identifier",
+    "startLineNumber": 3,
+    "endLineNumber": 3,
+    "startColumn": 9,
+    "endColumn": 10
+  },
+  {
+    "severity": "hint",
+    "message": "add r# to use a raw identifier",
+    "startLineNumber": 5,
+    "endLineNumber": 5,
+    "startColumn": 17,
+    "endColumn": 18
+  }
+]

@@ -1,0 +1,10 @@
+[
+  {
+    "severity": "error",
+    "message": "let is not allowed at the top-level",
+    "startLineNumber": 1,
+    "endLineNumber": 1,
+    "startColumn": 1,
+    "endColumn": 4
+  }
+]

@@ -1,0 +1,10 @@
+[
+  {
+    "severity": "error",
+    "message": "no variable called `fahrenheit` in scope",
+    "startLineNumber": 2,
+    "endLineNumber": 2,
+    "startColumn": 13,
+    "endColumn": 23
+  }
+]
