@@ -34,7 +34,7 @@
                 label: 'This error message and explanation was **difficult to understand**'
             },
             {
-                questionId: 'fix-postive',
+                questionId: 'fix-positive',
                 label: 'This error message and explanation **helped me fix the code**'
             }
         ]}
