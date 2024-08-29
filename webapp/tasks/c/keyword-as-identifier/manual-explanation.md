@@ -2,7 +2,7 @@
 
 ```
    6 |    int union = 324;
-              ~~~~~ using keyword as a variable name
+     |        ~~~~~ using keyword as a variable name
 ```
 
 
@@ -11,5 +11,5 @@ underscore to the end of the keyword to make it a valid name.
 
 ```
    6 |    int union_ = 324;
-                   + add underscore to make a valid name
+     |             + add underscore to make a valid name
 ```

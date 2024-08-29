@@ -2,12 +2,12 @@
 
 ```
    3 | #const pi 3.141592653589793
-       ~~~~~~ invalid
+     | ~~~~~~ invalid
 ```
 
 **Help**: If you are trying to define a preprocessor constant, use `#define` instead:
 
 ```
    3 | #define pi 3.141592653589793
-       ^^^^^^^ change here
+     | ^^^^^^^ change here
 ```

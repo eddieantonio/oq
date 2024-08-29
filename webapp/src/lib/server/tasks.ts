@@ -166,7 +166,7 @@ function loadOneTaskSync(taskDir: string, name: TaskName, language: ProgrammingL
     };
 
     return {
-        name: renameTaskHack(language, name),
+        name: nameTask(language, name),
         language,
         filename,
         sourceCode,
@@ -176,11 +176,9 @@ function loadOneTaskSync(taskDir: string, name: TaskName, language: ProgrammingL
 }
 
 /**
- * Renames a task. Non-C tasks are prefixed with the language name for... reasons...
- * @deprecated This is a hack. Tasks should be indexed by language AND name.
+ * Renames a task to include both the language and per-language name.
  */
-function renameTaskHack(language: ProgrammingLanguage, name: string): TaskName {
-    if (language === 'c') return name as TaskName;
+function nameTask(language: ProgrammingLanguage, name: string): TaskName {
     return `${language}:${name}` as TaskName;
 }
 
