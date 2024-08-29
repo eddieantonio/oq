@@ -1,5 +1,4 @@
 # This is hard-coded for how I will deploy it on beckett4
-version: '3'
 services:
   webapp:
     build:

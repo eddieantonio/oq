@@ -1,5 +1,4 @@
 # TODO: extend docker-compose.prod.yml instead of copy-paste
-version: '3'
 services:
   webapp:
     build:
