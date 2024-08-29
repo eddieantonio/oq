@@ -50,7 +50,7 @@ export function loadTasksSync(tasksDir: string) {
     // tasks/
     //   c/
     //      +common/                common files for all C tasks
-    //      missing-semicolon/
+    //      missing-brace/
     //      invalid-define/
     //  python/
     //      +common/                common files for all Python tasks
