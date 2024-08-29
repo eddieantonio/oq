@@ -14,7 +14,6 @@
 #
 # Docker Compose will then combine the common settings here, with the
 # customizations in the override file, and everything will work wonderfully.
-version: '3'
 services:
   webapp:
     build: ./webapp
