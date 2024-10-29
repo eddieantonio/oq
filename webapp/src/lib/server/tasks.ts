@@ -75,6 +75,7 @@ export function loadTasksSync(tasksDir: string) {
 
         for (const taskDir of taskDirs) {
             const name = taskDir.name as TaskName;
+            if (shouldIgnore(`${langDirPath}/${name}`)) continue;
             TASKS.push(loadOneTaskSync(`${langDirPath}/${name}`, name, language));
         }
     }
@@ -238,4 +239,8 @@ function getFirstRustcError(diagnostics: RootRustDiagnostic[]): RootRustDiagnost
     const error = diagnostics.find((d) => d.level === 'error');
     if (error == null) throw new Error('No error found in rustc diagnostics');
     return error;
+}
+
+function shouldIgnore(taskDir: string): boolean {
+    return fs.existsSync(`${taskDir}/should-ignore`);
 }
