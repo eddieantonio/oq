@@ -14,6 +14,7 @@ export type Diagnostics =
     | PythonDiagnostics
     | RustDiagnostics
     | LLMEnhancedDiagnostics
+    | MarkdownDiagnostics
     | ManuallyEnhancedDiagnostic;
 
 /**
@@ -67,6 +68,14 @@ export interface ManuallyEnhancedDiagnostic {
     format: 'manually-enhanced';
     markdown: MarkdownString;
     markers: JsonMarkerData[];
+}
+
+/**
+ * Diagnostics that should be rendered as plain Markdown.
+ */
+export interface MarkdownDiagnostics {
+    format: 'markdown';
+    markdown: MarkdownString;
 }
 
 /**

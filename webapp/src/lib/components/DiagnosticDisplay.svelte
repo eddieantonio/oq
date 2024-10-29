@@ -5,6 +5,7 @@
     import RustDiagnosticsDisplay from './diagnostics/RustDiagnosticsDisplay.svelte';
     import LLMDiagnosticsDisplay from './diagnostics/LLMDiagnosticsDisplay.svelte';
     import ManuallyEnhancedDiagnosticsDisplay from './diagnostics/ManuallyEnhancedDiagnosticsDisplay.svelte';
+    import Markdown from './Markdown.svelte';
 
     /**
      * The diagnostics object returned by the code execution server.
@@ -20,8 +21,8 @@
     <RustDiagnosticsDisplay {diagnostics} />
 {:else if diagnostics.format === 'llm-enhanced'}
     <LLMDiagnosticsDisplay {diagnostics} />
-{:else if diagnostics.format === 'manually-enhanced'}
-    <ManuallyEnhancedDiagnosticsDisplay {diagnostics} />
+{:else if diagnostics.format === 'manually-enhanced' || diagnostics.format === 'markdown'}
+    <Markdown markdown={diagnostics.markdown} />
 {:else if diagnostics.format === 'preformatted'}
     <pre><code class="problem">{diagnostics.plainText}</code></pre>
 {:else}

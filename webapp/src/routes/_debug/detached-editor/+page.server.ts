@@ -2,7 +2,7 @@ import { error } from '@sveltejs/kit';
 
 import { diagnosticsForCondition } from '$lib/server/diagnostics-util';
 import { getTaskByName } from '$lib/server/tasks';
-import type { Condition } from '$lib/types';
+import { CONDITIONS, type Condition } from '$lib/types';
 
 /**
  * Loads the requested task for the debug editor.
@@ -29,5 +29,5 @@ export function load({ url }) {
 }
 
 function validCondition(condition: unknown): condition is Condition {
-    return condition === 'control' || condition === 'enhanced' || condition === 'llm-enhanced';
+    return (CONDITIONS as readonly string[]).includes(String(condition));
 }

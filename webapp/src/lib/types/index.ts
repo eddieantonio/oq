@@ -6,12 +6,13 @@
  * All possible conditions in the study.
  * Note: conditions are labels, and are not ordered.
  */
-export const CONDITIONS = ['control', 'enhanced', 'llm-enhanced'] as const;
+export const CONDITIONS = ['control', 'enhanced', 'llm-enhanced', 'finetuned'] as const;
 /**
  * The study condition:
  *  - `control`: the basic error messages
  *  - `enhanced`: "better", (manually-enhanced) error messages
  *  - `llm-enhanced`: LLM-enhanced error messages
+ *  - `finetuned`: LLM-enhanced error messages with a fine-tuned model
  */
 export type Condition = (typeof CONDITIONS)[number];
 

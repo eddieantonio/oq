@@ -66,6 +66,13 @@ export function loadTasksSync(tasksDir: string) {
     for (const langDir of langDirectories) {
         const langDirPath = `${tasksDir}/${langDir.name}`;
         const language = requireSupportedProgrammingLanguage(langDir.name);
+
+        // TEMPORARY!
+        if (language != 'python') {
+            console.log(`Ignoring ${language} tasks for now...`);
+            continue;
+        }
+
         const taskDirs = fs
             .readdirSync(langDirPath, {
                 withFileTypes: true
@@ -148,8 +155,11 @@ function loadOneTaskSync(taskDir: string, name: TaskName, language: ProgrammingL
     const manuallyEnhancedMessageMarkers = JSON.parse(
         fs.readFileSync(`${taskDir}/manual-markers.json`, 'utf-8')
     ) as JsonMarkerData[];
-    const rawLlmResponse = JSON.parse(
+    const rawGptResponse = JSON.parse(
         fs.readFileSync(`${taskDir}/gpt4-response.json`, 'utf-8')
+    ) as RawLLMResponse;
+    const rawFinetunedResponse = JSON.parse(
+        fs.readFileSync(`${taskDir}/ft-response.json`, 'utf-8')
     ) as RawLLMResponse;
 
     const diagnostics: Task['diagnostics'] = {
@@ -161,8 +171,12 @@ function loadOneTaskSync(taskDir: string, name: TaskName, language: ProgrammingL
         },
         'llm-enhanced': {
             format: 'llm-enhanced',
-            markdown: getMarkdownResponse(rawLlmResponse),
+            markdown: getMarkdownResponse(rawGptResponse),
             original
+        },
+        finetuned: {
+            format: 'markdown',
+            markdown: getMarkdownResponse(rawFinetunedResponse)
         }
     };
 

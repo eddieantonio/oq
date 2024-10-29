@@ -62,6 +62,9 @@ function formatToCondition(format: Diagnostics['format']): Condition {
             return 'enhanced';
         case 'llm-enhanced':
             return 'llm-enhanced';
+        case 'markdown':
+            // Ideally, this function should not exist.
+            return 'finetuned';
         /* NOTE! I intentionally do not use a case for
          *  default:
          *      return 'control';

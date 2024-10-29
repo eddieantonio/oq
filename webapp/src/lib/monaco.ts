@@ -91,7 +91,8 @@ function extractMarkersFromDiagnostics(
             // Currently no markers for manually enhanced diagnostics.
             return convertMarkersFromJsonMarkers(diagnostics.markers);
         case 'preformatted':
-            // There are no markers for preformatted diagnostics.
+        case 'markdown':
+            // There are no markers for preformatted or markdown (finetuned) diagnostics.
             return [];
     }
 }
