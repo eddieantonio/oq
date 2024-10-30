@@ -1,6 +1,8 @@
 # Requires
 #  - jq -- https://jqlang.github.io/jq/
 #  - moreutils -- https://joeyh.name/code/moreutils/
+all: python-errors.txt gpt4-response.md ft-response.md
+
 python-errors.txt: main.py
 	python3.12 $< 2>&1 | ../+common/python-traceback-filter | sponge $@
 

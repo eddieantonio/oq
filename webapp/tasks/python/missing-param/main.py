@@ -1,4 +1,7 @@
-def convert():
-    return (fahrenheit - 32.0) / 1.8
+def area():
+    width = side
+    height = side
+    area = width * height
+    return area
 
-print(68.0, "fahrenheit is", convert(68.0), "celsius")
+print("the area of a 4x4 square is", area(4))
