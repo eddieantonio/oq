@@ -33,7 +33,9 @@ export async function load({ locals }) {
 
     const pem = makeDiagnosticsForAssignment(currentAssignment);
     return {
-        pem
+        pem,
+        // Disabled for now because students' opinion on this is largely unreliable:
+        shouldAskAboutMessageLength: false
     };
 }
 

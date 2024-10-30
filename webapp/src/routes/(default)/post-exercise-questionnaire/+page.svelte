@@ -8,7 +8,7 @@
     import LikertScale from '$lib/components/forms/LikertScale.svelte';
 
     export let data;
-    const pem = data.pem;
+    const { pem, shouldAskAboutMessageLength } = data;
 </script>
 
 <!-- This is the questionnaire for now. Eventually I will refactor this to have its own page. -->
@@ -42,18 +42,20 @@
         Please rate your agreement with the following statements:
     </LikertGroup>
 
-    <LikertScale
-        questionId="length"
-        labels={[
-            'Way too short',
-            'Slightly too short',
-            'Just right',
-            'Slightly too long',
-            'Way too long'
-        ]}
-    >
-        How was the length of this error message and its explanation?
-    </LikertScale>
+    {#if shouldAskAboutMessageLength}
+        <LikertScale
+            questionId="length"
+            labels={[
+                'Way too short',
+                'Slightly too short',
+                'Just right',
+                'Slightly too long',
+                'Way too long'
+            ]}
+        >
+            How was the length of this error message and its explanation?
+        </LikertScale>
+    {/if}
 
     <LongAnswer questionId="elaboration" optional>Could you explain your answers above?</LongAnswer>
 
