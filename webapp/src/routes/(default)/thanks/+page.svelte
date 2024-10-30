@@ -8,6 +8,12 @@
         let jsConfetti = new JSConfetti();
         jsConfetti.addConfetti();
     });
+
+    async function copyVoucherToClipboard() {
+        if (data.voucher == null) return;
+        await navigator.clipboard.writeText(data.voucher);
+        alert('Copied!');
+    }
 </script>
 
 <header>
@@ -30,6 +36,9 @@
 {#if data.voucher}
     <p>
         <strong>Your vocher</strong>: <input type="text" value={data.voucher} disabled />
+        <button on:click={copyVoucherToClipboard} disabled={data.voucher == null}
+            >Click to copy</button
+        >
     </p>
 {/if}
 
