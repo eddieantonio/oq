@@ -10,12 +10,6 @@
         let jsConfetti = new JSConfetti();
         jsConfetti.addConfetti();
     });
-
-    async function copyVoucherToClipboard() {
-        if (data.voucher == null) return;
-        await navigator.clipboard.writeText(data.voucher);
-        alert('Copied!');
-    }
 </script>
 
 <header>
