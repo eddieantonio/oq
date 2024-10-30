@@ -54,7 +54,7 @@ elif invocation == "prompt-gpt4o":
         )
 
 elif invocation == "prompt-ft":
-    MODEL = "ft:gpt-4o-2024-08-06:personal:pem-1:ANfg02Wz"
+    MODEL = "ft:gpt-4o-2024-08-06:personal:pem-2:AO4EizHb"
     SYSTEM_MESSAGE = (
         "Provide a plain English explanation of why running the Python 3 code causes "
         "an error and how to fix the problem. "
