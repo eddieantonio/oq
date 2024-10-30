@@ -8,7 +8,7 @@
       "index": 0,
       "message": {
         "role": "assistant",
-        "content": "Running the provided code results in an error because you cannot assign a value to an expression. \nTo fix the problem, assign the sum to `c` instead.\nFor example,\n```python\nc = a + b\n```",
+        "content": "Running the provided code results in an error because you cannot assign a value to an expression.\n\nTo fix the problem, assign the sum to `c` instead.\n\nFor example,\n```python\nc = a + b\n```",
         "refusal": null
       },
       "logprobs": null,

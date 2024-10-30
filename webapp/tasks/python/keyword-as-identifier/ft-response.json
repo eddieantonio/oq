@@ -8,7 +8,7 @@
       "index": 0,
       "message": {
         "role": "assistant",
-        "content": "Running the provided code results in an error because `import` is a reserved keyword in Python and cannot be used as a variable name.\nTo fix the problem, choose a different name for the variable.\nFor example,\n```python\nimports = 324\n```",
+        "content": "Running the provided code results in an error because `import` is a reserved keyword in Python and cannot be used as a variable name.\n\nTo fix the problem, choose a different name for the variable.\nFor example,\n```python\nimports = 324\n```",
         "refusal": null
       },
       "logprobs": null,

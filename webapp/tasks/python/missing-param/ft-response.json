@@ -8,7 +8,7 @@
       "index": 0,
       "message": {
         "role": "assistant",
-        "content": "Running the provided code results in an error because the `convert()` function is defined without parameters, but you try to pass an argument to it.\nTo fix the problem, include a parameter in the function definition and use it within the function.\nFor example,\n```python\ndef convert(fahrenheit):\n    return (fahrenheit - 32.0) / 1.8\n```",
+        "content": "Running the provided code results in an error because the `convert()` function is defined without parameters, but you try to pass an argument to it.\n\nTo fix the problem, include a parameter in the function definition and use it within the function.\n\nFor example,\n```python\ndef convert(fahrenheit):\n    return (fahrenheit - 32.0) / 1.8\n```",
         "refusal": null
       },
       "logprobs": null,

@@ -8,7 +8,7 @@
       "index": 0,
       "message": {
         "role": "assistant",
-        "content": "Running the provided code results in an error because the `import` statement is incorrect. It should be `from math import pi`.\nTo fix the problem, correct the import statement to properly bring in `pi` from the `math` module.",
+        "content": "Running the provided code results in an error because the `import` statement is incorrect. It should be `from math import pi`.\n\nTo fix the problem, correct the import statement to properly bring in `pi` from the `math` module.",
         "refusal": null
       },
       "logprobs": null,

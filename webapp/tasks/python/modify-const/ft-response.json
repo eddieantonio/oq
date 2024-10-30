@@ -8,7 +8,7 @@
       "index": 0,
       "message": {
         "role": "assistant",
-        "content": "Running the provided code results in an error because you cannot append to a tuple. Tuples are immutable, meaning their contents cannot be changed after creation.\nTo fix the problem, use a list instead of a tuple to store the sequence.\nFor example,\n```python\nsequence = []\n```",
+        "content": "Running the provided code results in an error because you cannot append to a tuple. Tuples are immutable, meaning their contents cannot be changed after creation.\n\nTo fix the problem, use a list instead of a tuple to store the sequence.\n\nFor example,\n```python\nsequence = []\n```",
         "refusal": null
       },
       "logprobs": null,
