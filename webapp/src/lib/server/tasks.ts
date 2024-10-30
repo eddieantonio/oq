@@ -1,12 +1,11 @@
 import * as fs from 'fs';
 
 import type { Diagnostics, RootGCCDiagnostic, RootRustDiagnostic } from '$lib/types/diagnostics';
-import type { MarkdownString, SHA256Hash } from './newtypes';
+import type { SHA256Hash } from './newtypes';
 import { hashSourceCode } from './hash';
 import { getMarkdownResponse, type RawLLMResponse } from './llm';
 import {
     type TaskName,
-    type JsonMarkerData,
     type Condition,
     type ProgrammingLanguage,
     SUPPORTED_PROGRAMMING_LANGUAGES
@@ -148,13 +147,6 @@ function loadOneTaskSync(taskDir: string, name: TaskName, language: ProgrammingL
     const hash = hashSourceCode(sourceCode);
 
     const original = loader.getOriginalDiagnostics(taskDir);
-    const manuallyEnhancedMessage = fs.readFileSync(
-        `${taskDir}/manual-explanation.md`,
-        'utf-8'
-    ) as MarkdownString;
-    const manuallyEnhancedMessageMarkers = JSON.parse(
-        fs.readFileSync(`${taskDir}/manual-markers.json`, 'utf-8')
-    ) as JsonMarkerData[];
     const rawGptResponse = JSON.parse(
         fs.readFileSync(`${taskDir}/gpt4-response.json`, 'utf-8')
     ) as RawLLMResponse;
@@ -164,11 +156,6 @@ function loadOneTaskSync(taskDir: string, name: TaskName, language: ProgrammingL
 
     const diagnostics: Task['diagnostics'] = {
         control: original,
-        enhanced: {
-            format: 'manually-enhanced',
-            markdown: manuallyEnhancedMessage,
-            markers: manuallyEnhancedMessageMarkers
-        },
         'llm-enhanced': {
             format: 'llm-enhanced',
             markdown: getMarkdownResponse(rawGptResponse),

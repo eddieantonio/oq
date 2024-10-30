@@ -59,7 +59,7 @@ function formatToCondition(format: Diagnostics['format']): Condition {
         case 'preformatted':
             return 'control';
         case 'manually-enhanced':
-            return 'enhanced';
+            throw new Error('Handwritten messages should not be enabled in this study!');
         case 'llm-enhanced':
             return 'llm-enhanced';
         case 'markdown':
