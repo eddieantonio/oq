@@ -2,6 +2,8 @@
     import { onMount } from 'svelte';
     import JSConfetti from 'js-confetti';
 
+    import Voucher from '$lib/components/Voucher.svelte';
+
     export let data;
 
     onMount(() => {
@@ -34,12 +36,7 @@
 </p>
 
 {#if data.voucher}
-    <p>
-        <strong>Your vocher</strong>: <input type="text" value={data.voucher} disabled />
-        <button on:click={copyVoucherToClipboard} disabled={data.voucher == null}
-            >Click to copy</button
-        >
-    </p>
+    <Voucher voucher={data.voucher} />
 {/if}
 
 <p>You may now close this tab.</p>
