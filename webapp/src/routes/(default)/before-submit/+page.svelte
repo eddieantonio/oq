@@ -15,14 +15,15 @@
         Heads up! <strong class="warning"
             >This is your last chance to change opt out of data collection</strong
         >. Remember, all data is collected anonymously and will be used for research purposes only.
+        The only data that we will store will be your survey answers and some interaction data when
+        you were writing code.
     </p>
 
     <p>
         <strong
-            >When you press “Submit”, your study data will be stored in our database for a period of
+            >When you press “Finish”, your study data will be stored in our database for a period of
             five years.</strong
         >
-        Regardless of your selection, you will receive your study voucher on the next page.
     </p>
 
     <form method="POST">
@@ -30,7 +31,7 @@
             <button type="submit" name="status" value="revoke-consent">
                 Opt out of data collection
             </button>
-            <button type="submit" name="status" value="consent"> Submit </button>
+            <button type="submit" name="status" value="consent"> Finish </button>
         </ActionBar>
     </form>
 </article>
@@ -40,7 +41,12 @@
         color: red;
     }
 
+    button {
+        font-size: larger;
+    }
+
     button[value='revoke-consent'] {
-        background-color: red;
+        margin-inline-end: auto;
+        background-color: grey;
     }
 </style>
