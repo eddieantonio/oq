@@ -12,7 +12,7 @@ import type { ProgrammingLanguage } from '$lib/types';
 
 // HACK: this global is WAY easier than storing the state in the database,
 // but it means that **only one study can run at a time**, unfortunately.
-const CURRENT_STUDY_LANGUAGE: ProgrammingLanguage = 'c';
+const CURRENT_STUDY_LANGUAGE: ProgrammingLanguage = 'python';
 const ASSIGNMENTS = (function () {
     // Lazy initialization of the generator.
     const init = () =>

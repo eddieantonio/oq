@@ -2,6 +2,8 @@
     import { onMount } from 'svelte';
     import JSConfetti from 'js-confetti';
 
+    export let data;
+
     onMount(() => {
         let jsConfetti = new JSConfetti();
         jsConfetti.addConfetti();
@@ -24,5 +26,11 @@
         href="mailto:eddie.santos@ucdconnect.ie">eddie.santos@ucdconnect.ie</a
     >.
 </p>
+
+{#if data.voucher}
+    <p>
+        <strong>Your vocher</strong>: <input type="text" value={data.voucher} disabled />
+    </p>
+{/if}
 
 <p>You may now close this tab.</p>

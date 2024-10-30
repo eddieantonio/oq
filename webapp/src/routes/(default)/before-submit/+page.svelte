@@ -1,5 +1,6 @@
 <script>
     import ActionBar from '$lib/components/forms/ActionBar.svelte';
+    export let data;
 </script>
 
 <header>
@@ -17,6 +18,11 @@
             >When you press “Submit”, your study data will be stored in our database for a period of
             five years.</strong
         >
+        Regardless of your selection, you will receive your study voucher on the next page.
+    </p>
+
+    <p>
+        <strong>Your vocher</strong>: <input type="text" value={data.voucher} disabled />
     </p>
 
     <form method="POST">
