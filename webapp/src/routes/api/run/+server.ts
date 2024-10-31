@@ -238,8 +238,6 @@ async function runOnPiston({
         run_timeout: 3000,
         compile_memory_limit: -1,
         run_memory_limit: -1,
-        // HACK! For one task in particular:
-        stdin: '1992\n'
     };
 
     const res = await fetch(PISTON_EXECUTE_URL, {
