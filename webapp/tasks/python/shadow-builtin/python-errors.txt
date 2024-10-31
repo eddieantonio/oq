@@ -1,4 +1,6 @@
-  File "main.py", line 6
-    If(age > 30): print("You're old")
-    ^^^^^^^^^^^^
-SyntaxError: illegal target for annotation
+hello, world
+Traceback (most recent call last):
+  File "main.py", line 5, in <module>
+    print(str(int) + " is my favourite number")
+          ^^^^^^^^
+TypeError: 'str' object is not callable

@@ -27,6 +27,7 @@ export type Condition = (typeof CONDITIONS)[number];
  */
 const STAGES = [
     'pre-questionnaire',
+    // TODO: this is hacky. Instead, encapsulate global -- change to using classroom info to get the stages.
     'exercise-1',
     'post-exercise-1',
     'exercise-2',
@@ -35,11 +36,10 @@ const STAGES = [
     'post-exercise-3',
     'exercise-4',
     'post-exercise-4',
-    // TODO: this is hacky. Instead, encapsulate global -- change to using classroom info to get the stages.
-    //'exercise-5',
-    //'post-exercise-5',
-    //'exercise-6',
-    //'post-exercise-6',
+    'exercise-5',
+    'post-exercise-5',
+    'exercise-6',
+    'post-exercise-6',
     'final-questionnaire',
     'completed'
 ] as const;
