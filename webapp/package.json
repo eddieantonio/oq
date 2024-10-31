@@ -17,7 +17,7 @@
     },
     "dependencies": {
         "ansi_up": "^6.0.2",
-        "better-sqlite3": "^11.5.0",
+        "better-sqlite3": "^9.6.0",
         "http-status-codes": "^2.3.0",
         "knex": "^3.0.1",
         "marked": "^10.0.0",
