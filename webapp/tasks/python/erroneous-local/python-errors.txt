@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "main.py", line 15, in <module>
+    print(complement())
+          ^^^^^^^^^^^^
+  File "main.py", line 2, in complement
+    temp = dna.replace("A", "x")
+           ^^^
+UnboundLocalError: cannot access local variable 'dna' where it is not associated with a value
