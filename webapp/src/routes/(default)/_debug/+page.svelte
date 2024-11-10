@@ -2,7 +2,7 @@
     import { CONDITIONS } from '$lib/types';
 
     export let data;
-    const classroom = 'TEST-CLASS';
+    const classroom = 'COMP1004J';
 </script>
 
 <header>
