@@ -1,6 +1,6 @@
 hello, world
 Traceback (most recent call last):
   File "main.py", line 5, in <module>
-    print(str(int) + " is my favourite number")
-          ^^^^^^^^
+    print(str(number) + " is my favourite number")
+          ^^^^^^^^^^^
 TypeError: 'str' object is not callable
