@@ -27,11 +27,17 @@ const ASSIGNMENTS = (function () {
     };
 })();
 
-export function load({ locals }) {
+export function load({ locals, cookies }) {
     const participant = locals.participant;
     // Unlike most pages, the happy case is that the participant is NOT registered.
     // If the participant is registered, they have already consented, and thus are at some other stage of the trial. Take them there:
     if (participant) redirectToCurrentStage(participant.stage);
+
+    // If they have a voucher but no particpant ID, then they have:
+    //  1. Completed the study
+    //  2. Opted-out of data collection
+    // So just show them their voucher again:
+    if (cookies.get('voucher') != null) throw redirect(StatusCodes.SEE_OTHER, '/already-responded');
 
     return {};
 }
