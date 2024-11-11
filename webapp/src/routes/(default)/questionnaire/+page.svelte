@@ -6,7 +6,7 @@
     import MultipleChoice from '$lib/components/forms/MultipleChoice.svelte';
 </script>
 
-<h1>Error Message and you</h1>
+<h1>Demographics</h1>
 
 <form method="post">
     <MultipleChoice

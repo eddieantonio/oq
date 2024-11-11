@@ -37,6 +37,11 @@
             <strong>Please do not use AI like ChatGPT, GitHub Copilot</strong>, etc. to help you
             with this study.
         </p>
+
+        <p>
+            <strong>Please do not talk to your friends</strong> to help you with this study. You should solve each problem on your own.
+        </p>
+
         <p>When you're ready, press continue to start the first exercise:</p>
 
         <ActionBar>

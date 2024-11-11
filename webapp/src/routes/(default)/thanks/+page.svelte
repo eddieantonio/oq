@@ -33,4 +33,4 @@
     <Voucher voucher={data.voucher} />
 {/if}
 
-<p>You may now close this tab.</p>
+<p>Submit this vocuher as directed by your instructor. After that, it is safe to close this tab.</p>
