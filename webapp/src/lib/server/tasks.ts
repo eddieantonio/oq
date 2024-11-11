@@ -163,7 +163,8 @@ function loadOneTaskSync(taskDir: string, name: TaskName, language: ProgrammingL
         },
         finetuned: {
             format: 'markdown',
-            markdown: getMarkdownResponse(rawFinetunedResponse)
+            markdown: getMarkdownResponse(rawFinetunedResponse),
+            original
         }
     };
 

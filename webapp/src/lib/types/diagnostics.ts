@@ -76,6 +76,8 @@ export interface ManuallyEnhancedDiagnostic {
 export interface MarkdownDiagnostics {
     format: 'markdown';
     markdown: MarkdownString;
+    // HACK: Get markers from the original diagnostic:
+    original: Diagnostics;
 }
 
 /**

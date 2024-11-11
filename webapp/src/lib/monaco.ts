@@ -84,6 +84,7 @@ function extractMarkersFromDiagnostics(
             return extractMarkersFromPythonTraceback(diagnostics.diagnostics, sourceCode);
         case 'rustc-json':
             return extractMarkersFromRustDiagnostics(diagnostics.diagnostics);
+        case 'markdown':
         case 'llm-enhanced':
             // Defer to the original diagnostics.
             return extractMarkersFromDiagnostics(diagnostics.original, sourceCode);
@@ -91,7 +92,6 @@ function extractMarkersFromDiagnostics(
             // Currently no markers for manually enhanced diagnostics.
             return convertMarkersFromJsonMarkers(diagnostics.markers);
         case 'preformatted':
-        case 'markdown':
             // There are no markers for preformatted or markdown (finetuned) diagnostics.
             return [];
     }
