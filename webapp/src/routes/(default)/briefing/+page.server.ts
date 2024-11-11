@@ -5,6 +5,8 @@ import { StatusCodes } from 'http-status-codes';
 
 export function load() {
     return {
+        // Disabled in BDIC study due to access issues:
+        shouldShowVideo: false,
         // How many exercises the participant will do:
         // TODO: DO NOT HARDCODE THE PROGRAMMING LANGUAGE
         tasks: getTasksForLanguage('python').length

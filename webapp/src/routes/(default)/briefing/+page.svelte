@@ -2,7 +2,7 @@
     import ActionBar from '$lib/components/forms/ActionBar.svelte';
 
     export let data: import('./$types').PageData;
-    const { tasks } = data;
+    const { tasks, shouldShowVideo } = data;
 
     const youtubeSource = 'https://www.youtube.com/embed/EwhtQx1ZkEg?si=JkIjjsEciY11SFU8';
 </script>
@@ -13,18 +13,20 @@
 
 <article>
     <form method="POST">
-        <p>Please watch this brief video to learn about what you will do in this study:</p>
-        <div class="youtube">
-            <iframe
-                width="560"
-                height="315"
-                src={youtubeSource}
-                title="YouTube video player"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen
-            />
-        </div>
+        {#if shouldShowVideo}
+            <p>Please watch this brief video to learn about what you will do in this study:</p>
+            <div class="youtube">
+                <iframe
+                    width="560"
+                    height="315"
+                    src={youtubeSource}
+                    title="YouTube video player"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen
+                />
+            </div>
+        {/if}
 
         <p>
             You're going to see <strong>{tasks} programs and {tasks} error messages</strong>. In the
