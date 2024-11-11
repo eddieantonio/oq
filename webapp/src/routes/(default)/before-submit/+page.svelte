@@ -13,7 +13,7 @@
 
     <p>
         Heads up! <strong class="warning"
-            >This is your last chance to change opt out of data collection</strong
+            >This is your last chance to opt out of data collection</strong
         >. Remember, all data is collected anonymously and will be used for research purposes only.
         The only data that we will store will be your survey answers and some interaction data when
         you were writing code.
