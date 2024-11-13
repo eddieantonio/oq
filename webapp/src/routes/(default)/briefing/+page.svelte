@@ -1,11 +1,16 @@
 <script lang="ts">
     import ActionBar from '$lib/components/forms/ActionBar.svelte';
+    import Prefetch from '$lib/components/Prefetch.svelte';
 
     export let data: import('./$types').PageData;
     const { tasks, shouldShowVideo } = data;
 
     const youtubeSource = 'https://www.youtube.com/embed/EwhtQx1ZkEg?si=JkIjjsEciY11SFU8';
 </script>
+
+<svelte:head>
+    <Prefetch />
+</svelte:head>
 
 <header>
     <h1>What you're going to do in this study</h1>
@@ -41,7 +46,8 @@
         </p>
 
         <p>
-            <strong>Please do not talk to your friends</strong> to help you with this study. You should solve each problem on your own.
+            <strong>Please do not talk to your friends</strong> to help you with this study. You should
+            solve each problem on your own.
         </p>
 
         <p>When you're ready, press continue to start the first exercise:</p>

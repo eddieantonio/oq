@@ -1,6 +1,7 @@
 <script lang="ts">
     import { createTimer, type CancelableTimer } from '$lib/cancelable-timer';
     import Ide from '$lib/components/IDE.svelte';
+    import Prefetch from '$lib/components/Prefetch.svelte';
     import type { RunnableProgram } from '$lib/types';
     import type { ClientSideRunResult } from '$lib/types/client-side-run-results';
     import { onMount } from 'svelte';
@@ -82,6 +83,10 @@
         return response;
     }
 </script>
+
+<svelte:head>
+    <Prefetch />
+</svelte:head>
 
 <Ide {language} {filename} bind:content {initialDiagnostics} {runCodeOnServer}>
     <svelte:fragment slot="buttons">

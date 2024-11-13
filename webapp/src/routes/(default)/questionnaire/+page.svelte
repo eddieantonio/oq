@@ -4,7 +4,12 @@
     import Gender from '$lib/components/forms/Gender.svelte';
 
     import MultipleChoice from '$lib/components/forms/MultipleChoice.svelte';
+    import Prefetch from '$lib/components/Prefetch.svelte';
 </script>
+
+<svelte:head>
+    <Prefetch />
+</svelte:head>
 
 <h1>Demographics</h1>
 
