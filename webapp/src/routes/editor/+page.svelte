@@ -4,7 +4,7 @@
     import Prefetch from '$lib/components/Prefetch.svelte';
     import type { RunnableProgram } from '$lib/types';
     import type { ClientSideRunResult } from '$lib/types/client-side-run-results';
-    import { onMount } from 'svelte';
+    import { onDestroy, onMount } from 'svelte';
 
     export let data: import('./$types').PageData;
     const { language, filename, initialDiagnostics, timeout, skipTimeout } = data;
@@ -12,20 +12,21 @@
 
     let okayToContinue = false;
     let enableSkip = false;
+    let timeoutTimer: CancelableTimer | null = null;
+    let skipTimer: CancelableTimer | null = null;
 
-    // Setup timers, compiles the code for the first time (if the initial
-    // diagnostics are not provided)
-    onMount(() => {
-        indicateExerciseStarted();
-        const timeoutTimer = startTimeout();
-        const skipTimer = startSkipTimer();
+    // Setup timers, and start the exercise.
+    onMount(async () => {
+        await indicateExerciseStarted();
+        timeoutTimer = startTimeout();
+        skipTimer = startSkipTimer();
+    });
 
-        // When the IDE is no longer in mounted, cancel the timers.
-        // Otherwise, they WILL run in the background :/
-        return () => {
-            timeoutTimer.cancel();
-            skipTimer.cancel();
-        };
+    // When the IDE is no longer in mounted, cancel the timers.
+    // Otherwise, they WILL run in the background :/
+    onDestroy(() => {
+        if (timeoutTimer) timeoutTimer.cancel();
+        if (skipTimer) skipTimer.cancel();
     });
 
     /** Tell the backend that we're ready to go! */
