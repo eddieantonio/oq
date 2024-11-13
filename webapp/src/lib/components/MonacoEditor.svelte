@@ -15,6 +15,8 @@
     export let clearMarkersOnChange: boolean = false;
     /** A hint of the requested height of the editor. This may or may not be ignored. */
     export let editorHeightHint: number = 500;
+    /** Called when Monaco is finished initializing (it takes a long time!) */
+    export let onMonacoReady = () => {};
 
     /** The DOM element that the editor will be mounted to. */
     let element: HTMLDivElement;
@@ -118,6 +120,7 @@
 
         // Update editor size when the window size changes
         window.addEventListener('resize', () => void editor.layout(), { signal });
+        onMonacoReady();
     });
 
     onDestroy(() => {

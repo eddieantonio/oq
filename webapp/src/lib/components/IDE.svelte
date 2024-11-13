@@ -48,6 +48,9 @@
     /** Status of execution.  */
     let executionStatus: 'idle' | 'running' | 'errored' = 'idle';
 
+    /** Monaco takes a long time to initialize, so have something to indicate we're not ready yet. */
+    let editorReady = false;
+
     /* Used for a hack to pass into the Editor. */
     let editorHeightHint = 0;
 
@@ -89,7 +92,7 @@
     }
 </script>
 
-<div class="ide">
+<div class="ide" class:disable-editor={!editorReady}>
     <Splitpanes
         horizontal={true}
         theme="vscode-theme"
@@ -129,6 +132,7 @@
                     bind:content
                     diagnostics={pem}
                     {language}
+                    onMonacoReady={() => void (editorReady = true)}
                     clearMarkersOnChange={true}
                     {editorHeightHint}
                 />
@@ -402,5 +406,10 @@
         height: 0.4lh;
         aspect-ratio: 1;
         margin-inline: 0.6ch;
+    }
+
+    .disable-editor {
+        pointer-events: none;
+        filter: blur(10px);
     }
 </style>
