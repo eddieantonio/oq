@@ -92,7 +92,7 @@
     }
 </script>
 
-<div class="ide" class:disable-editor={!editorReady}>
+<div class="ide animate-blur" class:disable-editor={!editorReady}>
     <Splitpanes
         horizontal={true}
         theme="vscode-theme"
@@ -406,6 +406,11 @@
         height: 0.4lh;
         aspect-ratio: 1;
         margin-inline: 0.6ch;
+    }
+
+    .animate-blur {
+        filter: blur(0px);
+        transition: filter 0.5s ease-in-out;
     }
 
     .disable-editor {
