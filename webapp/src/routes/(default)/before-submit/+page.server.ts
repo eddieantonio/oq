@@ -32,7 +32,8 @@ export const actions: import('./$types').Actions = {
 
         const voucher = createVoucher(participantId);
         cookies.set('voucher', voucher);
-        throw redirect(StatusCodes.SEE_OTHER, `/thanks?v=${voucher}`);
+        const params = new URLSearchParams({ v: voucher });
+        throw redirect(StatusCodes.SEE_OTHER, `/thanks?${params}`);
     }
 };
 
