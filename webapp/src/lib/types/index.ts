@@ -115,3 +115,7 @@ export function previousStage(stage: Stage): Stage {
 export function firstStage(): Stage {
     return STAGES[0];
 }
+
+export function stages(): readonly Stage[] {
+    return STAGES;
+}
