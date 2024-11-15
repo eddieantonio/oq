@@ -1,6 +1,4 @@
 <script lang="ts">
-    import { dev } from '$app/environment';
-
     import ActionBar from '$lib/components/forms/ActionBar.svelte';
     import DiagnosticDisplay from '$lib/components/DiagnosticDisplay.svelte';
     import LongAnswer from '$lib/components/forms/LongAnswer.svelte';
@@ -87,14 +85,6 @@
         <button type="submit">Submit</button>
     </ActionBar>
 </form>
-
-{#if dev}
-    <p>
-        <small>
-            (<a href="/_debug/answers">See the answers</a>)
-        </small>
-    </p>
-{/if}
 
 <style>
     /* https://stackoverflow.com/a/37964247/6626414 */

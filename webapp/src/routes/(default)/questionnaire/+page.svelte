@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { dev } from '$app/environment';
     import ActionBar from '$lib/components/forms/ActionBar.svelte';
     import Gender from '$lib/components/forms/Gender.svelte';
 
@@ -34,11 +33,3 @@
         <button type="submit">Submit</button>
     </ActionBar>
 </form>
-
-{#if dev}
-    <p>
-        <small>
-            (<a href="/_debug/answers">See the answers</a>)
-        </small>
-    </p>
-{/if}

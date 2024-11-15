@@ -49,10 +49,6 @@
         <li><a href="/before-submit">Before submission page</a></li>
         <li><a href="/thanks">Study completion page</a></li>
     </ol>
-    <h3>Debug pages</h3>
-    <ul>
-        <li><a href="/_debug/answers">Answers</a></li>
-    </ul>
 
     <h3>Create test editor</h3>
     <form method="GET" action="/_debug/detached-editor">
