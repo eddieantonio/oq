@@ -18,8 +18,9 @@
     }
 
     function setLocalStorage(suffix: string, value: string | null) {
-        if (!browser) return null;
-        if (value != null) localStorage.setItem(key(suffix), value);
+        if (!browser) return;
+        if (value == null) return;
+        localStorage.setItem(key(suffix), value);
     }
 
     /** Prefix key with oq to avoid clashes with third-party browser extensions. */
@@ -38,7 +39,6 @@
     <p>Jump quickly to…</p>
     <ol>
         <li><a href="/">Class selection</a></li>
-        <!-- TODO: use current classroom: -->
         <li><a href="/information/{classroom}">Information sheet</a></li>
         <li><a href="/consent/{classroom}">Consent</a></li>
         <li><a href="/questionnaire">Questionnaire: Part 1</a></li>
