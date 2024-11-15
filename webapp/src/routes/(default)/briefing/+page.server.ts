@@ -1,4 +1,5 @@
 import { setParticipantStage } from '$lib/server/database';
+import { redirectToCurrentStage } from '$lib/server/redirect';
 import { getTasksForLanguage } from '$lib/server/tasks';
 import { redirect } from '@sveltejs/kit';
 import { StatusCodes } from 'http-status-codes';
@@ -19,6 +20,8 @@ export const actions: import('./$types').Actions = {
      */
     default: async ({ locals }) => {
         const participant = locals.expectParticipant();
+        if (participant.stage != 'pre-questionnaire') redirectToCurrentStage(participant.stage);
+
         await setParticipantStage(participant.participant_id, 'exercise-1');
         throw redirect(StatusCodes.SEE_OTHER, '/editor');
     }

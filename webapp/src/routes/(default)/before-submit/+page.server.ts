@@ -9,7 +9,7 @@ import type { ParticipantId } from '$lib/server/newtypes.js';
 
 export function load({ locals }) {
     const participant = locals.expectParticipant();
-    if (participant.stage != 'final-questionnaire') redirectToCurrentStage(participant.stage);
+    if (participant.stage != 'before-submit') redirectToCurrentStage(participant.stage);
 }
 
 export const actions: import('./$types').Actions = {

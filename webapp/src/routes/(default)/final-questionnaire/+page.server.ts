@@ -6,7 +6,7 @@ import { StatusCodes } from 'http-status-codes';
 import { error, redirect } from '@sveltejs/kit';
 
 import { saveQuestionnaireResponses } from '$lib/server/questionnaire';
-import { getAllParticipantAssignments } from '$lib/server/database.js';
+import { getAllParticipantAssignments, setParticipantStage } from '$lib/server/database.js';
 import { makeDiagnosticsForAssignment } from '$lib/server/diagnostics-util';
 import type { Diagnostics } from '$lib/types/diagnostics';
 import { shuffle } from '$lib/random.js';
@@ -83,10 +83,10 @@ export const actions: import('./$types').Actions = {
             throw error(StatusCodes.BAD_REQUEST, 'Not at the correct stage');
 
         const participantId = participant.participant_id;
-        await saveQuestionnaireResponses(participantId, request);
-        // On the post-questionnaire page, we do not have to change the stage.
-        // The user can advance and go back to this page if they want to change their answers.
-
+        await Promise.all([
+            saveQuestionnaireResponses(participantId, request),
+            setParticipantStage(participantId, 'before-submit')
+        ]);
         throw redirect(StatusCodes.SEE_OTHER, '/before-submit');
     }
 };

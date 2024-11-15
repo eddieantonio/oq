@@ -41,6 +41,7 @@ const STAGES = [
     'exercise-6',
     'post-exercise-6',
     'final-questionnaire',
+    'before-submit',
     'completed',
     // Pseudo-stage. Participants are manually placed in this stage if they must restart from the beginnning.
     'retake'
