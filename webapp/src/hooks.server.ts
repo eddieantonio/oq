@@ -5,12 +5,12 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-import { error, type Handle } from '@sveltejs/kit';
+import { error, redirect, type Handle } from '@sveltejs/kit';
 import { building } from '$app/environment';
 import { env } from '$env/dynamic/private';
 
 import { loadTasksSync } from '$lib/server/tasks';
-import { getParticipantPossiblyUndefined } from '$lib/server/database';
+import { getParticipantPossiblyUndefined, setParticipantStage } from '$lib/server/database';
 import type { ParticipantId } from '$lib/server/newtypes';
 import { StatusCodes } from 'http-status-codes';
 
@@ -28,7 +28,12 @@ export const handle: Handle = async ({ event, resolve }) => {
     if (participantId) {
         const participant = await getParticipantPossiblyUndefined(participantId as ParticipantId);
         if (!participant) throw error(400, 'Invalid participant ID');
+
+        event.locals.participant = participant;
         event.locals.expectParticipant = () => participant;
+
+        // This is where we can intercept retakes
+        if (participant.stage == 'retake') handleRetake(participant.participant_id);
     } else {
         event.locals.expectParticipant = (message: string | undefined) => {
             throw error(StatusCodes.UNAUTHORIZED, message ?? 'Must be logged in for this page');
@@ -49,4 +54,9 @@ function currentTasksDir(): string {
 
     const here = path.dirname(fileURLToPath(import.meta.url));
     return path.resolve(`${here}/../tasks`);
+}
+
+function handleRetake(participant: ParticipantId) {
+    setParticipantStage(participant, 'pre-questionnaire');
+    throw redirect(StatusCodes.SEE_OTHER, '/questionnaire');
 }

@@ -34,7 +34,7 @@ export const actions: import('./$types').Actions = {
         const stage = data.get('stage');
         if (!isStageName(stage)) throw error(StatusCodes.BAD_REQUEST, 'Invalid stage');
 
-        setParticipantStage(participantId, stage);
+        await setParticipantStage(participantId, stage);
         redirectToCurrentStage(stage);
     }
 };

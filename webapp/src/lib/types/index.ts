@@ -41,7 +41,9 @@ const STAGES = [
     'exercise-6',
     'post-exercise-6',
     'final-questionnaire',
-    'completed'
+    'completed',
+    // Pseudo-stage. Participants are manually placed in this stage if they must restart from the beginnning.
+    'retake'
 ] as const;
 /** Stage of the participant during the study. */
 export type Stage = (typeof STAGES)[number];
@@ -95,7 +97,10 @@ export function nextStage(stage: Stage) {
     const index = STAGES.indexOf(stage);
     if (index === -1) throw new Error(`Invalid stage: ${stage}`);
     if (index === STAGES.length - 1) throw new Error(`No next stage after ${stage}`);
-    return STAGES[index + 1];
+
+    const result = STAGES[index + 1];
+    if (result == 'retake') throw new Error('Cannot advance to retake stage');
+    return result;
 }
 
 /**
