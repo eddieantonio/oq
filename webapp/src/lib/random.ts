@@ -17,7 +17,7 @@ export function shuffle<T>(array: T[]): void {
 /**
  * @returns A shuffled copy of the given array.
  */
-export function shuffled<T>(array: T[]): T[] {
+export function shuffled<T>(array: readonly T[]): T[] {
     const result = [...array];
     shuffle(result);
     return result;

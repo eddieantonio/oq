@@ -17,8 +17,6 @@ import { StatusCodes } from 'http-status-codes';
 // Loads all the tasks on server start.
 // If you change the files in webapp/tasks, you need to restart the server!
 
-// TODO: do some env bullcrap
-// so that tasks are loaded from /app/tasks on server load
 if (!building) loadTasksSync(currentTasksDir());
 
 /**
@@ -30,7 +28,6 @@ export const handle: Handle = async ({ event, resolve }) => {
     if (participantId) {
         const participant = await getParticipantPossiblyUndefined(participantId as ParticipantId);
         if (!participant) throw error(400, 'Invalid participant ID');
-        event.locals.participant = participant;
         event.locals.expectParticipant = () => participant;
     } else {
         event.locals.expectParticipant = (message: string | undefined) => {

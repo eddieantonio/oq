@@ -116,6 +116,9 @@ export function firstStage(): Stage {
     return STAGES[0];
 }
 
+/**
+ * @returns an array of all stages
+ */
 export function stages(): readonly Stage[] {
     return STAGES;
 }

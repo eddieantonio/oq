@@ -39,6 +39,10 @@ export interface Task {
 export function loadTasksSync(tasksDir: string) {
     // Sorry about this :/
     console.log('Loading tasks from', tasksDir);
+    if (TASKS.length > 0) {
+        console.log(`${TASKS.length} tasks already loaded!`);
+        return;
+    }
 
     // The structure of the tasks directory is:
     // tasks/

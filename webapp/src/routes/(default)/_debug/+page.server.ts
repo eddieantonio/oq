@@ -1,10 +1,11 @@
-import { setParticipantStage } from '$lib/server/database';
-import { ParticipantId } from '$lib/server/newtypes';
-import { redirectToCurrentStage } from '$lib/server/redirect';
-import { taskNames } from '$lib/server/tasks';
-import { Stage, stages } from '$lib/types';
 import { error } from '@sveltejs/kit';
 import { StatusCodes } from 'http-status-codes';
+
+import { redirectToCurrentStage } from '$lib/server/redirect';
+import { setParticipantStage } from '$lib/server/database';
+import { taskNames } from '$lib/server/tasks';
+import { type Stage, stages } from '$lib/types';
+import type { ParticipantId } from '$lib/server/newtypes';
 
 /**
  * @type {import('@sveltejs/kit').Load}
