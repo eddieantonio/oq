@@ -1,7 +1,5 @@
 <script>
     import ActionBar from '$lib/components/forms/ActionBar.svelte';
-    import Voucher from '$lib/components/Voucher.svelte';
-    export let data;
 </script>
 
 <header>
@@ -9,8 +7,6 @@
 </header>
 
 <article>
-    <Voucher voucher={data.voucher} />
-
     <p>
         Heads up! <strong class="warning"
             >This is your last chance to opt out of data collection</strong
@@ -24,6 +20,10 @@
             >When you press “Finish”, your study data will be stored in our database for a period of
             five years.</strong
         >
+    </p>
+
+    <p>
+        Regardless of what you pick, your voucher will be on the next page.
     </p>
 
     <form method="POST">
