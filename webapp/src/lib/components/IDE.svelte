@@ -16,6 +16,7 @@
 
     import type { ProgrammingLanguage, RunnableProgram } from '$lib/types';
     import type { ClientSideRunResult } from '$lib/types/client-side-run-results';
+    import { fade } from 'svelte/transition';
 
     /** The source code content in the editor. */
     export let content: string;
@@ -194,6 +195,12 @@
         </Pane>
     </Splitpanes>
 </div>
+
+{#if !editorReady}
+    <div class="background" out:fade>
+        <span class="message">Loading...</span>
+    </div>
+{/if}
 
 <style>
     /* Full IDE styles */
@@ -416,5 +423,21 @@
     .disable-editor {
         pointer-events: none;
         filter: blur(10px);
+    }
+
+    .background {
+        display: grid;
+        place-items: center;
+
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+
+        backdrop-filter: blur(10px);
+    }
+
+    .background .message {
+        font: 2rem sans-serif;
+        color: black;
     }
 </style>
